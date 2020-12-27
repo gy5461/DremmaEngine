@@ -1,1 +1,8 @@
-/bin
+# Directories
+bin/
+.settings/
+
+# Files
+.classpath
+.project
+.DS_Store
