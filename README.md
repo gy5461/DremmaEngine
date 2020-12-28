@@ -1,7 +1,7 @@
 # 梦玛引擎（GPL开源协议）
 ## 英文名：Dremma Engine
 
-![](/Users/guoyi/Documents/eclipse_workspace/DremmaEngine/res/logo/DremmaIcon.png)
+![](res/logo/DremmaIcon.png)
 
 ### 游戏窗体
 
