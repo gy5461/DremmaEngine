@@ -45,8 +45,8 @@ public class Game extends Canvas implements Runnable {
 
 		long lastnsTime = System.nanoTime(); // 记录上一帧纳秒数
 		// 每秒1e9纳秒，每秒渲染60帧画面是人眼上限，指在每秒渲染60帧画面的前提下，每帧需要多少纳秒
-		final double NSPERFRAME = 1000000000.0 / 65.0;	// 为了保证帧数在60帧以上，故将分母设置为65
-		double deltaFrame; // 纳秒数的变化除以nsPerFrame，即变化的帧数
+		final double NSPERFRAME = 1000000000.0 / 60.0;
+		double deltaFrame = 0; // 纳秒数的变化除以nsPerFrame，即变化的帧数
 		long curnsTime; // 记录当前纳秒数
 		// 如果需要测试机器极限，建议将shouldRender始终设置为true
 		boolean shouldRender; // 标记是否需要渲染，当deltaFrame>=1时，是渲染的时机
@@ -54,12 +54,13 @@ public class Game extends Canvas implements Runnable {
 		while (isRunning) {
 
 			curnsTime = System.nanoTime();
-			deltaFrame = (curnsTime - lastnsTime) / NSPERFRAME;
+			deltaFrame += (curnsTime - lastnsTime) / NSPERFRAME;
+			lastnsTime = curnsTime;
 
 			// 变化的纳秒数在满足人眼上限的前提下值得渲染一帧
 			if (deltaFrame >= 1.0) {
 				deltaFrame--;
-				lastnsTime = curnsTime;
+				
 				shouldRender = true;
 			} else {
 				shouldRender = false;
