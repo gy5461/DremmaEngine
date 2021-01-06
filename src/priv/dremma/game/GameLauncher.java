@@ -1,4 +1,4 @@
-package priv.emma.game;
+package priv.dremma.game;
 
 import java.applet.Applet;
 

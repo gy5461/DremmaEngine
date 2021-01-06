@@ -1,4 +1,4 @@
-package priv.emma.game.animation;
+package priv.dremma.game.animation;
 
 import java.awt.Image;
 import java.util.ArrayList;

@@ -1,8 +1,10 @@
-package priv.emma.game;
+package priv.dremma.game;
 
 import java.awt.Canvas;
 
 import javax.swing.JFrame;
+
+import priv.dremma.game.util.Debug;
 
 /**
  * 游戏主体类，包含游戏窗体、渲染等
@@ -21,6 +23,8 @@ public class Game extends Canvas implements Runnable {
 	public static final String NAME = "DremmaEngine"; // 名称
 	public static final int WIDTH = 160; // 窗体宽度
 	public static final int HEIGHT = WIDTH / 12 * 9; // 窗体高度
+	
+	public static boolean debug = true;	// 游戏引擎默认为Debug模式
 
 	public synchronized void start() {
 		isRunning = true;
@@ -79,13 +83,11 @@ public class Game extends Canvas implements Runnable {
 
 			if (System.currentTimeMillis() - lastTimer > 1000) {
 				// 游戏每过1秒，打印帧数（帧数指一秒内游戏渲染画面的张数）
-				System.out.println("Game frames:" + frames);
-
+				Debug.log(Debug.DebugLevel.INFO, "Game Frames :" + frames);
 				lastTimer += 1000;
 				frames = 0;
 			}
 
 		}
 	}
-
 }
