@@ -73,6 +73,6 @@ strategy.show();
 
 基于DremmaEngine开发的游戏，展现本游戏引擎的易用性
 
-绘制了两个长方形
+绘制两个矩形
 
-![2.png](https://i.loli.net/2021/01/10/mfB8lFcbD1viUXa.png)
+![2.png](https://i.loli.net/2021/01/10/3OE1uDQ2sU4Zehg.png)

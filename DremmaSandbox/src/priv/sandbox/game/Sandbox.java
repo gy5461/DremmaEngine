@@ -18,7 +18,7 @@ public class Sandbox extends Game {
 			
 			// 渲染一个绿色的长方形
 			g.setColor(Color.green);
-			g.fillRect(300, 300, 100, 100);
+			g.fillRect(300, 250, 100, 100);
 		}
 	}
 
