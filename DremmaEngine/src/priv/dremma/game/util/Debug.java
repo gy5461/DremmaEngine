@@ -16,15 +16,15 @@ public class Debug {
 		default:
 		case INFO:
 			// 打印绿色信息
-			System.out.println("\u001b[1;32m[" + Game.NAME + "][INFO]" + msg+"\u001b[0m");
+			System.out.println("\u001b[1;32m[" + Game.name + "][INFO]" + msg+"\u001b[0m");
 			break;
 		case WARNING:
 			// 打印黄色警告
-			System.out.println("\u001b[1;33m[" + Game.NAME + "][WARNIGN]" + msg+"\u001b[0m");
+			System.out.println("\u001b[1;33m[" + Game.name + "][WARNIGN]" + msg+"\u001b[0m");
 			break;
 		case SERVERE:
 			// 打印红色严重警告
-			System.out.println("\u001b[1;31m[" + Game.NAME + "][SERVERE]" + msg+"\u001b[0m");
+			System.out.println("\u001b[1;31m[" + Game.name + "][SERVERE]" + msg+"\u001b[0m");
 			break;
 		}
 	}

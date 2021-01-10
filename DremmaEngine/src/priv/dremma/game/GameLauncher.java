@@ -12,9 +12,14 @@ import javax.swing.JFrame;
 @SuppressWarnings("serial")
 public class GameLauncher extends Applet{
 	
-	private static Game game = new Game();
+	public static Game game;
+	
+	public void onStart() {
+		game =  new Game();
+	}
 	
 	public void start() {
+		onStart();
 		game.start();
 		game.setFocusable(true);
 	}
@@ -23,8 +28,8 @@ public class GameLauncher extends Applet{
 		game.stop();
 	}
 	
-	public static void main(String[] args) {
-		game.window = new JFrame(Game.NAME);	//新建游戏窗体
+	public static void lauchToApplication() {
+		game.window = new JFrame(Game.name);	//新建游戏窗体
 		game.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//设置默认情况下关闭窗体时游戏退出
 		game.window.setResizable(false);	//默认窗体不可改变大小
 		game.window.setLocationRelativeTo(null);	//使窗体置于屏幕中央
@@ -32,6 +37,11 @@ public class GameLauncher extends Applet{
 		game.setFocusable(true);	//默认聚焦游戏
 		
 		game.start();	//开始游戏
+	}
+	
+	public static void main(String[] args) {
+		game =  new Game();
+		lauchToApplication();
 	}
 	
 }

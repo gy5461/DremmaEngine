@@ -20,19 +20,30 @@ public class Game extends Canvas implements Runnable {
 	public Thread thread; // 游戏线程
 	public boolean isRunning; // 游戏是否正在运行
 
-	public static final String NAME = "DremmaEngine"; // 名称
-	public static final int WIDTH = 160; // 窗体宽度
-	public static final int HEIGHT = WIDTH / 12 * 9; // 窗体高度
+	public static String name = "DremmaEngine"; // 名称
+	public static int width = 160; // 窗体宽度
+	public static int height = width / 12 * 9; // 窗体高度
 	
 	public static boolean debug = true;	// 游戏引擎默认为Debug模式
+	
+	public void onStart() {
+	}
+	
+	public void onUpdate() {
+	}
+	
+	public void onDestroy() {
+	}
 
 	public synchronized void start() {
+		onStart();
 		isRunning = true;
-		thread = new Thread(this, NAME + "_main");
+		thread = new Thread(this, name + "_main");
 		thread.start();
 	}
 
 	public synchronized void stop() {
+		onDestroy();
 		isRunning = false;
 
 		try {
@@ -79,6 +90,7 @@ public class Game extends Canvas implements Runnable {
 
 			if (shouldRender) {
 				frames++;
+				onUpdate();
 			}
 
 			if (System.currentTimeMillis() - lastTimer > 1000) {
