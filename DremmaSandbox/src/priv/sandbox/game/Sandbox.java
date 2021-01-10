@@ -1,16 +1,25 @@
 package priv.sandbox.game;
 
+import java.awt.Color;
+
 import priv.dremma.game.Game;
-import priv.dremma.game.util.Debug;
 
 @SuppressWarnings("serial")
-public class Sandbox extends Game{
+public class Sandbox extends Game {
 	public void onStart() {
-		Game.name = "Sandbox";
+		this.setName("SandBox");
 	}
-	
+
 	public void onUpdate() {
-		Debug.log(Debug.DebugLevel.WARNING, "warning, this is sandbox!");
+		if (Game.g != null) {
+			// 渲染一个蓝色的长方形
+			g.setColor(Color.blue);
+			g.fillRect(200, 100, 500, 200);
+			
+			// 渲染一个绿色的长方形
+			g.setColor(Color.green);
+			g.fillRect(300, 300, 100, 100);
+		}
 	}
 
 }

@@ -1,10 +1,14 @@
 package priv.dremma.game;
 
 import java.awt.Canvas;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
-import priv.dremma.game.util.Debug;
+import priv.dremma.game.util.Time;
 
 /**
  * 游戏主体类，包含游戏窗体、渲染等
@@ -20,26 +24,40 @@ public class Game extends Canvas implements Runnable {
 	public Thread thread; // 游戏线程
 	public boolean isRunning; // 游戏是否正在运行
 
+	public static enum GameViewAngle {
+		ViewAngle2DOT5, ViewAngle2; // 游戏视角，2.5D or 2D
+	}
+
 	public static String name = "DremmaEngine"; // 名称
 	public static int width = 160; // 窗体宽度
 	public static int height = width / 12 * 9; // 窗体高度
-	
-	public static boolean debug = true;	// 游戏引擎默认为Debug模式
-	
+	public static int scale = 6; // 窗体放大倍数
+	public static final Dimension DIMENSIONS = new Dimension(width * scale, height * scale);
+	public static Graphics g;
+
+	public static boolean debug = true; // 游戏引擎默认为Debug模式
+	public boolean isApplet = false;
+	public static GameViewAngle viewAngle; // 游戏视角
+
+	public static int frames = 0; // 游戏帧数
+
+	private BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
 	public void onStart() {
 	}
-	
+
 	public void onUpdate() {
 	}
-	
+
 	public void onDestroy() {
 	}
 
 	public synchronized void start() {
-		onStart();
+		viewAngle = Game.GameViewAngle.ViewAngle2DOT5;
 		isRunning = true;
 		thread = new Thread(this, name + "_main");
 		thread.start();
+		onStart();
 	}
 
 	public synchronized void stop() {
@@ -55,32 +73,11 @@ public class Game extends Canvas implements Runnable {
 
 	@Override
 	public void run() {
-		int frames = 0; // 游戏帧数
-		long lastTimer = System.currentTimeMillis(); // 记录上一帧的时间，单位为毫秒
-
-		long lastnsTime = System.nanoTime(); // 记录上一帧纳秒数
-		// 每秒1e9纳秒，每秒渲染60帧画面是人眼上限，指在每秒渲染60帧画面的前提下，每帧需要多少纳秒
-		final double NSPERFRAME = 1000000000.0 / 60.0;
-		double deltaFrame = 0; // 纳秒数的变化除以nsPerFrame，即变化的帧数
-		long curnsTime; // 记录当前纳秒数
-		// 如果需要测试机器极限，建议将shouldRender始终设置为true
-		boolean shouldRender; // 标记是否需要渲染，当deltaFrame>=1时，是渲染的时机
 
 		while (isRunning) {
 
-			curnsTime = System.nanoTime();
-			deltaFrame += (curnsTime - lastnsTime) / NSPERFRAME;
-			lastnsTime = curnsTime;
+			Time.update();
 
-			// 变化的纳秒数在满足人眼上限的前提下值得渲染一帧
-			if (deltaFrame >= 1.0) {
-				deltaFrame--;
-				
-				shouldRender = true;
-			} else {
-				shouldRender = false;
-			}
-			
 			// 线程休息两毫秒
 			try {
 				Thread.sleep(2);
@@ -88,18 +85,45 @@ public class Game extends Canvas implements Runnable {
 				e.printStackTrace();
 			}
 
-			if (shouldRender) {
+			if (Time.shouldRender) {
 				frames++;
-				onUpdate();
-			}
+				render();
 
-			if (System.currentTimeMillis() - lastTimer > 1000) {
-				// 游戏每过1秒，打印帧数（帧数指一秒内游戏渲染画面的张数）
-				Debug.log(Debug.DebugLevel.INFO, "Game Frames :" + frames);
-				lastTimer += 1000;
-				frames = 0;
 			}
-
 		}
+	}
+
+	/**
+	 * 渲染游戏
+	 */
+	public void render() {
+		BufferStrategy bufferStrategy = this.getBufferStrategy(); // 取得本Canvas的buffer strategy
+		if (bufferStrategy == null) {
+			this.createBufferStrategy(2); // 通过双缓存、翻页技术，解决白屏闪烁、裂开等问题
+			return;
+		}
+
+		g = bufferStrategy.getDrawGraphics();
+
+		// 渲染bufferedImage
+		g.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
+		
+
+		// 游戏开发者更新
+		onUpdate();
+
+		g.dispose();
+		bufferStrategy.show();
+	}
+
+	/**
+	 * 设置游戏名称
+	 */
+	public void setName(String name) {
+		if (isApplet) {
+			return;
+		}
+		Game.name = name;
+		this.window.setTitle(name);
 	}
 }
