@@ -8,6 +8,9 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
+import priv.dremma.game.event.KeyInputHandler;
+import priv.dremma.game.event.MouseInputHandler;
+import priv.dremma.game.event.WindowInputHandler;
 import priv.dremma.game.util.Time;
 
 /**
@@ -43,6 +46,10 @@ public class Game extends Canvas implements Runnable {
 
 	private BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
+	public KeyInputHandler keyInput;
+	public MouseInputHandler mouseInput;
+	public WindowInputHandler windowInput;
+
 	public void onStart() {
 	}
 
@@ -50,6 +57,15 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public void onDestroy() {
+	}
+
+	/**
+	 * 在游戏循环开始前进行初始化工作
+	 */
+	public void init() {
+		keyInput = new KeyInputHandler(this);
+		mouseInput = new MouseInputHandler(this);
+		windowInput = new WindowInputHandler(this);
 	}
 
 	public synchronized void start() {
@@ -73,19 +89,14 @@ public class Game extends Canvas implements Runnable {
 
 	@Override
 	public void run() {
-
-		while (isRunning) {
+		init();
+		while (isRunning) { // 游戏循环
 
 			Time.update();
 
-			// 线程休息两毫秒
-			try {
-				Thread.sleep(2);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
 			if (Time.shouldRender) {
+				// 游戏开发者更新
+				onUpdate();
 				frames++;
 				render();
 
@@ -107,10 +118,6 @@ public class Game extends Canvas implements Runnable {
 
 		// 渲染bufferedImage
 		g.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
-		
-
-		// 游戏开发者更新
-		onUpdate();
 
 		g.dispose();
 		bufferStrategy.show();

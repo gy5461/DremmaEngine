@@ -44,7 +44,7 @@ public class GameLauncher extends Applet {
 		game.isApplet = false;
 
 		game.window = new JFrame(Game.name); // 新建游戏窗体
-		game.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 设置默认情况下关闭窗体时游戏退出
+		game.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 设置默认情况下关闭窗体退出程序
 
 		game.window.setLayout(new BorderLayout());
 

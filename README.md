@@ -69,6 +69,16 @@ strategy.show();
 
   显示器的刷新频率通常在75Hz左右，表示显示器每秒钟刷新75次，但如果显示器刷新途中发生翻页或者缓存区复制等操作，显示器将会同时显示一部分旧缓存区和一部分新缓存区，即发生裂开，为了解决这个问题，可以在显示器刷新完成之前翻页，在Java运行环境中可以使用BufferStrategy类完成该工作。
 
+### 事件监听
+
+* 鼠标事件
+
+* 键盘事件
+
+* 窗体事件
+
+![截屏2021-01-11下午7.56.32.png](https://i.loli.net/2021/01/11/5NH2UqO1CsZVInd.png)
+
 # DremmaSandbox
 
 基于DremmaEngine开发的游戏，展现本游戏引擎的易用性
@@ -76,3 +86,4 @@ strategy.show();
 绘制两个矩形
 
 ![2.png](https://i.loli.net/2021/01/10/3OE1uDQ2sU4Zehg.png)
+
