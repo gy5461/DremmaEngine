@@ -41,7 +41,7 @@ GameLauncher继承java.applet.Applet，支持引擎构建applet网页游戏
 >
 > Git：https://github.com/mihnita/ansi-econsole
 
-### 渲染
+### 渲染系统
 
 BufferStrategy类：处理双缓存、翻页和显示器刷新等待，它会根据系统功能选择最佳的缓存方法。首先，尝试进行翻页，若无法翻页则尝试进行双缓存。另外，翻页之前需要等待显示器刷新完毕，限制每秒可以显示的帧数最多为75，这样就不能用游戏帧速率作为测试系统运行速度的基准。
 

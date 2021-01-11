@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
+import priv.dremma.game.audio.AudioPlayer;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
@@ -46,9 +47,9 @@ public class Game extends Canvas implements Runnable {
 
 	private BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-	public KeyInputHandler keyInput;
-	public MouseInputHandler mouseInput;
-	public WindowInputHandler windowInput;
+	public KeyInputHandler keyInputHandler;
+	public MouseInputHandler mouseInputHandler;
+	public WindowInputHandler windowInputHandler;
 
 	public void onStart() {
 	}
@@ -63,9 +64,8 @@ public class Game extends Canvas implements Runnable {
 	 * 在游戏循环开始前进行初始化工作
 	 */
 	public void init() {
-		keyInput = new KeyInputHandler(this);
-		mouseInput = new MouseInputHandler(this);
-		windowInput = new WindowInputHandler(this);
+		keyInputHandler = new KeyInputHandler(this);
+		mouseInputHandler = new MouseInputHandler(this);
 	}
 
 	public synchronized void start() {
