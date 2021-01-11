@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
-import priv.dremma.game.audio.AudioPlayer;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
@@ -51,17 +50,10 @@ public class Game extends Canvas implements Runnable {
 	public MouseInputHandler mouseInputHandler;
 	public WindowInputHandler windowInputHandler;
 
-	AudioPlayer backgroundAudio;
-	AudioPlayer moneySound;
 	public void onStart() {
-		backgroundAudio = new AudioPlayer("res/vow to virtue.wav");
-		moneySound = new AudioPlayer("res/money.wav");
-		
 	}
 
 	public void onUpdate() {
-		backgroundAudio.playLoop();
-		moneySound.playLoop();
 	}
 
 	public void onDestroy() {

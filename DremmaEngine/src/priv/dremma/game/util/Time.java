@@ -48,12 +48,5 @@ public class Time {
 		}
 
 		printFrames(); // 打印帧数
-		
-		// 线程休息两毫秒
-		try {
-			Thread.sleep(2);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 }
