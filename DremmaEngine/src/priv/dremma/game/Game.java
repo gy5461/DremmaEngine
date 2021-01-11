@@ -51,10 +51,17 @@ public class Game extends Canvas implements Runnable {
 	public MouseInputHandler mouseInputHandler;
 	public WindowInputHandler windowInputHandler;
 
+	AudioPlayer backgroundAudio;
+	AudioPlayer moneySound;
 	public void onStart() {
+		backgroundAudio = new AudioPlayer("res/vow to virtue.wav");
+		moneySound = new AudioPlayer("res/money.wav");
+		
 	}
 
 	public void onUpdate() {
+		backgroundAudio.playLoop();
+		moneySound.playLoop();
 	}
 
 	public void onDestroy() {
@@ -94,6 +101,7 @@ public class Game extends Canvas implements Runnable {
 
 			Time.update();
 
+			//Time.shouldRender = true;	//解除shouldRender对于60帧左右的限制
 			if (Time.shouldRender) {
 				// 游戏开发者更新
 				onUpdate();
