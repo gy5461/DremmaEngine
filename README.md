@@ -100,6 +100,37 @@ strategy.show();
 
 故使用多线程进行音乐播放可以在很大程度上优化音乐播放器性能
 
+#### 音乐播放模块在Sandbox中用法
+
+~~~java
+package priv.sandbox.game;
+
+import priv.dremma.game.Game;
+import priv.dremma.game.audio.AudioManager;
+import priv.dremma.game.util.Res;
+
+@SuppressWarnings("serial")
+public class Sandbox extends Game {
+	
+	public void onStart() {
+		this.setName("SandBox");
+		
+    // 加载音乐资源
+		Res.loadRes(Res.ResType.Music, "backgroundMusic", "res/vow to virtue.wav");
+		Res.loadRes(Res.ResType.Music, "moneySound", "res/money.wav");
+	}
+
+	public void onUpdate() {
+    // 播放音乐
+		AudioManager.getInstance().playOnce("moneySound");
+		AudioManager.getInstance().playLoop("backgroundMusic");
+	}
+
+}
+~~~
+
+
+
 # DremmaSandbox
 
 基于DremmaEngine开发的游戏，展现本游戏引擎的易用性
