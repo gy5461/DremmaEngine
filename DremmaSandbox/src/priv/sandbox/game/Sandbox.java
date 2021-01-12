@@ -1,23 +1,22 @@
 package priv.sandbox.game;
 
 import priv.dremma.game.Game;
-import priv.dremma.game.audio.AudioPlayer;
+import priv.dremma.game.audio.AudioManager;
+import priv.dremma.game.util.Res;
 
 @SuppressWarnings("serial")
 public class Sandbox extends Game {
 	
-	AudioPlayer backgroundMusic;
-	AudioPlayer moneySound;
 	public void onStart() {
 		this.setName("SandBox");
 		
-		backgroundMusic = new  AudioPlayer("res/vow to virtue.wav");
-		moneySound = new AudioPlayer("res/money.wav");
+		Res.loadRes(Res.ResType.Music, "backgroundMusic", "res/vow to virtue.wav");
+		Res.loadRes(Res.ResType.Music, "moneySound", "res/money.wav");
 	}
 
 	public void onUpdate() {
-		this.backgroundMusic.playLoop();
-		this.moneySound.playOnce();
+		AudioManager.getInstance().playOnce("moneySound");
+		AudioManager.getInstance().playLoop("backgroundMusic");
 	}
 
 }
