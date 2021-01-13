@@ -2,7 +2,7 @@ package priv.sandbox.game;
 
 import priv.dremma.game.Game;
 import priv.dremma.game.audio.AudioManager;
-import priv.dremma.game.util.Res;
+import priv.dremma.game.util.Resources;
 
 @SuppressWarnings("serial")
 public class Sandbox extends Game {
@@ -10,8 +10,8 @@ public class Sandbox extends Game {
 	public void onStart() {
 		this.setName("SandBox");
 		
-		Res.loadRes(Res.ResType.Music, "backgroundMusic", "res/vow to virtue.wav");
-		Res.loadRes(Res.ResType.Music, "moneySound", "res/money.wav");
+		Resources.load(Resources.ResourceType.Music, "backgroundMusic", "res/music/background.wav");
+		Resources.load(Resources.ResourceType.Music, "moneySound", "res/music/money.wav");
 	}
 
 	public void onUpdate() {

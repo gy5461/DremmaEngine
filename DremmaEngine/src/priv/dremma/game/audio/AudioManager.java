@@ -11,8 +11,12 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import priv.dremma.game.Game;
-import priv.dremma.game.util.Res;
-
+import priv.dremma.game.util.Resources;
+/**
+ * 音频播放管理类
+ * @author guoyi
+ *
+ */
 public class AudioManager {
 	
 	private static AudioManager instance;
@@ -24,12 +28,16 @@ public class AudioManager {
 	}
 
 	AudioInputStream audioIn;
-	private HashMap<String, Clip> clips = new HashMap<String, Clip>();
+	private HashMap<String, Clip> clips = new HashMap<String, Clip>();	//声音表
 	Thread thread;
 	
+	/**
+	 * 音乐资源初始化
+	 * @param name
+	 */
 	public void initAudio(String name) {
 		try {
-			File file = new File(Res.res.get(name));
+			File file = new File(Resources.res.get(name));
 			audioIn = AudioSystem.getAudioInputStream(file);
 		} catch (UnsupportedAudioFileException e) {
 

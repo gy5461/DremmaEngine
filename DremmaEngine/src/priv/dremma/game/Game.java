@@ -8,9 +8,11 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
+import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
+import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
 
 /**
@@ -51,9 +53,13 @@ public class Game extends Canvas implements Runnable {
 	public WindowInputHandler windowInputHandler;
 
 	public void onStart() {
+		Resources.load(Resources.ResourceType.Music, "backgroundMusic", "res/music/background.wav");
+		Resources.load(Resources.ResourceType.Music, "moneySound", "res/music/money.wav");
 	}
 
 	public void onUpdate() {
+		AudioManager.getInstance().playOnce("moneySound");
+		AudioManager.getInstance().playLoop("backgroundMusic");
 	}
 
 	public void onDestroy() {
@@ -68,6 +74,7 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	public synchronized void start() {
+		//加载游戏资源
 		viewAngle = Game.GameViewAngle.ViewAngle2DOT5;
 		isRunning = true;
 		thread = new Thread(this, name + "_main");

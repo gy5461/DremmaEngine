@@ -81,8 +81,6 @@ strategy.show();
 
 ### 音频播放
 
-支持的文件格式有`wav，au，和aiff`
-
 直接实现音频播放时，游戏帧数会下降到30-40帧
 
 ![截屏2021-01-11下午10.15.52.png](https://i.loli.net/2021/01/11/toCF8xcK7irmIYR.png)
@@ -100,37 +98,6 @@ strategy.show();
 
 故使用多线程进行音乐播放可以在很大程度上优化音乐播放器性能
 
-#### 音乐播放模块在Sandbox中用法
-
-~~~java
-package priv.sandbox.game;
-
-import priv.dremma.game.Game;
-import priv.dremma.game.audio.AudioManager;
-import priv.dremma.game.util.Res;
-
-@SuppressWarnings("serial")
-public class Sandbox extends Game {
-	
-	public void onStart() {
-		this.setName("SandBox");
-		
-    // 加载音乐资源
-		Res.loadRes(Res.ResType.Music, "backgroundMusic", "res/vow to virtue.wav");
-		Res.loadRes(Res.ResType.Music, "moneySound", "res/money.wav");
-	}
-
-	public void onUpdate() {
-    // 播放音乐
-		AudioManager.getInstance().playOnce("moneySound");
-		AudioManager.getInstance().playLoop("backgroundMusic");
-	}
-
-}
-~~~
-
-
-
 # DremmaSandbox
 
 基于DremmaEngine开发的游戏，展现本游戏引擎的易用性
@@ -138,4 +105,33 @@ public class Sandbox extends Game {
 绘制两个矩形
 
 ![2.png](https://i.loli.net/2021/01/10/3OE1uDQ2sU4Zehg.png)
+
+## 音乐播放模块在Sandbox中用法
+
+支持的文件格式有`wav，au，和aiff`
+
+~~~java
+package priv.sandbox.game;
+
+import priv.dremma.game.Game;
+import priv.dremma.game.audio.AudioManager;
+import priv.dremma.game.util.Resources;
+
+@SuppressWarnings("serial")
+public class Sandbox extends Game {
+	
+	public void onStart() {
+		this.setName("SandBox");
+		
+		Resources.load(Resources.ResourceType.Music, "backgroundMusic", "res/music/background.wav");
+		Resources.load(Resources.ResourceType.Music, "moneySound", "res/music/money.wav");
+	}
+
+	public void onUpdate() {
+		AudioManager.getInstance().playOnce("moneySound");
+		AudioManager.getInstance().playLoop("backgroundMusic");
+	}
+
+}
+~~~
 
