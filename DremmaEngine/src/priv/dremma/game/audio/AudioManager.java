@@ -80,4 +80,15 @@ public class AudioManager {
 		}, Game.name + "_playLoop");
 		thread.start();
 	}
+	
+	public void stopPlay(String name) {
+		thread = new Thread(new Thread() {
+			public void run() {
+				if(clips.get(name).isRunning()) {
+					clips.get(name).stop();
+				}
+			}
+		}, Game.name + "_stopPlay");
+		thread.start();
+	}
 }
