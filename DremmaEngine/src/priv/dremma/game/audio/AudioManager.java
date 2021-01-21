@@ -26,6 +26,8 @@ public class AudioManager {
 		}
 		return instance;
 	}
+	
+	private AudioManager() {}
 
 	AudioInputStream audioIn;
 	private HashMap<String, Clip> clips = new HashMap<String, Clip>();	//ÉùÒô±í
