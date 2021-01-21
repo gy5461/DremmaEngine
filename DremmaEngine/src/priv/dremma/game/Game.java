@@ -2,7 +2,7 @@ package priv.dremma.game;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
@@ -36,8 +36,7 @@ public class Game extends Canvas implements Runnable {
 	public static int height = width / 12 * 9; // 窗体高度
 	public static int scale = 6; // 窗体放大倍数
 	public static final Dimension DIMENSIONS = new Dimension(width * scale, height * scale);
-	public static Graphics g;
-
+	
 	public static boolean debug = true; // 游戏引擎默认为Debug模式
 	public boolean isApplet = false;
 	public static GameViewAngle viewAngle; // 游戏视角
@@ -110,19 +109,36 @@ public class Game extends Canvas implements Runnable {
 	 * 渲染游戏
 	 */
 	public void render() {
-		BufferStrategy bufferStrategy = this.getBufferStrategy(); // 取得本Canvas的buffer strategy
-		if (bufferStrategy == null) {
-			this.createBufferStrategy(2); // 通过双缓存、翻页技术，解决白屏闪烁、裂开等问题
-			return;
-		}
-
-		g = bufferStrategy.getDrawGraphics();
+		Graphics2D g = this.getGraphics2D();
 
 		// 渲染bufferedImage
 		g.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
 
 		g.dispose();
-		bufferStrategy.show();
+		
+		if(!this.getBS().contentsLost()) {
+			this.getBS().show();
+		}
+	}
+	
+	/**
+	 * 获取2D画笔
+	 * @return
+	 */
+	public Graphics2D getGraphics2D() {
+		return (Graphics2D)this.getBS().getDrawGraphics();
+	}
+	
+	/**
+	 * 获取Buffer Strategy
+	 * @return
+	 */
+	private BufferStrategy getBS() {
+		BufferStrategy bufferStrategy = this.getBufferStrategy(); // 取得本Canvas的buffer strategy
+		if (bufferStrategy == null) {
+			this.createBufferStrategy(2); // 通过双缓存、翻页技术，解决白屏闪烁、裂开等问题
+		}
+		return this.getBufferStrategy();
 	}
 
 	/**
