@@ -98,6 +98,10 @@ strategy.show();
 
 故使用多线程进行音乐播放可以在很大程度上优化音乐播放器性能
 
+### 动画系统
+
+![anim](DremmaEngine/gif/anim.gif)
+
 # DremmaSandbox
 
 基于DremmaEngine开发的游戏，展现本游戏引擎的易用性

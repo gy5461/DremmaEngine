@@ -62,11 +62,13 @@ public class Game extends Canvas implements Runnable {
 	private Entity entity;
 
 	Vector<Image> playerRun = new Vector<Image>();
+	Vector<Image> playerStand = new Vector<Image>();
 
 	public void loadImages() {
 		Animation anim = new Animation();
 		for (int i = 0; i <= 63; i++) {
 			playerRun.add(loadImage("res/images/player_run/player_run_" + i + ".png"));
+			playerStand.add(loadImage("res/images/player_stand/player_stand_" + i + ".png"));
 			anim.addFrame(playerRun.get(i), 0.25f);
 		}
 
