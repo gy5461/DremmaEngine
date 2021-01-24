@@ -3,7 +3,7 @@ package priv.dremma.game.event;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import priv.dremma.game.Game;
+import priv.dremma.game.GameCore;
 import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Vector2;
 
@@ -16,7 +16,7 @@ import priv.dremma.game.util.Vector2;
 
 public class MouseInputHandler implements MouseListener {
 
-	public MouseInputHandler(Game game) {
+	public MouseInputHandler(GameCore game) {
 		game.addMouseListener(this); // 给游戏窗体添加鼠标监听器
 	}
 

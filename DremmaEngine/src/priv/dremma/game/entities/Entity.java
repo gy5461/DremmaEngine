@@ -4,14 +4,13 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 
-import priv.dremma.game.Game;
-import priv.dremma.game.animation.Animation;
+import priv.dremma.game.anim.Animator;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
 public class Entity {
 
-	private Animation anim;
+	public Animator animator;
 
 	private Vector2 position; // 位置
 
@@ -32,10 +31,14 @@ public class Entity {
 	 * 
 	 * @param anim
 	 */
-	public Entity(Animation anim) {
-		this.anim = anim;
+	public Entity(Animator animator) {
+		this.animator = animator;
 		this.position = new Vector2(0, 0);
 		this.speed = new Vector2(0, 0);
+	}
+	
+	public void setAnimator(Animator animator) {
+		this.animator = animator;
 	}
 
 	/**
@@ -44,7 +47,7 @@ public class Entity {
 	public void update() {
 		this.position.x += this.speed.x * Time.deltaTime;
 		this.position.y += this.speed.y * Time.deltaTime;
-		anim.update();
+		this.animator.playLoop(animator.state);
 	}
 
 	/**
@@ -89,7 +92,7 @@ public class Entity {
 	 * @return
 	 */
 	public int getWidth() {
-		return anim.getImage().getWidth(null);
+		return this.getImage().getWidth(null);
 	}
 
 	/**
@@ -98,7 +101,7 @@ public class Entity {
 	 * @return
 	 */
 	public int getHeight() {
-		return anim.getImage().getHeight(null);
+		return this.getImage().getHeight(null);
 	}
 
 	/**
@@ -107,7 +110,7 @@ public class Entity {
 	 * @return
 	 */
 	public Image getImage() {
-		return anim.getImage();
+		return animator.getAnimation(animator.state).getImage();
 	}
 
 	/**
@@ -117,10 +120,12 @@ public class Entity {
 	 */
 	public void draw(Graphics2D g) {
 		AffineTransform transform = new AffineTransform();
-		transform.scale(2, 2); // 缩放
-		transform.translate(400, 200); // 平移
-		transform.rotate(Math.toRadians(90)); // 顺时针旋转90度
-		transform.scale(-1, 1); // 镜像翻转
+//		transform.scale(2, 2); // 缩放
+//		transform.translate(400, 200); // 平移
+//		transform.rotate(Math.toRadians(90)); // 顺时针旋转90度
+//		transform.scale(-1, 1); // 镜像翻转
+		
+		transform.translate(this.position.x, this.position.y);
 		g.drawImage(this.getImage(), transform, null);
 	}
 }

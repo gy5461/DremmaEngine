@@ -3,7 +3,7 @@ package priv.dremma.game.event;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import priv.dremma.game.Game;
+import priv.dremma.game.GameCore;
 import priv.dremma.game.util.Debug;
 
 /**
@@ -13,9 +13,9 @@ import priv.dremma.game.util.Debug;
  */
 public class WindowInputHandler implements WindowListener {
 
-	private final Game game;
+	private final GameCore game;
 	
-	public WindowInputHandler(Game game) {
+	public WindowInputHandler(GameCore game) {
 		this.game = game;
 		this.game.window.addWindowListener(this);	//给游戏窗体添加窗体监听器
 	}

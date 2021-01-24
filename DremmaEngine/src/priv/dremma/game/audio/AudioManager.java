@@ -10,7 +10,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import priv.dremma.game.Game;
+import priv.dremma.game.GameCore;
 import priv.dremma.game.util.Resources;
 /**
  * 音频播放管理类
@@ -70,7 +70,7 @@ public class AudioManager {
 			public void run() {
 				clips.get(name).start();
 			}
-		}, Game.name + "_playOnce");
+		}, GameCore.name + "_playOnce");
 		thread.start();
 	}
 
@@ -79,7 +79,7 @@ public class AudioManager {
 			public void run() {
 				clips.get(name).loop(Clip.LOOP_CONTINUOUSLY);
 			}
-		}, Game.name + "_playLoop");
+		}, GameCore.name + "_playLoop");
 		thread.start();
 	}
 	
@@ -90,7 +90,7 @@ public class AudioManager {
 					clips.get(name).stop();
 				}
 			}
-		}, Game.name + "_stopPlay");
+		}, GameCore.name + "_stopPlay");
 		thread.start();
 	}
 }

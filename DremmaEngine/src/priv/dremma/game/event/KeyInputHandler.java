@@ -3,7 +3,7 @@ package priv.dremma.game.event;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import priv.dremma.game.Game;
+import priv.dremma.game.GameCore;
 import priv.dremma.game.util.Debug;
 
 /**
@@ -15,7 +15,7 @@ import priv.dremma.game.util.Debug;
 public class KeyInputHandler implements KeyListener {
 
 	// ÎªgameÌí¼Ó¼üÅÌÊäÈë¼àÌı
-	public KeyInputHandler(Game game) {
+	public KeyInputHandler(GameCore game) {
 		game.addKeyListener(this);
 	}
 

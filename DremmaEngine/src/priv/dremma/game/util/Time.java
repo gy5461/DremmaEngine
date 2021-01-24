@@ -1,6 +1,6 @@
 package priv.dremma.game.util;
 
-import priv.dremma.game.Game;
+import priv.dremma.game.GameCore;
 
 /**
  * 时间类
@@ -25,9 +25,9 @@ public class Time {
 	public static void printFrames() {
 		if (System.currentTimeMillis() - Time.lastTime > 1000) {
 			// 游戏每过1秒，打印帧数（帧数指一秒内游戏渲染画面的张数）
-			Debug.log(Debug.DebugLevel.INFO, "Game Frames :" + Game.frames);
+			Debug.log(Debug.DebugLevel.INFO, "Game Frames :" + GameCore.frames);
 			Time.lastTime += 1000;
-			Game.frames = 0;
+			GameCore.frames = 0;
 		}
 	}
 
