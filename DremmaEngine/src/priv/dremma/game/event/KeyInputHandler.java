@@ -64,11 +64,13 @@ public class KeyInputHandler implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		toggleKey(e.getKeyCode(), true); // 按键事件发生时触发键
+		e.consume();
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		toggleKey(e.getKeyCode(), false); // 释放键事件发生时将本键是否被按压属性设为false
+		e.consume();
 	}
 
 	@Override

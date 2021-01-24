@@ -3,7 +3,6 @@ package priv.dremma.game.animation;
 import java.awt.Image;
 import java.util.ArrayList;
 
-import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Time;
 
 /**

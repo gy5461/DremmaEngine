@@ -6,6 +6,7 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 
 import priv.dremma.game.event.WindowInputHandler;
+import priv.dremma.game.util.Resources;
 
 /**
  * 游戏加载类，可生成Applet小程序
@@ -30,6 +31,7 @@ public class GameLauncher extends Applet {
 		this.setSize(Game.DIMENSIONS);
 		Game.debug = true;
 		game.isApplet = true;
+		Resources.path = "../res/";
 
 		game.start();
 		game.setFocusable(true);
@@ -43,6 +45,7 @@ public class GameLauncher extends Applet {
 	public static void lauchToApplication() {
 		Game.debug = true; // 开启debug模式
 		game.isApplet = false;
+		Resources.path = "res/";
 
 		game.window = new JFrame(Game.name); // 新建游戏窗体
 		game.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 设置默认情况下关闭窗体退出程序

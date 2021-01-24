@@ -11,6 +11,8 @@ import priv.dremma.game.audio.AudioManager;
  */
 public class Resources {
 	
+	public static String path;
+	
 	// 资源类型
 	public static enum ResourceType {
 		Music

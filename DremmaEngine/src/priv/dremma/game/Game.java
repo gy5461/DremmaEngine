@@ -16,6 +16,7 @@ import priv.dremma.game.entities.Entity;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
+import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
@@ -67,8 +68,8 @@ public class Game extends Canvas implements Runnable {
 	public void loadImages() {
 		Animation anim = new Animation();
 		for (int i = 0; i <= 63; i++) {
-			playerRun.add(loadImage("res/images/player_run/player_run_" + i + ".png"));
-			playerStand.add(loadImage("res/images/player_stand/player_stand_" + i + ".png"));
+			playerRun.add(loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+			playerStand.add(loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
 			anim.addFrame(playerRun.get(i), 0.25f);
 		}
 
@@ -126,7 +127,7 @@ public class Game extends Canvas implements Runnable {
 
 			Time.update();
 
-			//Time.shouldRender = true; //解除shouldRender对于60帧左右的限制
+			// Time.shouldRender = true; //解除shouldRender对于60帧左右的限制
 			if (Time.shouldRender) {
 				// 游戏开发者更新
 				onUpdate();
@@ -152,8 +153,8 @@ public class Game extends Canvas implements Runnable {
 		// 渲染bufferedImage
 		g.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
 		
-		//绘制entity
-		g.drawImage(entity.getImage(), Math.round(entity.getPosition().x), Math.round(entity.getPosition().y), null);
+		// 绘制entity
+		entity.draw(g);
 	}
 
 	/**

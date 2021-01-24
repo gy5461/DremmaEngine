@@ -69,6 +69,19 @@ strategy.show();
 
   显示器的刷新频率通常在75Hz左右，表示显示器每秒钟刷新75次，但如果显示器刷新途中发生翻页或者缓存区复制等操作，显示器将会同时显示一部分旧缓存区和一部分新缓存区，即发生裂开，为了解决这个问题，可以在显示器刷新完成之前翻页，在Java运行环境中可以使用BufferStrategy类完成该工作。
 
+### 图形变换
+
+~~~java
+public void draw(Graphics2D g) {
+  AffineTransform transform = new AffineTransform();
+  transform.scale(2, 2); // 缩放
+  transform.translate(400, 200); // 平移
+  transform.rotate(Math.toRadians(90)); // 顺时针旋转90度
+  transform.scale(-1, 1); // 镜像翻转
+  g.drawImage(this.getImage(), transform, null);
+}
+~~~
+
 ### 事件监听
 
 * 鼠标事件
@@ -101,6 +114,8 @@ strategy.show();
 ### 动画系统
 
 ![anim](DremmaEngine/gif/anim.gif)
+
+
 
 # DremmaSandbox
 
