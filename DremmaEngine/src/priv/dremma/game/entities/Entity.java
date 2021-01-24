@@ -120,7 +120,7 @@ public class Entity {
 	 */
 	public void draw(Graphics2D g) {
 		AffineTransform transform = new AffineTransform();
-//		transform.scale(2, 2); // 缩放
+		transform.scale(2, 2); // 缩放
 //		transform.translate(400, 200); // 平移
 //		transform.rotate(Math.toRadians(90)); // 顺时针旋转90度
 //		transform.scale(-1, 1); // 镜像翻转

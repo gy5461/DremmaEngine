@@ -145,7 +145,9 @@ public class GameCore extends Canvas implements Runnable {
 		
 		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path+"music/background.wav");
 		AudioManager.getInstance().playLoop("backgroundSound");
-
+		
+		Resources.load(Resources.ResourceType.Music, "walkSound", Resources.path+"music/walk.wav");
+		
 	}
 
 	public Image loadImage(String fileName) {
@@ -261,6 +263,9 @@ public class GameCore extends Canvas implements Runnable {
 			if (deltaX < 0 && deltaY < 0) {
 				entity.animator.state = "playerStandUp";
 			}
+			AudioManager.getInstance().stopPlay("walkSound");
+		} else {
+			AudioManager.getInstance().playLoop("walkSound");
 		}
 
 		entity.update();
