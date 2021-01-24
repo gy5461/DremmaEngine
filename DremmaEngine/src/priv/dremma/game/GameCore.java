@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 
 import priv.dremma.game.anim.Animation;
 import priv.dremma.game.anim.Animator;
+import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.entities.Player;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
@@ -141,6 +142,9 @@ public class GameCore extends Canvas implements Runnable {
 		entity.setPosition(new Vector2(400f, 100f));
 
 		entity.setSpeed(new Vector2(0f, 0f));
+		
+		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path+"music/background.wav");
+		AudioManager.getInstance().playLoop("backgroundSound");
 
 	}
 
@@ -149,7 +153,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	public void onUpdate() {
-
+		
 	}
 
 	public void onDestroy() {
