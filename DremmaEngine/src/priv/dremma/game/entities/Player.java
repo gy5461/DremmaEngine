@@ -54,19 +54,19 @@ public class Player extends Entity {
 			this.isMoved = false;
 			if (this.keyInputHandler.up.isPressed()) {
 				this.animator.state = "playerRunUp";
-				this.speed = (new Vector2(SPEED, SPEED)).mul(new Vector2(-1, -1));
+				this.speed = (new Vector2(SPEED, SPEED*88/130)).mul(new Vector2(-1, -1));
 				isMoved = true;
 			} else if (this.keyInputHandler.down.isPressed()) {
 				this.animator.state = "playerRunDown";
-				this.speed = (new Vector2(SPEED, SPEED)).mul(new Vector2(1, 1));
+				this.speed = (new Vector2(SPEED, SPEED*88/130)).mul(new Vector2(1, 1));
 				isMoved = true;
 			} else if (this.keyInputHandler.left.isPressed()) {
 				this.animator.state = "playerRunLeft";
-				this.speed = (new Vector2(SPEED, SPEED)).mul(new Vector2(-1, 1));
+				this.speed = (new Vector2(SPEED, SPEED*88/130)).mul(new Vector2(-1, 1));
 				isMoved = true;
 			} else if (this.keyInputHandler.right.isPressed()) {
 				this.animator.state = "playerRunRight";
-				this.speed = (new Vector2(SPEED, SPEED)).mul(new Vector2(1, -1));
+				this.speed = (new Vector2(SPEED, SPEED*88/130)).mul(new Vector2(1, -1));
 				isMoved = true;
 			}
 			

@@ -19,7 +19,6 @@ import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
 import priv.dremma.game.tiles.TileMap;
-import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
@@ -64,7 +63,7 @@ public class GameCore extends Canvas implements Runnable {
 	private TileMap map;
 
 	public void onStart() {
-		viewAngle = GameCore.GameViewAngle.ViewAngle2;
+		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5;
 		loadImages();
 		entity = new Player(playerAnimator, this.keyInputHandler);
 
