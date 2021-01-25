@@ -32,8 +32,8 @@ public class Entity {
 	 */
 	public Entity(Animator animator) {
 		this.animator = animator;
-		this.position = new Vector2(0, 0);
-		this.speed = new Vector2(0, 0);
+		this.position = Vector2.zero;
+		this.speed = Vector2.zero;
 	}
 	
 	public void setAnimator(Animator animator) {

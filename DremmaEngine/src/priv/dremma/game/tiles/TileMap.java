@@ -15,7 +15,7 @@ import priv.dremma.game.entities.Player;
 public class TileMap {
 
 	private Image[][] tiles; // 地砖
-	private LinkedList<Entity> entities; // 游戏中的其他
+	private LinkedList<Entity> entities; // 游戏中的其他实体
 	private Player player; // 主角
 	
 	/**

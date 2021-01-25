@@ -18,6 +18,8 @@ import priv.dremma.game.entities.Player;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
+import priv.dremma.game.tiles.TileMap;
+import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
@@ -59,9 +61,10 @@ public class GameCore extends Canvas implements Runnable {
 	public WindowInputHandler windowInputHandler;
 
 	private Player entity;
+	private TileMap map;
 
 	public void onStart() {
-		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5;
+		viewAngle = GameCore.GameViewAngle.ViewAngle2;
 		loadImages();
 		entity = new Player(playerAnimator, this.keyInputHandler);
 
@@ -73,6 +76,13 @@ public class GameCore extends Canvas implements Runnable {
 		AudioManager.getInstance().playLoop("backgroundSound");
 
 		Resources.load(Resources.ResourceType.Music, "walkSound", Resources.path + "music/walk.wav");
+
+		map = new TileMap(100, 100);
+		for(int i=0;i<100;i++) {
+			for(int j=0;j<100;j++) {
+				map.setTile(i, j, this.loadImage(Resources.path+"images/tiles/floor.png"));
+			}
+		}
 	}
 
 	// 站立动画
@@ -149,7 +159,7 @@ public class GameCore extends Canvas implements Runnable {
 			playerAnimator.addAnimation("playerRunLeft", playerRunLeftAnimation);
 
 			playerAnimator.state = "playerStandDown";
-		} else if(GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2) {
+		} else if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2) {
 			// up
 			for (int i = 24; i <= 31; i++) {
 				playerStandUp.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
@@ -269,6 +279,19 @@ public class GameCore extends Canvas implements Runnable {
 	public void draw(Graphics2D g) {
 		// 渲染bufferedImage
 		g.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
+		
+		int dd=50;
+		// 绘制地图
+		for(int j=0;j<100;j++) {
+			for(int i=0;i<100;i++) {
+				//Debug.log(Debug.DebugLevel.INFO, "width:"+map.getTile(i, j).getWidth(null)+"height:"+map.getTile(i, j).getHeight(null));
+				if(j%2==1) {
+					g.drawImage(map.getTile(i, j),i*130-130/2,j*88-44-j*dd, map.getTile(i, j).getWidth(null), map.getTile(i, j).getHeight(null), null);
+				} else {
+					g.drawImage(map.getTile(i, j),i*130,      j*88-44-j*dd, map.getTile(i, j).getWidth(null), map.getTile(i, j).getHeight(null), null);
+				}
+			}
+		}
 
 		// 绘制entity
 		entity.draw(g);
