@@ -18,7 +18,6 @@ import priv.dremma.game.entities.Player;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
-import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
@@ -59,11 +58,22 @@ public class GameCore extends Canvas implements Runnable {
 	public MouseInputHandler mouseInputHandler;
 	public WindowInputHandler windowInputHandler;
 
-	public void onStart() {
-		loadImages();
-	}
-
 	private Player entity;
+
+	public void onStart() {
+		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5;
+		loadImages();
+		entity = new Player(playerAnimator, this.keyInputHandler);
+
+		entity.position = new Vector2(400f, 100f);
+
+		entity.speed = new Vector2(60f, 60f);
+
+		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");
+		AudioManager.getInstance().playLoop("backgroundSound");
+
+		Resources.load(Resources.ResourceType.Music, "walkSound", Resources.path + "music/walk.wav");
+	}
 
 	// 站立动画
 	HashMap<Integer, Image> playerStandUp = new HashMap<Integer, Image>();
@@ -90,64 +100,103 @@ public class GameCore extends Canvas implements Runnable {
 	Animator playerAnimator = new Animator();
 
 	public void loadImages() {
+		float duration = 1.0f / 8.0f; // 人物动画每组8张，一秒播放8次
 
-		// up
-		for (int i = 48; i <= 55; i++) {
-			playerStandUp.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-			playerStandUpAnimation.addFrame(playerStandUp.get(i), 0.25f);
+		if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2DOT5) {
 
-			playerRunUp.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-			playerRunUpAnimation.addFrame(playerRunUp.get(i), 0.25f);
+			// up
+			for (int i = 48; i <= 55; i++) {
+				playerStandUp.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
+
+				playerRunUp.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunUpAnimation.addFrame(playerRunUp.get(i), duration);
+			}
+			playerAnimator.addAnimation("playerStandUp", playerStandUpAnimation);
+			playerAnimator.addAnimation("playerRunUp", playerRunUpAnimation);
+
+			// down
+			for (int i = 40; i <= 47; i++) {
+				playerStandDown.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandDownAnimation.addFrame(playerStandDown.get(i), duration);
+
+				playerRunDown.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunDownAnimation.addFrame(playerRunDown.get(i), duration);
+			}
+			playerAnimator.addAnimation("playerStandDown", playerStandDownAnimation);
+			playerAnimator.addAnimation("playerRunDown", playerRunDownAnimation);
+
+			// right
+			for (int i = 56; i <= 63; i++) {
+				playerStandRight.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandRightAnimation.addFrame(playerStandRight.get(i), duration);
+
+				playerRunRight.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunRightAnimation.addFrame(playerRunRight.get(i), duration);
+			}
+			playerAnimator.addAnimation("playerStandRight", playerStandRightAnimation);
+			playerAnimator.addAnimation("playerRunRight", playerRunRightAnimation);
+
+			// left
+			for (int i = 32; i <= 39; i++) {
+				playerStandLeft.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandLeftAnimation.addFrame(playerStandLeft.get(i), duration);
+
+				playerRunLeft.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunLeftAnimation.addFrame(playerRunLeft.get(i), duration);
+			}
+			playerAnimator.addAnimation("playerStandLeft", playerStandLeftAnimation);
+			playerAnimator.addAnimation("playerRunLeft", playerRunLeftAnimation);
+
+			playerAnimator.state = "playerStandDown";
+		} else if(GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2) {
+			// up
+			for (int i = 24; i <= 31; i++) {
+				playerStandUp.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
+
+				playerRunUp.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunUpAnimation.addFrame(playerRunUp.get(i), duration);
+			}
+			playerAnimator.addAnimation("playerStandUp", playerStandUpAnimation);
+			playerAnimator.addAnimation("playerRunUp", playerRunUpAnimation);
+
+			// down
+			for (int i = 0; i <= 7; i++) {
+				playerStandDown.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandDownAnimation.addFrame(playerStandDown.get(i), duration);
+
+				playerRunDown.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunDownAnimation.addFrame(playerRunDown.get(i), duration);
+			}
+			playerAnimator.addAnimation("playerStandDown", playerStandDownAnimation);
+			playerAnimator.addAnimation("playerRunDown", playerRunDownAnimation);
+
+			// right
+			for (int i = 16; i <= 23; i++) {
+				playerStandRight.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandRightAnimation.addFrame(playerStandRight.get(i), duration);
+
+				playerRunRight.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunRightAnimation.addFrame(playerRunRight.get(i), duration);
+			}
+			playerAnimator.addAnimation("playerStandRight", playerStandRightAnimation);
+			playerAnimator.addAnimation("playerRunRight", playerRunRightAnimation);
+
+			// left
+			for (int i = 8; i <= 15; i++) {
+				playerStandLeft.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandLeftAnimation.addFrame(playerStandLeft.get(i), duration);
+
+				playerRunLeft.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunLeftAnimation.addFrame(playerRunLeft.get(i), duration);
+			}
+			playerAnimator.addAnimation("playerStandLeft", playerStandLeftAnimation);
+			playerAnimator.addAnimation("playerRunLeft", playerRunLeftAnimation);
+
+			playerAnimator.state = "playerStandDown";
 		}
-		playerAnimator.addAnimation("playerStandUp", playerStandUpAnimation);
-		playerAnimator.addAnimation("playerRunUp", playerRunUpAnimation);
 
-		// down
-		for (int i = 40; i <= 47; i++) {
-			playerStandDown.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-			playerStandDownAnimation.addFrame(playerStandDown.get(i), 0.25f);
-
-			playerRunDown.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-			playerRunDownAnimation.addFrame(playerRunDown.get(i), 0.25f);
-		}
-		playerAnimator.addAnimation("playerStandDown", playerStandDownAnimation);
-		playerAnimator.addAnimation("playerRunDown", playerRunDownAnimation);
-
-		// right
-		for (int i = 56; i <= 63; i++) {
-			playerStandRight.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-			playerStandRightAnimation.addFrame(playerStandRight.get(i), 0.25f);
-
-			playerRunRight.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-			playerRunRightAnimation.addFrame(playerRunRight.get(i), 0.25f);
-		}
-		playerAnimator.addAnimation("playerStandRight", playerStandRightAnimation);
-		playerAnimator.addAnimation("playerRunRight", playerRunRightAnimation);
-
-		// left
-		for (int i = 32; i <= 39; i++) {
-			playerStandLeft.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-			playerStandLeftAnimation.addFrame(playerStandLeft.get(i), 0.25f);
-
-			playerRunLeft.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-			playerRunLeftAnimation.addFrame(playerRunLeft.get(i), 0.25f);
-		}
-		playerAnimator.addAnimation("playerStandLeft", playerStandLeftAnimation);
-		playerAnimator.addAnimation("playerRunLeft", playerRunLeftAnimation);
-
-		playerAnimator.state = "playerStandDown";
-
-		entity = new Player(playerAnimator);
-
-		entity.setPosition(new Vector2(400f, 100f));
-
-		entity.setSpeed(new Vector2(0f, 0f));
-		
-		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path+"music/background.wav");
-		AudioManager.getInstance().playLoop("backgroundSound");
-		
-		Resources.load(Resources.ResourceType.Music, "walkSound", Resources.path+"music/walk.wav");
-		
 	}
 
 	public Image loadImage(String fileName) {
@@ -155,7 +204,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	public void onUpdate() {
-		
+
 	}
 
 	public void onDestroy() {
@@ -167,15 +216,15 @@ public class GameCore extends Canvas implements Runnable {
 	public void init() {
 		keyInputHandler = new KeyInputHandler(this);
 		mouseInputHandler = new MouseInputHandler(this);
+
+		onStart();
 	}
 
 	public synchronized void start() {
 		// 加载游戏资源
-		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5;
 		isRunning = true;
 		thread = new Thread(this, name + "_main");
 		thread.start();
-		onStart();
 	}
 
 	public synchronized void stop() {
@@ -208,66 +257,8 @@ public class GameCore extends Canvas implements Runnable {
 			}
 		}
 	}
-	
-	int deltaX = 0, deltaY = 0;
 
 	public void animationLoop() {
-		int speed = 80;
-		boolean isMoved = false;
-		
-		if (this.keyInputHandler.up.isPressed()) {
-			entity.animator.state = "playerRunUp";
-			entity.getPosition().x += -1 * speed * Time.deltaTime;
-			entity.getPosition().y += -1 * speed * Time.deltaTime;
-			
-			deltaX = -1;
-			deltaY = -1;
-			isMoved = true;
-		} else if (this.keyInputHandler.down.isPressed()) {
-			entity.animator.state = "playerRunDown";
-			entity.getPosition().x += 1 * speed * Time.deltaTime;
-			entity.getPosition().y += 1 * speed * Time.deltaTime;
-
-			deltaX = 1;
-			deltaY = 1;
-			isMoved = true;
-		} else if (this.keyInputHandler.left.isPressed()) {
-			entity.animator.state = "playerRunLeft";
-			entity.getPosition().x += -1 * speed * Time.deltaTime;
-			entity.getPosition().y += 1 * speed * Time.deltaTime;
-
-			deltaX = -1;
-			deltaY = 1;
-			isMoved = true;
-		} else if (this.keyInputHandler.right.isPressed()) {
-			entity.animator.state = "playerRunRight";
-			entity.getPosition().x += 1 * speed * Time.deltaTime;
-			entity.getPosition().y += -1 * speed * Time.deltaTime;
-
-			deltaX = 1;
-			deltaY = -1;
-			isMoved = true;
-		}
-
-		if (!isMoved) {
-			Debug.log(Debug.DebugLevel.INFO, "deltaX:"+deltaX+"deltaY:"+deltaY);
-			if (deltaX > 0 && deltaY > 0) {
-				entity.animator.state = "playerStandDown";
-			}
-			if (deltaX > 0 && deltaY < 0) {
-				entity.animator.state = "playerStandRight";
-			}
-			if (deltaX < 0 && deltaY > 0) {
-				entity.animator.state = "playerStandLeft";
-			}
-			if (deltaX < 0 && deltaY < 0) {
-				entity.animator.state = "playerStandUp";
-			}
-			AudioManager.getInstance().stopPlay("walkSound");
-		} else {
-			AudioManager.getInstance().playLoop("walkSound");
-		}
-
 		entity.update();
 
 		Graphics2D g = this.getGraphics2D();
