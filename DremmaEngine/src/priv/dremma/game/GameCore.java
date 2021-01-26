@@ -8,7 +8,6 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import priv.dremma.game.anim.Animation;
@@ -76,12 +75,13 @@ public class GameCore extends Canvas implements Runnable {
 
 		Resources.load(Resources.ResourceType.Music, "walkSound", Resources.path + "music/walk.wav");
 
-		map = new TileMap(100, 100);
-		for(int i=0;i<100;i++) {
-			for(int j=0;j<100;j++) {
-				map.setTile(i, j, this.loadImage(Resources.path+"images/tiles/floor.png"));
-			}
-		}
+//		map = new TileMap(100, 100);
+//		for (int i = 0; i < 100; i++) {
+//			for (int j = 0; j < 100; j++) {
+//				map.setTile(i, j, Resources.loadImage(Resources.path + "images/tiles/floor_3.png"));
+//			}
+//		}
+		map = TileMap.loadTileMap(Resources.path+"images/tiles/tileMap.txt");
 	}
 
 	// 站立动画
@@ -115,10 +115,11 @@ public class GameCore extends Canvas implements Runnable {
 
 			// up
 			for (int i = 48; i <= 55; i++) {
-				playerStandUp.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandUp.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
 				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
 
-				playerRunUp.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunUp.put(i, Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
 				playerRunUpAnimation.addFrame(playerRunUp.get(i), duration);
 			}
 			playerAnimator.addAnimation("playerStandUp", playerStandUpAnimation);
@@ -126,10 +127,12 @@ public class GameCore extends Canvas implements Runnable {
 
 			// down
 			for (int i = 40; i <= 47; i++) {
-				playerStandDown.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandDown.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
 				playerStandDownAnimation.addFrame(playerStandDown.get(i), duration);
 
-				playerRunDown.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunDown.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
 				playerRunDownAnimation.addFrame(playerRunDown.get(i), duration);
 			}
 			playerAnimator.addAnimation("playerStandDown", playerStandDownAnimation);
@@ -137,10 +140,12 @@ public class GameCore extends Canvas implements Runnable {
 
 			// right
 			for (int i = 56; i <= 63; i++) {
-				playerStandRight.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandRight.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
 				playerStandRightAnimation.addFrame(playerStandRight.get(i), duration);
 
-				playerRunRight.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunRight.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
 				playerRunRightAnimation.addFrame(playerRunRight.get(i), duration);
 			}
 			playerAnimator.addAnimation("playerStandRight", playerStandRightAnimation);
@@ -148,10 +153,12 @@ public class GameCore extends Canvas implements Runnable {
 
 			// left
 			for (int i = 32; i <= 39; i++) {
-				playerStandLeft.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandLeft.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
 				playerStandLeftAnimation.addFrame(playerStandLeft.get(i), duration);
 
-				playerRunLeft.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunLeft.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
 				playerRunLeftAnimation.addFrame(playerRunLeft.get(i), duration);
 			}
 			playerAnimator.addAnimation("playerStandLeft", playerStandLeftAnimation);
@@ -161,10 +168,11 @@ public class GameCore extends Canvas implements Runnable {
 		} else if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2) {
 			// up
 			for (int i = 24; i <= 31; i++) {
-				playerStandUp.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandUp.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
 				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
 
-				playerRunUp.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunUp.put(i, Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
 				playerRunUpAnimation.addFrame(playerRunUp.get(i), duration);
 			}
 			playerAnimator.addAnimation("playerStandUp", playerStandUpAnimation);
@@ -172,10 +180,12 @@ public class GameCore extends Canvas implements Runnable {
 
 			// down
 			for (int i = 0; i <= 7; i++) {
-				playerStandDown.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandDown.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
 				playerStandDownAnimation.addFrame(playerStandDown.get(i), duration);
 
-				playerRunDown.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunDown.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
 				playerRunDownAnimation.addFrame(playerRunDown.get(i), duration);
 			}
 			playerAnimator.addAnimation("playerStandDown", playerStandDownAnimation);
@@ -183,10 +193,12 @@ public class GameCore extends Canvas implements Runnable {
 
 			// right
 			for (int i = 16; i <= 23; i++) {
-				playerStandRight.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandRight.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
 				playerStandRightAnimation.addFrame(playerStandRight.get(i), duration);
 
-				playerRunRight.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunRight.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
 				playerRunRightAnimation.addFrame(playerRunRight.get(i), duration);
 			}
 			playerAnimator.addAnimation("playerStandRight", playerStandRightAnimation);
@@ -194,10 +206,12 @@ public class GameCore extends Canvas implements Runnable {
 
 			// left
 			for (int i = 8; i <= 15; i++) {
-				playerStandLeft.put(i, loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandLeft.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
 				playerStandLeftAnimation.addFrame(playerStandLeft.get(i), duration);
 
-				playerRunLeft.put(i, loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunLeft.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
 				playerRunLeftAnimation.addFrame(playerRunLeft.get(i), duration);
 			}
 			playerAnimator.addAnimation("playerStandLeft", playerStandLeftAnimation);
@@ -206,10 +220,6 @@ public class GameCore extends Canvas implements Runnable {
 			playerAnimator.state = "playerStandDown";
 		}
 
-	}
-
-	public Image loadImage(String fileName) {
-		return new ImageIcon(fileName).getImage();
 	}
 
 	public void onUpdate() {
@@ -278,19 +288,9 @@ public class GameCore extends Canvas implements Runnable {
 	public void draw(Graphics2D g) {
 		// 渲染bufferedImage
 		g.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
-		
-		int dd=50;
+
 		// 绘制地图
-		for(int j=0;j<100;j++) {
-			for(int i=0;i<100;i++) {
-				//Debug.log(Debug.DebugLevel.INFO, "width:"+map.getTile(i, j).getWidth(null)+"height:"+map.getTile(i, j).getHeight(null));
-				if(j%2==1) {
-					g.drawImage(map.getTile(i, j),i*130-130/2,j*88-44-j*dd, map.getTile(i, j).getWidth(null), map.getTile(i, j).getHeight(null), null);
-				} else {
-					g.drawImage(map.getTile(i, j),i*130,      j*88-44-j*dd, map.getTile(i, j).getWidth(null), map.getTile(i, j).getHeight(null), null);
-				}
-			}
-		}
+		map.draw(g);
 
 		// 绘制entity
 		entity.draw(g);

@@ -65,6 +65,10 @@ public class AudioManager {
 		}
 	}
 
+	/**
+	 * 播放一次
+	 * @param name 音乐名
+	 */
 	public void playOnce(String name) {
 		thread = new Thread(new Thread() {
 			public void run() {
@@ -74,6 +78,10 @@ public class AudioManager {
 		thread.start();
 	}
 
+	/**
+	 * 循环播放
+	 * @param name
+	 */
 	public void playLoop(String name) {
 		thread = new Thread(new Thread() {
 			public void run() {
@@ -83,6 +91,10 @@ public class AudioManager {
 		thread.start();
 	}
 	
+	/**
+	 * 停止播放
+	 * @param name
+	 */
 	public void stopPlay(String name) {
 		thread = new Thread(new Thread() {
 			public void run() {
