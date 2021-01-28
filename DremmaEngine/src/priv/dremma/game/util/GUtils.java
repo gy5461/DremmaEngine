@@ -155,17 +155,17 @@ public final class GUtils {
      * @param basePointY: 视口左上角的世界y像素坐标；
      * return 视口坐标.
      **/
-    public static int[] worldTileCenterToWorldPixel( int tx, int ty,
+    public static Vector2 worldTileCenterToWorldPixel( int tx, int ty,
                                                      int tileWidth, int tileHeight) {
-        int[] piexl = new int[2];
+    	Vector2 piexl = Vector2.zero;
         if (ty % 2 == 0) {
-            piexl[0] = tx * tileWidth;
-            piexl[1] = ty * (tileHeight/2);
+            piexl.x = tx * tileWidth;
+            piexl.y = ty * (tileHeight/2);
             return piexl;
         }
         else {
-            piexl[0] = tx * tileWidth + tileWidth/2;
-            piexl[1] = ty * (tileHeight/2);
+            piexl.x = tx * tileWidth + tileWidth/2;
+            piexl.y = ty * (tileHeight/2);
             return piexl;
         }
     }

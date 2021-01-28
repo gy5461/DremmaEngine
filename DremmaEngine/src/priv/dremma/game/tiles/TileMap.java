@@ -10,10 +10,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import priv.dremma.game.GameCore;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.entities.Player;
+import priv.dremma.game.gfx.Screen;
+import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Resources;
+import priv.dremma.game.util.Vector2;
 
 /**
  * TileMap 类包含地砖地图的数据、实体
@@ -139,7 +143,7 @@ public class TileMap {
 	 */
 	public static TileMap loadTileMap(String path) {
 		TileMap.loadTiles();
-		
+
 		ArrayList<String> lines = new ArrayList<String>();
 		int width = 0;
 		int height = 0;
@@ -181,26 +185,66 @@ public class TileMap {
 	}
 
 	/**
+	 * 向地图中添加实体（如树、NPC等）
+	 * 
+	 * @param entity
+	 * @param tileX
+	 * @param tileY
+	 */
+	public void addEntity(Entity srcEntity, int tileX, int tileY) {
+		if (srcEntity != null) {
+			try {
+				// 从主实体中复制实体
+				Entity entity = (Entity) srcEntity.clone();
+				entity.position = new Vector2(
+						GUtils.worldTileCenterToWorldPixel(tileX, tileY, this.getTile(tileX, tileY).getWidth(null),
+								this.getTile(tileX, tileY).getHeight(null)).x
+								+ GUtils.worldTileCenterToWorldPixel(1, 1, this.getTile(tileX, tileY).getWidth(null),
+										this.getTile(tileX, tileY).getHeight(null)).x
+								- entity.getWidth() / 2,
+						GUtils.worldTileCenterToWorldPixel(tileX, tileY + 1, this.getTile(tileX, tileY).getWidth(null),
+								this.getTile(tileX, tileY).getHeight(null)).y - entity.getHeight());
+
+				this.addEntity(entity);
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public final int TILE_SIZE = 76 * 130;
+
+	/**
 	 * 渲染地图
 	 * 
 	 * @param g
 	 */
 	public void draw(Graphics2D g) {
+		int offsetX = GameCore.screen.width / 2 - Math.round(player.position.x);
+		offsetX = Math.max(offsetX, 0);
+		offsetX = Math.min(offsetX, GameCore.screen.width);
+		
+		int offsetY = GameCore.screen.height / 2 - Math.round(player.position.y);
+		offsetY = Math.max(offsetY, 0);
+		offsetY = Math.min(offsetY, GameCore.screen.height);
+		
+		//Debug.log(Debug.DebugLevel.INFO, "offsetX:"+offsetX+", offsetY:"+offsetY);
 		// 绘制地图
 		for (int j = 0; j < this.getHeight(); j++) {
 			for (int i = 0; i < this.getWidth(); i++) {
-				// Debug.log(Debug.DebugLevel.INFO, "width:"+map.getTile(i,
-				// j).getWidth(null)+"height:"+map.getTile(i, j).getHeight(null));
 				if (j % 2 == 1) {
-					g.drawImage(this.getTile(i, j), i * 130 - 130 / 2, j * 88 - 44 - j * 50,
+					g.drawImage(this.getTile(i, j), i * 130 - 130 / 2 + offsetX, j * 88 - 44 - j * 50 + offsetY,
 							this.getTile(i, j).getWidth(null), this.getTile(i, j).getHeight(null), null);
+					// Debug.log(Debug.DebugLevel.INFO, "x:"+(i * 130 - 130 / 2)+"y:"+(j * 88 - 44 -
+					// j * 50));
 				} else {
-					g.drawImage(this.getTile(i, j), i * 130, j * 88 - 44 - j * 50, this.getTile(i, j).getWidth(null),
+					g.drawImage(this.getTile(i, j), i * 130 + offsetX,           j * 88 - 44 - j * 50 + offsetY, this.getTile(i, j).getWidth(null),
 							this.getTile(i, j).getHeight(null), null);
+					// Debug.log(Debug.DebugLevel.INFO, "x:"+(i * 130)+"y:"+(j * 88 - 44 - j * 50));
 				}
 			}
 		}
-		
+
 		// 绘制entity
 		player.draw(g);
 	}

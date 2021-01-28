@@ -13,6 +13,7 @@ import priv.dremma.game.entities.Player;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
+import priv.dremma.game.gfx.Screen;
 import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
@@ -56,19 +57,22 @@ public class GameCore extends Canvas implements Runnable {
 
 	private Player player;
 	private TileMap map;
+	public static Screen screen;
 
 	public void onStart() {
-		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5;
+		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5;	//设置2D游戏视角
 		player = new Player(this.keyInputHandler);
 		player.loadAnimation();
 
 		player.position = new Vector2(200f, 100f);
 
+		// 加载音乐
 		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");
 		AudioManager.getInstance().playLoop("backgroundSound");
 
 		Resources.load(Resources.ResourceType.Music, "walkSound", Resources.path + "music/walk.wav");
 
+		//从文件中加载地图
 		map = TileMap.loadTileMap(Resources.path+"images/tiles/tileMap.txt");
 		map.setPlayer(player);
 	}
@@ -86,6 +90,7 @@ public class GameCore extends Canvas implements Runnable {
 	public void init() {
 		keyInputHandler = new KeyInputHandler(this);
 		mouseInputHandler = new MouseInputHandler(this);
+		screen = new Screen(GameCore.width * GameCore.scale, GameCore.height * GameCore.scale);
 
 		onStart();
 	}

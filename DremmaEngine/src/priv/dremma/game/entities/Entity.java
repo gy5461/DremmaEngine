@@ -7,7 +7,7 @@ import java.awt.geom.AffineTransform;
 import priv.dremma.game.anim.Animator;
 import priv.dremma.game.util.Vector2;
 
-public class Entity {
+public class Entity implements Cloneable{
 
 	public Animator animator;
 
@@ -73,6 +73,14 @@ public class Entity {
 	public Image getImage() {
 		return animator.getAnimation(animator.state).getImage();
 	}
+	
+	/**
+	 * 改变clone方法的可见性
+	 */
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+	    return super.clone();
+	}
 
 	/**
 	 * 绘制entity
@@ -81,11 +89,6 @@ public class Entity {
 	 */
 	public void draw(Graphics2D g) {
 		AffineTransform transform = new AffineTransform();
-		transform.scale(2, 2); // 缩放
-//		transform.translate(400, 200); // 平移
-//		transform.rotate(Math.toRadians(90)); // 顺时针旋转90度
-//		transform.scale(-1, 1); // 镜像翻转
-		
 		transform.translate(this.position.x, this.position.y);
 		g.drawImage(this.getImage(), transform, null);
 	}

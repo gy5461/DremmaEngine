@@ -83,22 +83,23 @@ public class Player extends Entity {
 	public synchronized void update() {
 		
 		if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2DOT5) {
+			float modifier = 76.0f/130.0f;	// 2.5D视角时，需要进行速度修正才不会走歪
 			this.isMoved = false;
 			if (this.keyInputHandler.up.isPressed()) {
 				this.animator.state = "playerRunUp";
-				this.speed = (new Vector2(SPEED, SPEED*88/130)).mul(new Vector2(-1, -1));
+				this.speed = (new Vector2(SPEED, SPEED*modifier)).mul(new Vector2(-1, -1));
 				isMoved = true;
 			} else if (this.keyInputHandler.down.isPressed()) {
 				this.animator.state = "playerRunDown";
-				this.speed = (new Vector2(SPEED, SPEED*88/130)).mul(new Vector2(1, 1));
+				this.speed = (new Vector2(SPEED, SPEED*modifier)).mul(new Vector2(1, 1));
 				isMoved = true;
 			} else if (this.keyInputHandler.left.isPressed()) {
 				this.animator.state = "playerRunLeft";
-				this.speed = (new Vector2(SPEED, SPEED*88/130)).mul(new Vector2(-1, 1));
+				this.speed = (new Vector2(SPEED, SPEED*modifier)).mul(new Vector2(-1, 1));
 				isMoved = true;
 			} else if (this.keyInputHandler.right.isPressed()) {
 				this.animator.state = "playerRunRight";
-				this.speed = (new Vector2(SPEED, SPEED*88/130)).mul(new Vector2(1, -1));
+				this.speed = (new Vector2(SPEED, SPEED*modifier)).mul(new Vector2(1, -1));
 				isMoved = true;
 			}
 			
