@@ -131,6 +131,7 @@ public class TileMap {
 		Resources.load(Resources.ResourceType.Tile, "floor1", Resources.path + "images/tiles/floor_1.png");
 		Resources.load(Resources.ResourceType.Tile, "floor2", Resources.path + "images/tiles/floor_2.png");
 		Resources.load(Resources.ResourceType.Tile, "floor3", Resources.path + "images/tiles/floor_3.png");
+		Resources.load(Resources.ResourceType.Tile, "floor4", Resources.path + "images/tiles/floor_4.png");
 	}
 
 	/**
@@ -199,5 +200,8 @@ public class TileMap {
 				}
 			}
 		}
+		
+		// ªÊ÷∆entity
+		player.draw(g);
 	}
 }

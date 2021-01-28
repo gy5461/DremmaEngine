@@ -1,13 +1,23 @@
 package priv.dremma.game.entities;
 
+import java.awt.Image;
+import java.util.HashMap;
+
 import priv.dremma.game.GameCore;
+import priv.dremma.game.anim.Animation;
 import priv.dremma.game.anim.Animator;
 import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.util.FloatCompare;
+import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
+/**
+ * 游戏主角类
+ * @author guoyi
+ *
+ */
 public class Player extends Entity {
 
 	public static final int STATE_NORMAL = 0;
@@ -23,8 +33,30 @@ public class Player extends Entity {
 	private int floorY;
 	private int state;
 
-	public Player(Animator animator, KeyInputHandler keyInputHandler) {
-		super(animator);
+	// 站立动画
+	HashMap<Integer, Image> playerStandUp = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerStandDown = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerStandRight = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerStandLeft = new HashMap<Integer, Image>();
+
+	Animation playerStandUpAnimation = new Animation();
+	Animation playerStandDownAnimation = new Animation();
+	Animation playerStandRightAnimation = new Animation();
+	Animation playerStandLeftAnimation = new Animation();
+
+	// 跑步动画
+	HashMap<Integer, Image> playerRunUp = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerRunDown = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerRunRight = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerRunLeft = new HashMap<Integer, Image>();
+
+	Animation playerRunUpAnimation = new Animation();
+	Animation playerRunDownAnimation = new Animation();
+	Animation playerRunRightAnimation = new Animation();
+	Animation playerRunLeftAnimation = new Animation();
+
+	public Player(KeyInputHandler keyInputHandler) {
+		super();
 		state = STATE_NORMAL;
 		this.keyInputHandler = keyInputHandler;
 		this.isMoved = false;
@@ -141,4 +173,123 @@ public class Player extends Entity {
 		}
 	}
 
+
+	/**
+	 * 加载动画资源
+	 */
+	public void loadAnimation() {
+		if(this.animator == null) {
+			this.animator = new Animator();
+		}
+		float duration = 1.0f / 8.0f; // 人物动画每组8张，一秒播放8次
+
+		if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2DOT5) {
+
+			// up
+			for (int i = 48; i <= 55; i++) {
+				playerStandUp.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
+
+				playerRunUp.put(i, Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunUpAnimation.addFrame(playerRunUp.get(i), duration);
+			}
+			this.animator.addAnimation("playerStandUp", playerStandUpAnimation);
+			this.animator.addAnimation("playerRunUp", playerRunUpAnimation);
+
+			// down
+			for (int i = 40; i <= 47; i++) {
+				playerStandDown.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandDownAnimation.addFrame(playerStandDown.get(i), duration);
+
+				playerRunDown.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunDownAnimation.addFrame(playerRunDown.get(i), duration);
+			}
+			this.animator.addAnimation("playerStandDown", playerStandDownAnimation);
+			this.animator.addAnimation("playerRunDown", playerRunDownAnimation);
+
+			// right
+			for (int i = 56; i <= 63; i++) {
+				playerStandRight.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandRightAnimation.addFrame(playerStandRight.get(i), duration);
+
+				playerRunRight.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunRightAnimation.addFrame(playerRunRight.get(i), duration);
+			}
+			this.animator.addAnimation("playerStandRight", playerStandRightAnimation);
+			this.animator.addAnimation("playerRunRight", playerRunRightAnimation);
+
+			// left
+			for (int i = 32; i <= 39; i++) {
+				playerStandLeft.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandLeftAnimation.addFrame(playerStandLeft.get(i), duration);
+
+				playerRunLeft.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunLeftAnimation.addFrame(playerRunLeft.get(i), duration);
+			}
+			this.animator.addAnimation("playerStandLeft", playerStandLeftAnimation);
+			this.animator.addAnimation("playerRunLeft", playerRunLeftAnimation);
+
+			this.animator.state = "playerStandDown";
+		} else if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2) {
+			// up
+			for (int i = 24; i <= 31; i++) {
+				playerStandUp.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
+
+				playerRunUp.put(i, Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunUpAnimation.addFrame(playerRunUp.get(i), duration);
+			}
+			this.animator.addAnimation("playerStandUp", playerStandUpAnimation);
+			this.animator.addAnimation("playerRunUp", playerRunUpAnimation);
+
+			// down
+			for (int i = 0; i <= 7; i++) {
+				playerStandDown.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandDownAnimation.addFrame(playerStandDown.get(i), duration);
+
+				playerRunDown.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunDownAnimation.addFrame(playerRunDown.get(i), duration);
+			}
+			this.animator.addAnimation("playerStandDown", playerStandDownAnimation);
+			this.animator.addAnimation("playerRunDown", playerRunDownAnimation);
+
+			// right
+			for (int i = 16; i <= 23; i++) {
+				playerStandRight.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandRightAnimation.addFrame(playerStandRight.get(i), duration);
+
+				playerRunRight.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunRightAnimation.addFrame(playerRunRight.get(i), duration);
+			}
+			this.animator.addAnimation("playerStandRight", playerStandRightAnimation);
+			this.animator.addAnimation("playerRunRight", playerRunRightAnimation);
+
+			// left
+			for (int i = 8; i <= 15; i++) {
+				playerStandLeft.put(i,
+						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+				playerStandLeftAnimation.addFrame(playerStandLeft.get(i), duration);
+
+				playerRunLeft.put(i,
+						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunLeftAnimation.addFrame(playerRunLeft.get(i), duration);
+			}
+			this.animator.addAnimation("playerStandLeft", playerStandLeftAnimation);
+			this.animator.addAnimation("playerRunLeft", playerRunLeftAnimation);
+
+			this.animator.state = "playerStandDown";
+		}
+	}
 }

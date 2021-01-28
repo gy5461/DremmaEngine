@@ -3,15 +3,11 @@ package priv.dremma.game;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 
 import javax.swing.JFrame;
 
-import priv.dremma.game.anim.Animation;
-import priv.dremma.game.anim.Animator;
 import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.entities.Player;
 import priv.dremma.game.event.KeyInputHandler;
@@ -58,168 +54,23 @@ public class GameCore extends Canvas implements Runnable {
 	public MouseInputHandler mouseInputHandler;
 	public WindowInputHandler windowInputHandler;
 
-	private Player entity;
+	private Player player;
 	private TileMap map;
 
 	public void onStart() {
 		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5;
-		loadImages();
-		entity = new Player(playerAnimator, this.keyInputHandler);
+		player = new Player(this.keyInputHandler);
+		player.loadAnimation();
 
-		entity.position = new Vector2(400f, 100f);
-
-		entity.speed = new Vector2(60f, 60f);
+		player.position = new Vector2(200f, 100f);
 
 		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");
 		AudioManager.getInstance().playLoop("backgroundSound");
 
 		Resources.load(Resources.ResourceType.Music, "walkSound", Resources.path + "music/walk.wav");
 
-//		map = new TileMap(100, 100);
-//		for (int i = 0; i < 100; i++) {
-//			for (int j = 0; j < 100; j++) {
-//				map.setTile(i, j, Resources.loadImage(Resources.path + "images/tiles/floor_3.png"));
-//			}
-//		}
 		map = TileMap.loadTileMap(Resources.path+"images/tiles/tileMap.txt");
-	}
-
-	// 站立动画
-	HashMap<Integer, Image> playerStandUp = new HashMap<Integer, Image>();
-	HashMap<Integer, Image> playerStandDown = new HashMap<Integer, Image>();
-	HashMap<Integer, Image> playerStandRight = new HashMap<Integer, Image>();
-	HashMap<Integer, Image> playerStandLeft = new HashMap<Integer, Image>();
-
-	Animation playerStandUpAnimation = new Animation();
-	Animation playerStandDownAnimation = new Animation();
-	Animation playerStandRightAnimation = new Animation();
-	Animation playerStandLeftAnimation = new Animation();
-
-	// 跑步动画
-	HashMap<Integer, Image> playerRunUp = new HashMap<Integer, Image>();
-	HashMap<Integer, Image> playerRunDown = new HashMap<Integer, Image>();
-	HashMap<Integer, Image> playerRunRight = new HashMap<Integer, Image>();
-	HashMap<Integer, Image> playerRunLeft = new HashMap<Integer, Image>();
-
-	Animation playerRunUpAnimation = new Animation();
-	Animation playerRunDownAnimation = new Animation();
-	Animation playerRunRightAnimation = new Animation();
-	Animation playerRunLeftAnimation = new Animation();
-
-	Animator playerAnimator = new Animator();
-
-	public void loadImages() {
-		float duration = 1.0f / 8.0f; // 人物动画每组8张，一秒播放8次
-
-		if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2DOT5) {
-
-			// up
-			for (int i = 48; i <= 55; i++) {
-				playerStandUp.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
-
-				playerRunUp.put(i, Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-				playerRunUpAnimation.addFrame(playerRunUp.get(i), duration);
-			}
-			playerAnimator.addAnimation("playerStandUp", playerStandUpAnimation);
-			playerAnimator.addAnimation("playerRunUp", playerRunUpAnimation);
-
-			// down
-			for (int i = 40; i <= 47; i++) {
-				playerStandDown.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-				playerStandDownAnimation.addFrame(playerStandDown.get(i), duration);
-
-				playerRunDown.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-				playerRunDownAnimation.addFrame(playerRunDown.get(i), duration);
-			}
-			playerAnimator.addAnimation("playerStandDown", playerStandDownAnimation);
-			playerAnimator.addAnimation("playerRunDown", playerRunDownAnimation);
-
-			// right
-			for (int i = 56; i <= 63; i++) {
-				playerStandRight.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-				playerStandRightAnimation.addFrame(playerStandRight.get(i), duration);
-
-				playerRunRight.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-				playerRunRightAnimation.addFrame(playerRunRight.get(i), duration);
-			}
-			playerAnimator.addAnimation("playerStandRight", playerStandRightAnimation);
-			playerAnimator.addAnimation("playerRunRight", playerRunRightAnimation);
-
-			// left
-			for (int i = 32; i <= 39; i++) {
-				playerStandLeft.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-				playerStandLeftAnimation.addFrame(playerStandLeft.get(i), duration);
-
-				playerRunLeft.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-				playerRunLeftAnimation.addFrame(playerRunLeft.get(i), duration);
-			}
-			playerAnimator.addAnimation("playerStandLeft", playerStandLeftAnimation);
-			playerAnimator.addAnimation("playerRunLeft", playerRunLeftAnimation);
-
-			playerAnimator.state = "playerStandDown";
-		} else if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2) {
-			// up
-			for (int i = 24; i <= 31; i++) {
-				playerStandUp.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
-
-				playerRunUp.put(i, Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-				playerRunUpAnimation.addFrame(playerRunUp.get(i), duration);
-			}
-			playerAnimator.addAnimation("playerStandUp", playerStandUpAnimation);
-			playerAnimator.addAnimation("playerRunUp", playerRunUpAnimation);
-
-			// down
-			for (int i = 0; i <= 7; i++) {
-				playerStandDown.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-				playerStandDownAnimation.addFrame(playerStandDown.get(i), duration);
-
-				playerRunDown.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-				playerRunDownAnimation.addFrame(playerRunDown.get(i), duration);
-			}
-			playerAnimator.addAnimation("playerStandDown", playerStandDownAnimation);
-			playerAnimator.addAnimation("playerRunDown", playerRunDownAnimation);
-
-			// right
-			for (int i = 16; i <= 23; i++) {
-				playerStandRight.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-				playerStandRightAnimation.addFrame(playerStandRight.get(i), duration);
-
-				playerRunRight.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-				playerRunRightAnimation.addFrame(playerRunRight.get(i), duration);
-			}
-			playerAnimator.addAnimation("playerStandRight", playerStandRightAnimation);
-			playerAnimator.addAnimation("playerRunRight", playerRunRightAnimation);
-
-			// left
-			for (int i = 8; i <= 15; i++) {
-				playerStandLeft.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
-				playerStandLeftAnimation.addFrame(playerStandLeft.get(i), duration);
-
-				playerRunLeft.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
-				playerRunLeftAnimation.addFrame(playerRunLeft.get(i), duration);
-			}
-			playerAnimator.addAnimation("playerStandLeft", playerStandLeftAnimation);
-			playerAnimator.addAnimation("playerRunLeft", playerRunLeftAnimation);
-
-			playerAnimator.state = "playerStandDown";
-		}
-
+		map.setPlayer(player);
 	}
 
 	public void onUpdate() {
@@ -278,7 +129,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	public void animationLoop() {
-		entity.update();
+		player.update();
 
 		Graphics2D g = this.getGraphics2D();
 		draw(g);
@@ -291,9 +142,6 @@ public class GameCore extends Canvas implements Runnable {
 
 		// 绘制地图
 		map.draw(g);
-
-		// 绘制entity
-		entity.draw(g);
 	}
 
 	/**
@@ -331,7 +179,7 @@ public class GameCore extends Canvas implements Runnable {
 	 * 设置游戏名称
 	 */
 	public void setName(String name) {
-		if (isApplet) {
+		if (isApplet) {	// applet小程序不需要设置名称
 			return;
 		}
 		GameCore.name = name;

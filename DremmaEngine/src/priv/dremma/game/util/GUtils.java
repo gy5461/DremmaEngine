@@ -254,7 +254,8 @@ public final class GUtils {
      * @param writer Writer
      * @throws IOException
      */
-    public static String readLine(Reader reader) {
+    @SuppressWarnings("unused")
+	public static String readLine(Reader reader) {
         int c;
         StringBuffer s = new StringBuffer();
         try {
