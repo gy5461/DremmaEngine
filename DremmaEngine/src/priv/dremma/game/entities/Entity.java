@@ -16,8 +16,8 @@ public class Entity implements Cloneable{
 	public Vector2 speed; // ËÙ¶È
 
 	public Entity() {
-		this.position = new Vector2(0, 0);
-		this.speed = new Vector2(0, 0);
+		this.position = Vector2.zero();
+		this.speed = Vector2.zero();
 	}
 
 	public Entity(Vector2 position, Vector2 speed) {
@@ -72,6 +72,10 @@ public class Entity implements Cloneable{
 	 */
 	public Image getImage() {
 		return animator.getAnimation(animator.state).getImage();
+	}
+	
+	public float getBottom() {
+		return this.position.y + this.getHeight()/2f;
 	}
 	
 	/**

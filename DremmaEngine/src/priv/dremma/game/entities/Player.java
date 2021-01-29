@@ -189,10 +189,10 @@ public class Player extends Entity {
 			// up
 			for (int i = 48; i <= 55; i++) {
 				playerStandUp.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
 
-				playerRunUp.put(i, Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunUp.put(i, Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunUpAnimation.addFrame(playerRunUp.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandUp", playerStandUpAnimation);
@@ -201,11 +201,11 @@ public class Player extends Entity {
 			// down
 			for (int i = 40; i <= 47; i++) {
 				playerStandDown.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandDownAnimation.addFrame(playerStandDown.get(i), duration);
 
 				playerRunDown.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunDownAnimation.addFrame(playerRunDown.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandDown", playerStandDownAnimation);
@@ -214,11 +214,11 @@ public class Player extends Entity {
 			// right
 			for (int i = 56; i <= 63; i++) {
 				playerStandRight.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandRightAnimation.addFrame(playerStandRight.get(i), duration);
 
 				playerRunRight.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunRightAnimation.addFrame(playerRunRight.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandRight", playerStandRightAnimation);
@@ -227,11 +227,11 @@ public class Player extends Entity {
 			// left
 			for (int i = 32; i <= 39; i++) {
 				playerStandLeft.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandLeftAnimation.addFrame(playerStandLeft.get(i), duration);
 
 				playerRunLeft.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunLeftAnimation.addFrame(playerRunLeft.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandLeft", playerStandLeftAnimation);
@@ -242,10 +242,10 @@ public class Player extends Entity {
 			// up
 			for (int i = 24; i <= 31; i++) {
 				playerStandUp.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
 
-				playerRunUp.put(i, Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+				playerRunUp.put(i, Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunUpAnimation.addFrame(playerRunUp.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandUp", playerStandUpAnimation);
@@ -254,11 +254,11 @@ public class Player extends Entity {
 			// down
 			for (int i = 0; i <= 7; i++) {
 				playerStandDown.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandDownAnimation.addFrame(playerStandDown.get(i), duration);
 
 				playerRunDown.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunDownAnimation.addFrame(playerRunDown.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandDown", playerStandDownAnimation);
@@ -267,11 +267,11 @@ public class Player extends Entity {
 			// right
 			for (int i = 16; i <= 23; i++) {
 				playerStandRight.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandRightAnimation.addFrame(playerStandRight.get(i), duration);
 
 				playerRunRight.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunRightAnimation.addFrame(playerRunRight.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandRight", playerStandRightAnimation);
@@ -280,11 +280,11 @@ public class Player extends Entity {
 			// left
 			for (int i = 8; i <= 15; i++) {
 				playerStandLeft.put(i,
-						Resources.loadImage(Resources.path + "images/player_stand/player_stand_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandLeftAnimation.addFrame(playerStandLeft.get(i), duration);
 
 				playerRunLeft.put(i,
-						Resources.loadImage(Resources.path + "images/player_run/player_run_" + i + ".png"));
+						Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunLeftAnimation.addFrame(playerRunLeft.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandLeft", playerStandLeftAnimation);

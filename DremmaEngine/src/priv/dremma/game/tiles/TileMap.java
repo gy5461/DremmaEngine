@@ -8,13 +8,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 
 import priv.dremma.game.GameCore;
+import priv.dremma.game.anim.Animation;
+import priv.dremma.game.anim.Animator;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.entities.Player;
 import priv.dremma.game.util.Debug;
+import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Vector2;
@@ -32,6 +37,7 @@ public class TileMap {
 	private Image[][] tiles; // 地砖
 	private LinkedList<Entity> entities; // 游戏中的其他实体
 	private Player player; // 主角
+	PriorityQueue<Entity> renderEntities;	// 渲染优先队列
 
 	/**
 	 * 生成指定宽度与高度的TileMap
@@ -42,6 +48,15 @@ public class TileMap {
 	public TileMap(int width, int height) {
 		tiles = new Image[width][height];
 		entities = new LinkedList<Entity>();
+		renderEntities = new PriorityQueue<Entity>(1, new Comparator<Entity>() {
+
+			@Override
+			public int compare(Entity o1, Entity o2) {
+				// 解决人树问题
+				return FloatCompare.isLess(o1.getBottom(), o2.getBottom()) ? -1 : 1;
+			}
+
+		});
 	}
 
 	/**
@@ -180,6 +195,15 @@ public class TileMap {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		Animator tree = new Animator();
+		Animation treeAnim = new Animation();
+		treeAnim.addFrame(Resources.loadImage(Resources.path + "images/entities/tree1.png"), 100);
+		tree.addAnimation("static", treeAnim);
+		tree.state = "static";
+		Entity e = new Entity(tree);
+
+		resultMap.addEntity(e, 2, 5);
+		Debug.log(Debug.DebugLevel.INFO, "x:" + e.getHeight());
 
 		return resultMap;
 	}
@@ -221,36 +245,48 @@ public class TileMap {
 		int offsetX = Math.round(GameCore.screen.width / 2.0f - player.position.x);
 //		offsetX = Math.max(offsetX, 0);
 //		offsetX = Math.min(offsetX, Math.round(GUtils.worldTileCenterToWorldPixel(this.getWidth(), this.getHeight(), 130, 76).x));
-		
+
 		int offsetY = Math.round(GameCore.screen.height / 2.0f - player.position.y);
 //		offsetY = Math.max(offsetY, 0 );
 //		offsetY = Math.min(offsetY, Math.round(GUtils.worldTileCenterToWorldPixel(this.getWidth(), this.getHeight(), 130, 76).y));
 		GameCore.screen.setOffset(offsetX, offsetY);
-		
-		//Debug.log(Debug.DebugLevel.INFO, "offsetX:"+offsetX+", offsetY:"+offsetY);
+
+		// Debug.log(Debug.DebugLevel.INFO, "offsetX:"+offsetX+", offsetY:"+offsetY);
 		// 绘制地图
 		for (int j = 0; j < this.getHeight(); j++) {
 			for (int i = 0; i < this.getWidth(); i++) {
 				if (j % 2 == 1) {
 					AffineTransform transform = new AffineTransform();
 					transform.scale(2, 2);
-					transform.translate(i * 130 - 130 / 2 + offsetX, j * 88 - 44 - j * 50 + offsetY);	// scale会对translate产生影响
-					
+					transform.translate(i * 130 - 130 / 2, j * 88 - 44 - j * 50); // scale会对translate产生影响
+
 					g.drawImage(this.getTile(i, j), transform, null);
 					// Debug.log(Debug.DebugLevel.INFO, "x:"+(i * 130 - 130 / 2)+"y:"+(j * 88 - 44 -
 					// j * 50));
 				} else {
 					AffineTransform transform = new AffineTransform();
 					transform.scale(2, 2);
-					transform.translate(i * 130 + offsetX, j * 88 - 44 - j * 50 + offsetY);
-					//transform.scale(2, 2);
+					transform.translate(i * 130, j * 88 - 44 - j * 50);
 					g.drawImage(this.getTile(i, j), transform, null);
 					// Debug.log(Debug.DebugLevel.INFO, "x:"+(i * 130)+"y:"+(j * 88 - 44 - j * 50));
 				}
 			}
 		}
+		
+		// 清空实体渲染队列
+		renderEntities.clear();
+		
+		// 向实体渲染队列中添加游戏主角
+		renderEntities.add(player);
 
-		// 绘制entity
-		player.draw(g);
+		// 向实体渲染队列中添加其他实体
+		for (Entity e : this.entities) {
+			renderEntities.add(e);
+		}
+
+		// 将实体渲染队列中的实体渲染到屏幕上
+		for (Entity e : renderEntities) {
+			e.draw(g);
+		}
 	}
 }
