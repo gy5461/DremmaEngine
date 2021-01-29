@@ -89,7 +89,8 @@ public class Entity implements Cloneable{
 	 */
 	public void draw(Graphics2D g) {
 		AffineTransform transform = new AffineTransform();
-		transform.translate(this.position.x - this.getWidth()/2f, this.position.y-this.getHeight()/2f);
+		transform.translate(this.position.x - this.getWidth(), this.position.y-this.getHeight());
+		transform.scale(2, 2);
 		g.drawImage(this.getImage(), transform, null);
 	}
 }

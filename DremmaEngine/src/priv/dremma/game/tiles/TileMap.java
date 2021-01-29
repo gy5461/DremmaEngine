@@ -2,6 +2,7 @@ package priv.dremma.game.tiles;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -231,13 +232,19 @@ public class TileMap {
 		for (int j = 0; j < this.getHeight(); j++) {
 			for (int i = 0; i < this.getWidth(); i++) {
 				if (j % 2 == 1) {
-					g.drawImage(this.getTile(i, j), i * 130 - 130 / 2 + offsetX, j * 88 - 44 - j * 50 + offsetY,
-							this.getTile(i, j).getWidth(null), this.getTile(i, j).getHeight(null), null);
+					AffineTransform transform = new AffineTransform();
+					transform.scale(2, 2);
+					transform.translate(i * 130 - 130 / 2 + offsetX, j * 88 - 44 - j * 50 + offsetY);	// scale会对translate产生影响
+					
+					g.drawImage(this.getTile(i, j), transform, null);
 					// Debug.log(Debug.DebugLevel.INFO, "x:"+(i * 130 - 130 / 2)+"y:"+(j * 88 - 44 -
 					// j * 50));
 				} else {
-					g.drawImage(this.getTile(i, j), i * 130 + offsetX,           j * 88 - 44 - j * 50 + offsetY, this.getTile(i, j).getWidth(null),
-							this.getTile(i, j).getHeight(null), null);
+					AffineTransform transform = new AffineTransform();
+					transform.scale(2, 2);
+					transform.translate(i * 130 + offsetX, j * 88 - 44 - j * 50 + offsetY);
+					//transform.scale(2, 2);
+					g.drawImage(this.getTile(i, j), transform, null);
 					// Debug.log(Debug.DebugLevel.INFO, "x:"+(i * 130)+"y:"+(j * 88 - 44 - j * 50));
 				}
 			}
