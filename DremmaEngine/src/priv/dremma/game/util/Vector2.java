@@ -10,8 +10,12 @@ public class Vector2 {
 
 	public float x, y; // 向量(x,y)在x轴与y轴上的分量
 
-	public static Vector2 zero = new Vector2();
-	public static Vector2 one = new Vector2(1, 1);
+	public static Vector2 zero() {
+		return new Vector2();
+	}
+	public static Vector2 one() {
+		return new Vector2(1, 1);
+	}
 
 	// 默认构造函数
 	public Vector2() {

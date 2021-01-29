@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import priv.dremma.game.GameCore;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.entities.Player;
-import priv.dremma.game.gfx.Screen;
 import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Resources;
@@ -212,21 +211,20 @@ public class TileMap {
 		}
 	}
 
-	public final int TILE_SIZE = 76 * 130;
-
 	/**
 	 * ‰÷»æµÿÕº
 	 * 
 	 * @param g
 	 */
 	public void draw(Graphics2D g) {
-		int offsetX = GameCore.screen.width / 2 - Math.round(player.position.x);
-		offsetX = Math.max(offsetX, 0);
-		offsetX = Math.min(offsetX, GameCore.screen.width);
+		int offsetX = Math.round(GameCore.screen.width / 2.0f - player.position.x);
+//		offsetX = Math.max(offsetX, 0);
+//		offsetX = Math.min(offsetX, Math.round(GUtils.worldTileCenterToWorldPixel(this.getWidth(), this.getHeight(), 130, 76).x));
 		
-		int offsetY = GameCore.screen.height / 2 - Math.round(player.position.y);
-		offsetY = Math.max(offsetY, 0);
-		offsetY = Math.min(offsetY, GameCore.screen.height);
+		int offsetY = Math.round(GameCore.screen.height / 2.0f - player.position.y);
+//		offsetY = Math.max(offsetY, 0 );
+//		offsetY = Math.min(offsetY, Math.round(GUtils.worldTileCenterToWorldPixel(this.getWidth(), this.getHeight(), 130, 76).y));
+		GameCore.screen.setOffset(offsetX, offsetY);
 		
 		//Debug.log(Debug.DebugLevel.INFO, "offsetX:"+offsetX+", offsetY:"+offsetY);
 		// ªÊ÷∆µÿÕº

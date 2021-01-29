@@ -15,6 +15,7 @@ import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
 import priv.dremma.game.gfx.Screen;
 import priv.dremma.game.tiles.TileMap;
+import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
@@ -64,8 +65,9 @@ public class GameCore extends Canvas implements Runnable {
 		player = new Player(this.keyInputHandler);
 		player.loadAnimation();
 
-		player.position = new Vector2(200f, 100f);
+		player.position = new Vector2(GameCore.screen.width/2f, GameCore.screen.height/2f);
 
+		
 		// º”‘ÿ“Ù¿÷
 		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");
 		AudioManager.getInstance().playLoop("backgroundSound");
@@ -78,7 +80,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	public void onUpdate() {
-
+		Debug.log(Debug.DebugLevel.INFO, "postition:"+player.position);
 	}
 
 	public void onDestroy() {

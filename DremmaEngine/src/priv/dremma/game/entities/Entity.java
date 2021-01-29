@@ -32,8 +32,8 @@ public class Entity implements Cloneable{
 	 */
 	public Entity(Animator animator) {
 		this.animator = animator;
-		this.position = Vector2.zero;
-		this.speed = Vector2.zero;
+		this.position = Vector2.zero();
+		this.speed = Vector2.zero();
 	}
 	
 	public void setAnimator(Animator animator) {
@@ -89,7 +89,7 @@ public class Entity implements Cloneable{
 	 */
 	public void draw(Graphics2D g) {
 		AffineTransform transform = new AffineTransform();
-		transform.translate(this.position.x, this.position.y);
+		transform.translate(this.position.x - this.getWidth()/2f, this.position.y-this.getHeight()/2f);
 		g.drawImage(this.getImage(), transform, null);
 	}
 }

@@ -63,9 +63,9 @@ public final class GUtils {
      * return ÊÓ¿Ú×ø±ê.
      *
      **/
-    public static int[] worldPixelToViewPort(int tx, int ty, int basePointX,
-                                             int basePointY) {
-        int[] view = new int[2];
+    public static float[] worldPixelToViewPort(float tx, float ty, float basePointX,
+    		float basePointY) {
+    	float[] view = new float[2];
         view[0] = tx - basePointX;
         view[1] = ty - basePointY;
         return view;
@@ -157,15 +157,15 @@ public final class GUtils {
      **/
     public static Vector2 worldTileCenterToWorldPixel( int tx, int ty,
                                                      int tileWidth, int tileHeight) {
-    	Vector2 piexl = Vector2.zero;
+    	Vector2 piexl = Vector2.zero();
         if (ty % 2 == 0) {
             piexl.x = tx * tileWidth;
-            piexl.y = ty * (tileHeight/2);
+            piexl.y = ty * (tileHeight/2.0f);
             return piexl;
         }
         else {
-            piexl.x = tx * tileWidth + tileWidth/2;
-            piexl.y = ty * (tileHeight/2);
+            piexl.x = tx * tileWidth + tileWidth/2.0f;
+            piexl.y = ty * (tileHeight/2.0f);
             return piexl;
         }
     }
