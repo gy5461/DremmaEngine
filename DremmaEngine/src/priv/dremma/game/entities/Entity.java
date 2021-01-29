@@ -7,22 +7,32 @@ import java.awt.geom.AffineTransform;
 import priv.dremma.game.anim.Animator;
 import priv.dremma.game.util.Vector2;
 
-public class Entity implements Cloneable{
+public class Entity implements Cloneable {
 
 	public Animator animator;
 
 	public Vector2 position; // 位置
 
 	public Vector2 speed; // 速度
+	private Vector2 scale; // 缩放
 
 	public Entity() {
 		this.position = Vector2.zero();
 		this.speed = Vector2.zero();
+		this.scale = Vector2.one();
 	}
 
 	public Entity(Vector2 position, Vector2 speed) {
 		this.position = position;
 		this.speed = speed;
+		this.scale = Vector2.one();
+	}
+	
+	public Entity(Entity e) {
+		this.animator = new Animator(e.animator);
+		this.position = new Vector2(e.position);
+		this.speed = new Vector2(e.speed);
+		this.scale = new Vector2(e.scale);
 	}
 
 	/**
@@ -34,10 +44,17 @@ public class Entity implements Cloneable{
 		this.animator = animator;
 		this.position = Vector2.zero();
 		this.speed = Vector2.zero();
+		this.scale = Vector2.one();
 	}
-	
+
 	public void setAnimator(Animator animator) {
 		this.animator = animator;
+	}
+	
+	public void setScale(Vector2 scale) {
+		this.scale.x = scale.x;
+		this.scale.y = scale.y;
+		this.speed = this.speed.mul(scale);
 	}
 
 	/**
@@ -73,17 +90,13 @@ public class Entity implements Cloneable{
 	public Image getImage() {
 		return animator.getAnimation(animator.state).getImage();
 	}
-	
-	public float getBottom() {
-		return this.position.y + this.getHeight()/2f;
-	}
-	
+
 	/**
-	 * 改变clone方法的可见性
+	 * 获取实体底部纵坐标
+	 * @return
 	 */
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-	    return super.clone();
+	public float getBottom() {
+		return this.position.y + this.getHeight() * this.scale.y / 2f;
 	}
 
 	/**
@@ -93,8 +106,8 @@ public class Entity implements Cloneable{
 	 */
 	public void draw(Graphics2D g) {
 		AffineTransform transform = new AffineTransform();
-		transform.translate(this.position.x - this.getWidth(), this.position.y-this.getHeight());
-		transform.scale(2, 2);
+		transform.translate(this.position.x - this.getWidth() * this.scale.x / 2f, this.position.y - this.getHeight() * this.scale.y / 2f);
+		transform.scale(this.scale.x, this.scale.y);
 		g.drawImage(this.getImage(), transform, null);
 	}
 }

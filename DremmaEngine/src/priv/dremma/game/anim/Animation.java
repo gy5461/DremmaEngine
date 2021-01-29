@@ -14,7 +14,7 @@ import priv.dremma.game.util.Time;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class Animation {
 
-	private ArrayList frames; // 动画关键帧数组
+	private ArrayList<AnimFrame> frames; // 动画关键帧数组
 	private int curFrameIndex; // 当前帧在关键帧数组中的下标
 	private float curAnimTime; // 当前动画播放时长
 
@@ -24,8 +24,22 @@ public class Animation {
 	 * 构造新的Animation
 	 */
 	public Animation() {
-		frames = new ArrayList();
+		frames = new ArrayList<AnimFrame>();
 		totalDuration = 0f;
+		start();
+	}
+	
+	/**
+	 * 拷贝构造新的Animation
+	 */
+	public Animation(Animation animation) {
+		frames = new ArrayList();
+		for(AnimFrame a : animation.frames) {
+			this.addFrame(a.image, a.endTime);
+		}
+		this.curFrameIndex = animation.curFrameIndex;
+		this.curAnimTime = animation.curAnimTime;
+		this.totalDuration = animation.totalDuration;
 		start();
 	}
 

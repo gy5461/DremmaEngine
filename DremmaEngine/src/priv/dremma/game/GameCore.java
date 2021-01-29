@@ -60,21 +60,23 @@ public class GameCore extends Canvas implements Runnable {
 	public static Screen screen;
 
 	public void onStart() {
-		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5;	//设置2D游戏视角
+		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // 设置2D游戏视角
 		player = new Player(this.keyInputHandler);
 		player.loadAnimation();
 
-		player.position = new Vector2(GameCore.screen.width/2f, GameCore.screen.height/2f);
+		player.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.height / 2f);
 
-		
+		player.speed = new Vector2(60f, 60f);
+		player.setScale(new Vector2(2f, 2f));
+
 		// 加载音乐
 		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");
 		AudioManager.getInstance().playLoop("backgroundSound");
 
 		Resources.load(Resources.ResourceType.Music, "walkSound", Resources.path + "music/walk.wav");
 
-		//从文件中加载地图
-		map = TileMap.loadTileMap(Resources.path+"maps/map1.txt");
+		// 从文件中加载地图
+		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
 		map.setPlayer(player);
 	}
 
@@ -184,7 +186,7 @@ public class GameCore extends Canvas implements Runnable {
 	 * 设置游戏名称
 	 */
 	public void setName(String name) {
-		if (isApplet) {	// applet小程序不需要设置名称
+		if (isApplet) { // applet小程序不需要设置名称
 			return;
 		}
 		GameCore.name = name;

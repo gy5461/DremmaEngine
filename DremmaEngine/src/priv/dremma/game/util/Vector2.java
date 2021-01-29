@@ -13,6 +13,7 @@ public class Vector2 {
 	public static Vector2 zero() {
 		return new Vector2();
 	}
+
 	public static Vector2 one() {
 		return new Vector2(1, 1);
 	}
@@ -27,6 +28,11 @@ public class Vector2 {
 	public Vector2(float x, float y) {
 		this.x = x;
 		this.y = y;
+	}
+
+	public Vector2(Vector2 vec2) {
+		this.x = vec2.x;
+		this.y = vec2.y;
 	}
 
 	// 返回向量模长

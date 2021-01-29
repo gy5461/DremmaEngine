@@ -18,7 +18,6 @@ import priv.dremma.game.anim.Animation;
 import priv.dremma.game.anim.Animator;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.entities.Player;
-import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Resources;
@@ -37,7 +36,7 @@ public class TileMap {
 	private Image[][] tiles; // 地砖
 	private LinkedList<Entity> entities; // 游戏中的其他实体
 	private Player player; // 主角
-	PriorityQueue<Entity> renderEntities;	// 渲染优先队列
+	PriorityQueue<Entity> renderEntities; // 渲染优先队列
 
 	/**
 	 * 生成指定宽度与高度的TileMap
@@ -153,6 +152,8 @@ public class TileMap {
 		Resources.load(Resources.ResourceType.Tile, "floor4", Resources.path + "images/tiles/floor_4.png");
 	}
 
+	static Entity e;
+
 	/**
 	 * 根据文件加载地图
 	 */
@@ -200,10 +201,16 @@ public class TileMap {
 		treeAnim.addFrame(Resources.loadImage(Resources.path + "images/entities/tree1.png"), 100);
 		tree.addAnimation("static", treeAnim);
 		tree.state = "static";
-		Entity e = new Entity(tree);
+		e = new Entity(tree);
+		e.setScale(new Vector2(3f, 3f));
 
 		resultMap.addEntity(e, 2, 5);
-		Debug.log(Debug.DebugLevel.INFO, "x:" + e.getHeight());
+
+		e.setScale(new Vector2(2f, 2f));
+		resultMap.addEntity(e, 4, 5);
+		
+		e.setScale(new Vector2(1f, 1f));
+		resultMap.addEntity(e, 3, 11);
 
 		return resultMap;
 	}
@@ -217,22 +224,18 @@ public class TileMap {
 	 */
 	public void addEntity(Entity srcEntity, int tileX, int tileY) {
 		if (srcEntity != null) {
-			try {
-				// 从主实体中复制实体
-				Entity entity = (Entity) srcEntity.clone();
-				entity.position = new Vector2(
-						GUtils.worldTileCenterToWorldPixel(tileX, tileY, this.getTile(tileX, tileY).getWidth(null),
-								this.getTile(tileX, tileY).getHeight(null)).x
-								+ GUtils.worldTileCenterToWorldPixel(1, 1, this.getTile(tileX, tileY).getWidth(null),
-										this.getTile(tileX, tileY).getHeight(null)).x
-								- entity.getWidth() / 2,
-						GUtils.worldTileCenterToWorldPixel(tileX, tileY + 1, this.getTile(tileX, tileY).getWidth(null),
-								this.getTile(tileX, tileY).getHeight(null)).y - entity.getHeight());
+			// 从主实体中复制实体（深拷贝）
+			Entity entity = new Entity(srcEntity);
+			entity.position = new Vector2(
+					GUtils.worldTileCenterToWorldPixel(tileX, tileY, this.getTile(tileX, tileY).getWidth(null),
+							this.getTile(tileX, tileY).getHeight(null)).x
+							+ GUtils.worldTileCenterToWorldPixel(1, 1, this.getTile(tileX, tileY).getWidth(null),
+									this.getTile(tileX, tileY).getHeight(null)).x
+							- entity.getWidth() / 2,
+					GUtils.worldTileCenterToWorldPixel(tileX, tileY + 1, this.getTile(tileX, tileY).getWidth(null),
+							this.getTile(tileX, tileY).getHeight(null)).y - entity.getHeight());
 
-				this.addEntity(entity);
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
+			this.addEntity(entity);
 		}
 	}
 
@@ -241,7 +244,7 @@ public class TileMap {
 	 * 
 	 * @param g
 	 */
-	public void draw(Graphics2D g) {
+	public synchronized void draw(Graphics2D g) {
 		int offsetX = Math.round(GameCore.screen.width / 2.0f - player.position.x);
 //		offsetX = Math.max(offsetX, 0);
 //		offsetX = Math.min(offsetX, Math.round(GUtils.worldTileCenterToWorldPixel(this.getWidth(), this.getHeight(), 130, 76).x));
@@ -272,7 +275,7 @@ public class TileMap {
 				}
 			}
 		}
-		
+
 		// 清空实体渲染队列
 		renderEntities.clear();
 		
@@ -283,10 +286,11 @@ public class TileMap {
 		for (Entity e : this.entities) {
 			renderEntities.add(e);
 		}
-
-		// 将实体渲染队列中的实体渲染到屏幕上
-		for (Entity e : renderEntities) {
-			e.draw(g);
+		
+		// 渲染优先队列
+		while(!renderEntities.isEmpty()) {
+			renderEntities.peek().draw(g);
+			renderEntities.remove(renderEntities.peek());
 		}
 	}
 }
