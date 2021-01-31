@@ -1,5 +1,7 @@
 package priv.dremma.game.event;
 
+import java.awt.MouseInfo;
+import java.awt.PointerInfo;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -15,9 +17,11 @@ import priv.dremma.game.util.Vector2;
  */
 
 public class MouseInputHandler implements MouseListener {
+	GameCore game;
 
 	public MouseInputHandler(GameCore game) {
 		game.addMouseListener(this); // 给游戏窗体添加鼠标监听器
+		this.game = game;
 	}
 
 	/**
@@ -30,17 +34,40 @@ public class MouseInputHandler implements MouseListener {
 		private int pressedTimes = 0; // 鼠标按压次数
 		private boolean isPressed = false; // 鼠标是否被按
 		private Vector2 location; // 鼠标按压位置
+		private Vector2 curPos = Vector2.zero(); // 鼠标当前位置
+
+		public Vector2 getCurPos() {
+			PointerInfo pinfo = MouseInfo.getPointerInfo();
+			curPos = new Vector2(pinfo.getLocation().x, pinfo.getLocation().y);
+			curPos = curPos.sub(new Vector2(game.window.getLocation().x, game.window.getLocation().y + 24));
+			return curPos;
+		}
 
 		public int getPressedTimes() {
 			return pressedTimes;
 		}
+		
+		public void setPressedTimes(int pressedTimes) {
+			this.pressedTimes = pressedTimes;
+		}
 
 		public boolean isPressed() {
-			return isPressed;
+			return this.isPressed;
 		}
 
 		public Vector2 getLocation() {
 			return location;
+		}
+
+		/**
+		 * 判断鼠标坐标是否在矩形内 矩形：
+		 * 
+		 * @param leftUp    左上点坐标
+		 * @param rightDown 右下点坐标
+		 * @return
+		 */
+		public boolean isInRect(Vector2 leftUp, Vector2 rightDown) {
+			return this.location.isLessOrEqual(rightDown) && this.location.isBiggerOrEqual(leftUp);
 		}
 
 		// 触发键
@@ -63,14 +90,12 @@ public class MouseInputHandler implements MouseListener {
 	// 鼠标按键单击（按下并释放）时触发，测试时感觉不够灵敏
 	@Override
 	public void mouseClicked(MouseEvent e) {
-
 	}
 
 	// 鼠标按键按下时触发
 	@Override
 	public void mousePressed(MouseEvent e) {
 		mouse.toggle(new Vector2(e.getX(), e.getY()), true);
-		;
 	}
 
 	// 鼠标释放时触发
@@ -79,10 +104,9 @@ public class MouseInputHandler implements MouseListener {
 		mouse.toggle(new Vector2(e.getX(), e.getY()), false);
 	}
 
-	// 鼠标进入时或进入状态中触发
+	// 鼠标进入时触发
 	@Override
 	public void mouseEntered(MouseEvent e) {
-
 	}
 
 	// 鼠标从Enter状态中退出时触发

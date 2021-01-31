@@ -115,5 +115,50 @@ public class Vector2 {
 	public String toString() {
 		return "Vector2 [x=" + x + ", y=" + y + "]";
 	}
+	
+	/**
+	 * 向量是否相等
+	 * @param another
+	 * @return
+	 */
+	public boolean isEqual(Vector2 another) {
+		return FloatCompare.isEqual(this.x, another.x) && FloatCompare.isEqual(this.y, another.y);
+	}
 
+	/**
+	 * 向量是否大于another
+	 * @param another
+	 * @return
+	 */
+	public boolean isBigger(Vector2 another) {
+		return FloatCompare.isBigger(this.x, another.x) && FloatCompare.isBigger(this.y, another.y);
+	}
+	
+	/**
+	 * 向量是否大于等于another
+	 * @param another
+	 * @return
+	 */
+	public boolean isBiggerOrEqual(Vector2 another) {
+		return this.isBigger(another) || this.isEqual(another);
+	}
+	
+
+	/**
+	 * 向量是否小于another
+	 * @param another
+	 * @return
+	 */
+	public boolean isLess(Vector2 another) {
+		return FloatCompare.isLess(this.x, another.x) && FloatCompare.isLess(this.y, another.y);
+	}
+	
+	/**
+	 * 向量是否小于等于another
+	 * @param another
+	 * @return
+	 */
+	public boolean isLessOrEqual(Vector2 another) {
+		return this.isLess(another) || this.isEqual(another);
+	}
 }

@@ -41,8 +41,12 @@ public class Resources {
 		}
 	}
 	
-	public static Image loadImage(String fileName) {
-		return new ImageIcon(fileName).getImage();
+	/**
+	 * º”‘ÿÕº∆¨
+	 * @param filePath
+	 * @return
+	 */
+	public static Image loadImage(String filePath) {
+		return new ImageIcon(filePath).getImage();
 	}
-
 }

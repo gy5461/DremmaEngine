@@ -9,12 +9,14 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
 import priv.dremma.game.audio.AudioManager;
+import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.entities.Player;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
 import priv.dremma.game.gfx.Screen;
 import priv.dremma.game.tiles.TileMap;
+import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
@@ -58,6 +60,8 @@ public class GameCore extends Canvas implements Runnable {
 	private Player player;
 	private TileMap map;
 	public static Screen screen;
+	
+	CollisionBox cb1, cb2;
 
 	public void onStart() {
 		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // 设置2D游戏视角
@@ -78,9 +82,13 @@ public class GameCore extends Canvas implements Runnable {
 		// 从文件中加载地图
 		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
 		map.setPlayer(player);
+		cb1 = new CollisionBox(new Vector2(300,300),new Vector2(500,500), mouseInputHandler);
+		cb2 = new CollisionBox(new Vector2(400,400),new Vector2(600,600), mouseInputHandler);
 	}
 
 	public void onUpdate() {
+		cb1.update();
+		cb2.update();
 	}
 
 	public void onDestroy() {
@@ -149,6 +157,10 @@ public class GameCore extends Canvas implements Runnable {
 
 		// 绘制地图
 		map.draw(g);
+		
+		// 绘制碰撞盒
+		cb1.draw(g);
+		cb2.draw(g);
 	}
 
 	/**

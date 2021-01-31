@@ -275,9 +275,6 @@ public class TileMap {
 				}
 			}
 		}
-
-		// 清空实体渲染队列
-		renderEntities.clear();
 		
 		// 向实体渲染队列中添加游戏主角
 		renderEntities.add(player);
