@@ -23,14 +23,11 @@ import priv.dremma.game.util.Vector2;
 public class Player extends Entity {
 
 	public static final int STATE_NORMAL = 0;
-	public static final int STATE_JUMPING = 1;
 	public static final float GRAVITY = 0.002f;
 
 	public boolean isMoved;
 
 	KeyInputHandler keyInputHandler;
-
-	private int floorY;
 	private int state;
 
 	// 站立动画
@@ -55,12 +52,13 @@ public class Player extends Entity {
 	Animation playerRunRightAnimation = new Animation();
 	Animation playerRunLeftAnimation = new Animation();
 
-	public Player(KeyInputHandler keyInputHandler) {
+	public Player(KeyInputHandler keyInputHandler, float speed) {
 		super();
 		state = STATE_NORMAL;
 		this.keyInputHandler = keyInputHandler;
 		this.isMoved = false;
 		this.name = "Player";
+		this.speed = speed;
 		CollisionBox.collisionBoxs.put(this.name, new CollisionBox(this.position.sub(new Vector2(33,-17)), this.position.add(new Vector2(25,90))));
 	}
 
@@ -71,114 +69,95 @@ public class Player extends Entity {
 	public int getState() {
 		return state;
 	}
-
-	public void setFloorY(int floorY) {
-		this.floorY = floorY;
-		this.position.y = floorY;
-	}
-
-	public void jump() {
-		this.speed.y = -1;
-		state = STATE_JUMPING;
-	}
-
-	Vector2 lastSpeed = Vector2.zero();
+	
+	Vector2 lastMoveVector = Vector2.zero();
 	public synchronized void update() {
 		if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2DOT5) {
-			Vector2 tmpSpeed = lastSpeed;
+			this.moveVector = lastMoveVector;
 			float modifier = 76.0f/130.0f;	// 2.5D视角时，需要进行速度修正才不会走歪
 			this.isMoved = false;
 			if (this.keyInputHandler.up.isPressed()) {
 				this.animator.state = "playerRunUp";
-				tmpSpeed = (new Vector2(this.speed.x, this.speed.y*modifier)).mul(new Vector2(-1, -1));
+				this.moveVector = (new Vector2(this.speed, this.speed*modifier)).mul(new Vector2(-1, -1));
 				isMoved = true;
 			} else if (this.keyInputHandler.down.isPressed()) {
 				this.animator.state = "playerRunDown";
-				tmpSpeed = (new Vector2(this.speed.x, this.speed.y*modifier)).mul(new Vector2(1, 1));
+				this.moveVector = (new Vector2(this.speed, this.speed*modifier)).mul(new Vector2(1, 1));
 				isMoved = true;
 			} else if (this.keyInputHandler.left.isPressed()) {
 				this.animator.state = "playerRunLeft";
-				tmpSpeed = (new Vector2(this.speed.x, this.speed.y*modifier)).mul(new Vector2(-1, 1));
+				this.moveVector = (new Vector2(this.speed, this.speed*modifier)).mul(new Vector2(-1, 1));
 				isMoved = true;
 			} else if (this.keyInputHandler.right.isPressed()) {
 				this.animator.state = "playerRunRight";
-				tmpSpeed = (new Vector2(this.speed.x, this.speed.y*modifier)).mul(new Vector2(1, -1));
+				this.moveVector = (new Vector2(this.speed, this.speed*modifier)).mul(new Vector2(1, -1));
 				isMoved = true;
 			}
 			
 			if (!isMoved) {
-				if (FloatCompare.isBigger(tmpSpeed.x , 0) && FloatCompare.isBigger(tmpSpeed.y , 0)) {
+				if (FloatCompare.isBigger(this.moveVector.x , 0) && FloatCompare.isBigger(this.moveVector.y , 0)) {
 					this.animator.state = "playerStandDown";
 				}
-				if (FloatCompare.isBigger(tmpSpeed.x , 0) && FloatCompare.isLess(tmpSpeed.y , 0)) {
+				if (FloatCompare.isBigger(this.moveVector.x , 0) && FloatCompare.isLess(this.moveVector.y , 0)) {
 					this.animator.state = "playerStandRight";
 				}
-				if (FloatCompare.isLess(tmpSpeed.x , 0) && FloatCompare.isBigger(tmpSpeed.y , 0)) {
+				if (FloatCompare.isLess(this.moveVector.x , 0) && FloatCompare.isBigger(this.moveVector.y , 0)) {
 					this.animator.state = "playerStandLeft";
 				}
-				if (FloatCompare.isLess(tmpSpeed.x , 0) && FloatCompare.isLess(tmpSpeed.y , 0)) {
+				if (FloatCompare.isLess(this.moveVector.x , 0) && FloatCompare.isLess(this.moveVector.y , 0)) {
 					this.animator.state = "playerStandUp";
 				}
 				AudioManager.getInstance().stopPlay("walkSound");
 			} else {
 				AudioManager.getInstance().playLoop("walkSound");
-				this.position = this.position.add(tmpSpeed.mul(Time.deltaTime));
-				lastSpeed = tmpSpeed;
+				this.position = this.position.add(this.moveVector.mul(Time.deltaTime));
+				lastMoveVector = this.moveVector;
 			}
 		} else if(GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2) {
-			Vector2 tmpSpeed = lastSpeed;
+			this.moveVector = lastMoveVector;
 			this.isMoved = false;
 			if (this.keyInputHandler.up.isPressed()) {
 				this.animator.state = "playerRunUp";
-				tmpSpeed = (new Vector2(this.speed.x, this.speed.y)).mul(new Vector2(0, -1));
+				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(0, -1));
 				isMoved = true;
 			} else if (this.keyInputHandler.down.isPressed()) {
 				this.animator.state = "playerRunDown";
-				tmpSpeed = (new Vector2(this.speed.x, this.speed.y)).mul(new Vector2(0, 1));
+				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(0, 1));
 				isMoved = true;
 			} else if (this.keyInputHandler.left.isPressed()) {
 				this.animator.state = "playerRunLeft";
-				tmpSpeed = (new Vector2(this.speed.x, this.speed.y)).mul(new Vector2(-1, 0));
+				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(-1, 0));
 				isMoved = true;
 			} else if (this.keyInputHandler.right.isPressed()) {
 				this.animator.state = "playerRunRight";
-				tmpSpeed = (new Vector2(this.speed.x, this.speed.y)).mul(new Vector2(1, 0));
+				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(1, 0));
 				isMoved = true;
 			}
 			
 			if (!isMoved) {
-				if (FloatCompare.isEqual(tmpSpeed.x, 0f) && FloatCompare.isBigger(tmpSpeed.y, 0f)) {
+				if (FloatCompare.isEqual(this.moveVector.x, 0f) && FloatCompare.isBigger(this.moveVector.y, 0f)) {
 					this.animator.state = "playerStandDown";
 				}
-				if (FloatCompare.isBigger(tmpSpeed.x, 0f) && FloatCompare.isEqual(tmpSpeed.y, 0f)) {
+				if (FloatCompare.isBigger(this.moveVector.x, 0f) && FloatCompare.isEqual(this.moveVector.y, 0f)) {
 					this.animator.state = "playerStandRight";
 				}
-				if (FloatCompare.isLess(tmpSpeed.x, 0f) && FloatCompare.isEqual(tmpSpeed.y, 0f)) {
+				if (FloatCompare.isLess(this.moveVector.x, 0f) && FloatCompare.isEqual(this.moveVector.y, 0f)) {
 					this.animator.state = "playerStandLeft";
 				}
-				if (FloatCompare.isEqual(tmpSpeed.x, 0f) && FloatCompare.isLess(tmpSpeed.y, 0f)) {
+				if (FloatCompare.isEqual(this.moveVector.x, 0f) && FloatCompare.isLess(this.moveVector.y, 0f)) {
 					this.animator.state = "playerStandUp";
 				}
 				AudioManager.getInstance().stopPlay("walkSound");	//停止播放脚步声
 			} else {
 				AudioManager.getInstance().playLoop("walkSound");	//循环播放脚步声
-				this.position = this.position.add(tmpSpeed.mul(Time.deltaTime));
-				lastSpeed = tmpSpeed;
+				this.position = this.position.add(this.moveVector.mul(Time.deltaTime));
+				lastMoveVector = this.moveVector;
 			}
-		}
-		
-		if (this.getState() == STATE_JUMPING) {
-			this.speed.y += GRAVITY * Time.deltaTime;
 		}
 
 		super.update();
-
-		if (this.getState() == STATE_JUMPING && this.position.y >= floorY) {
-			this.speed.y = 0;
-			this.position.y = floorY;
-			this.setState(STATE_NORMAL);
-		}
 		
+		//设置碰撞盒坐标
 		CollisionBox.collisionBoxs.get(this.name).leftUpPoint = this.position.sub(new Vector2(33,-17));
 		CollisionBox.collisionBoxs.get(this.name).rightDownPoint = this.position.add(new Vector2(25,90));
 		//Debug.log(Debug.DebugLevel.INFO, ""+this.collisionBox.rightDownPoint.sub(this.position));

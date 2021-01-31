@@ -67,7 +67,7 @@ public class MouseInputHandler implements MouseListener {
 		 * @return
 		 */
 		public boolean isInRect(Vector2 leftUp, Vector2 rightDown) {
-			return this.location.isLessOrEqual(rightDown) && this.location.isBiggerOrEqual(leftUp);
+			return this.location.isInRect(leftUp, rightDown);
 		}
 
 		// ´¥·¢¼ü

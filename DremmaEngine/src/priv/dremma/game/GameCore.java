@@ -66,12 +66,11 @@ public class GameCore extends Canvas implements Runnable {
 
 	public void onStart() {
 		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // 设置2D游戏视角
-		player = new Player(this.keyInputHandler);
+		player = new Player(this.keyInputHandler, 60f);
 		player.loadAnimation();
 
 		player.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.height / 2f);
 
-		player.speed = new Vector2(60f, 60f);
 		player.setScale(new Vector2(2f, 2f));
 
 		// 加载音乐
@@ -131,7 +130,7 @@ public class GameCore extends Canvas implements Runnable {
 			if (Time.shouldRender) {
 				// 游戏开发者更新
 				onUpdate();
-				collisionBoxUpdate();
+				collisionBoxAjustUpdate();
 				frames++;
 				render();
 
@@ -206,8 +205,12 @@ public class GameCore extends Canvas implements Runnable {
 		GameCore.name = name;
 		this.window.setTitle(name);
 	}
-	
-	public void collisionBoxUpdate() {
+
+	/**
+	 * 用于调整碰撞盒
+	 */
+	public void collisionBoxAjustUpdate() {
+		CollisionBox.collisionDetection();
 		if (!CollisionBox.isRender) {
 			return;
 		}

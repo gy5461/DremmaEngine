@@ -38,7 +38,7 @@ public class TileMap {
 
 	private Image[][] tiles; // 地砖
 	public static HashMap<String, Entity> entities; // 游戏中的其他实体
-	private Player player; // 主角
+	public static Player player; // 主角
 	PriorityQueue<Entity> renderEntities; // 渲染优先队列
 	
 	MouseInputHandler mouseInputHandler;
@@ -117,7 +117,7 @@ public class TileMap {
 	 * @param player
 	 */
 	public void setPlayer(Player player) {
-		this.player = player;
+		TileMap.player = player;
 	}
 
 	/**

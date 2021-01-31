@@ -13,26 +13,23 @@ public class Entity {
 
 	public Vector2 position; // 位置
 
-	public Vector2 speed; // 速度
+	public float speed;
+	public Vector2 moveVector; // 速度
 	private Vector2 scale; // 缩放
 	public String name;
 
 	public Entity() {
 		this.position = Vector2.zero();
-		this.speed = Vector2.zero();
-		this.scale = Vector2.one();
-	}
-
-	public Entity(Vector2 position, Vector2 speed) {
-		this.position = position;
-		this.speed = speed;
+		this.speed = 0;
+		this.moveVector = Vector2.zero();
 		this.scale = Vector2.one();
 	}
 	
 	public Entity(Entity e) {
 		this.animator = new Animator(e.animator);
 		this.position = new Vector2(e.position);
-		this.speed = new Vector2(e.speed);
+		this.speed = e.speed;
+		this.moveVector = new Vector2(e.moveVector);
 		this.scale = new Vector2(e.scale);
 		this.name = new String(e.name);
 	}
@@ -45,7 +42,8 @@ public class Entity {
 	public Entity(Animator animator) {
 		this.animator = animator;
 		this.position = Vector2.zero();
-		this.speed = Vector2.zero();
+		this.speed = 0;
+		this.moveVector = Vector2.zero();
 		this.scale = Vector2.one();
 	}
 
@@ -56,7 +54,7 @@ public class Entity {
 	public void setScale(Vector2 scale) {
 		this.scale.x = scale.x;
 		this.scale.y = scale.y;
-		this.speed = this.speed.mul(scale);
+		this.speed *= scale.x;
 	}
 
 	/**

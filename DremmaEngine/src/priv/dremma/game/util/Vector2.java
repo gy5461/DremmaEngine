@@ -161,4 +161,14 @@ public class Vector2 {
 	public boolean isLessOrEqual(Vector2 another) {
 		return this.isLess(another) || this.isEqual(another);
 	}
+	
+	/**
+	 * 当前坐标是否在一个矩形内
+	 * @param leftUp
+	 * @param rightDown
+	 * @return
+	 */
+	public boolean isInRect(Vector2 leftUp, Vector2 rightDown) {
+		return this.isLessOrEqual(rightDown) && this.isBiggerOrEqual(leftUp);
+	}
 }
