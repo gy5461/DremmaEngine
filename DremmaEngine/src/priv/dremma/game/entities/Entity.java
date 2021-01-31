@@ -7,7 +7,7 @@ import java.awt.geom.AffineTransform;
 import priv.dremma.game.anim.Animator;
 import priv.dremma.game.util.Vector2;
 
-public class Entity implements Cloneable {
+public class Entity {
 
 	public Animator animator;
 
@@ -15,6 +15,7 @@ public class Entity implements Cloneable {
 
 	public Vector2 speed; // ËÙ¶È
 	private Vector2 scale; // Ëõ·Å
+	public String name;
 
 	public Entity() {
 		this.position = Vector2.zero();
@@ -33,6 +34,7 @@ public class Entity implements Cloneable {
 		this.position = new Vector2(e.position);
 		this.speed = new Vector2(e.speed);
 		this.scale = new Vector2(e.scale);
+		this.name = new String(e.name);
 	}
 
 	/**

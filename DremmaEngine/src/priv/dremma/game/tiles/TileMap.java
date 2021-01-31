@@ -9,15 +9,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Map.Entry;
 
 import priv.dremma.game.GameCore;
 import priv.dremma.game.anim.Animation;
 import priv.dremma.game.anim.Animator;
+import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.entities.Player;
+import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Resources;
@@ -34,9 +37,11 @@ public class TileMap {
 	public static ArrayList<Image> tilesTable = new ArrayList<Image>();
 
 	private Image[][] tiles; // 地砖
-	private LinkedList<Entity> entities; // 游戏中的其他实体
+	public static HashMap<String, Entity> entities; // 游戏中的其他实体
 	private Player player; // 主角
 	PriorityQueue<Entity> renderEntities; // 渲染优先队列
+	
+	MouseInputHandler mouseInputHandler;
 
 	/**
 	 * 生成指定宽度与高度的TileMap
@@ -46,7 +51,7 @@ public class TileMap {
 	 */
 	public TileMap(int width, int height) {
 		tiles = new Image[width][height];
-		entities = new LinkedList<Entity>();
+		entities = new HashMap<String, Entity>();
 		renderEntities = new PriorityQueue<Entity>(1, new Comparator<Entity>() {
 
 			@Override
@@ -120,8 +125,8 @@ public class TileMap {
 	 * 
 	 * @param entity
 	 */
-	public void addEntity(Entity entity) {
-		entities.add(entity);
+	public static void addEntity(String name, Entity entity) {
+		entities.put(name, entity);
 	}
 
 	/**
@@ -129,15 +134,15 @@ public class TileMap {
 	 * 
 	 * @param entity
 	 */
-	public void removeEntity(Entity entity) {
-		entities.remove(entity);
+	public void removeEntity(String name) {
+		entities.remove(name);
 	}
 
 	/**
 	 * 取得这个地图中所有实体（除主角对象外）的迭代器
 	 */
-	public Iterator<Entity> getEntities() {
-		return entities.iterator();
+	public static Iterator<Entry<String, Entity>> getEntitiesIterator() {
+		return entities.entrySet().iterator();
 	}
 
 	/**
@@ -152,7 +157,7 @@ public class TileMap {
 		Resources.load(Resources.ResourceType.Tile, "floor4", Resources.path + "images/tiles/floor_4.png");
 	}
 
-	static Entity e;
+	static Entity treeEntity;
 
 	/**
 	 * 根据文件加载地图
@@ -201,17 +206,24 @@ public class TileMap {
 		treeAnim.addFrame(Resources.loadImage(Resources.path + "images/entities/tree1.png"), 100);
 		tree.addAnimation("static", treeAnim);
 		tree.state = "static";
-		e = new Entity(tree);
-		e.setScale(new Vector2(3f, 3f));
-
-		resultMap.addEntity(e, 2, 5);
-
-		e.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(e, 4, 5);
+		treeEntity = new Entity(tree);
 		
-		e.setScale(new Vector2(1f, 1f));
-		resultMap.addEntity(e, 3, 11);
+		treeEntity.setScale(new Vector2(3f, 3f));
+		treeEntity.name = "tree1";
+		resultMap.addEntity(treeEntity, 2, 5);
 
+		treeEntity.name = "tree2";
+		treeEntity.setScale(new Vector2(2f, 2f));
+		resultMap.addEntity(treeEntity, 4, 5);
+		
+		treeEntity.name = "tree3";
+		treeEntity.setScale(new Vector2(1f, 1f));
+		resultMap.addEntity(treeEntity, 3, 11);
+		
+		// 设置实体碰撞盒位置
+		CollisionBox.collisionBoxs.get("tree1").setPos(new Vector2(338, 216), new Vector2(556, 348));
+		CollisionBox.collisionBoxs.get("tree2").setPos(new Vector2(635, 172), new Vector2(785, 260));
+		CollisionBox.collisionBoxs.get("tree3").setPos(new Vector2(545, 398), new Vector2(617, 440));
 		return resultMap;
 	}
 
@@ -235,7 +247,8 @@ public class TileMap {
 					GUtils.worldTileCenterToWorldPixel(tileX, tileY + 1, this.getTile(tileX, tileY).getWidth(null),
 							this.getTile(tileX, tileY).getHeight(null)).y - entity.getHeight());
 
-			this.addEntity(entity);
+			TileMap.addEntity(entity.name, entity);
+			CollisionBox.collisionBoxs.put(entity.name, new CollisionBox(entity.position, entity.position.add(Vector2.one().mul(50))));
 		}
 	}
 
@@ -280,8 +293,10 @@ public class TileMap {
 		renderEntities.add(player);
 
 		// 向实体渲染队列中添加其他实体
-		for (Entity e : this.entities) {
-			renderEntities.add(e);
+		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
+		while (entitiesIterator.hasNext()) {
+			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
+			renderEntities.add(entry.getValue());
 		}
 		
 		// 渲染优先队列

@@ -5,6 +5,9 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.swing.JFrame;
 
@@ -60,8 +63,6 @@ public class GameCore extends Canvas implements Runnable {
 	private Player player;
 	private TileMap map;
 	public static Screen screen;
-	
-	CollisionBox cb1, cb2;
 
 	public void onStart() {
 		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // 设置2D游戏视角
@@ -82,13 +83,9 @@ public class GameCore extends Canvas implements Runnable {
 		// 从文件中加载地图
 		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
 		map.setPlayer(player);
-		cb1 = new CollisionBox(new Vector2(300,300),new Vector2(500,500), mouseInputHandler);
-		cb2 = new CollisionBox(new Vector2(400,400),new Vector2(600,600), mouseInputHandler);
 	}
 
 	public void onUpdate() {
-		cb1.update();
-		cb2.update();
 	}
 
 	public void onDestroy() {
@@ -134,6 +131,7 @@ public class GameCore extends Canvas implements Runnable {
 			if (Time.shouldRender) {
 				// 游戏开发者更新
 				onUpdate();
+				collisionBoxUpdate();
 				frames++;
 				render();
 
@@ -159,8 +157,12 @@ public class GameCore extends Canvas implements Runnable {
 		map.draw(g);
 		
 		// 绘制碰撞盒
-		cb1.draw(g);
-		cb2.draw(g);
+		Iterator<Entry<String, CollisionBox>> collisionBoxsIterator = CollisionBox.getCollisionBoxsIterator();
+		while (collisionBoxsIterator.hasNext()) {
+		   HashMap.Entry<String, CollisionBox> entry = (HashMap.Entry<String, CollisionBox>) collisionBoxsIterator.next();
+		   CollisionBox collisionBox = entry.getValue();
+		   collisionBox.draw(g);
+	    }	
 	}
 
 	/**
@@ -203,5 +205,55 @@ public class GameCore extends Canvas implements Runnable {
 		}
 		GameCore.name = name;
 		this.window.setTitle(name);
+	}
+	
+	public void collisionBoxUpdate() {
+		if (!CollisionBox.isRender) {
+			return;
+		}
+		
+	   Iterator<Entry<String, CollisionBox>> collisionBoxsIterator = CollisionBox.getCollisionBoxsIterator();
+	   while (collisionBoxsIterator.hasNext()) {
+		   HashMap.Entry<String, CollisionBox> entry = (HashMap.Entry<String, CollisionBox>) collisionBoxsIterator.next();
+		   String name = entry.getKey();
+		   CollisionBox collisionBox = entry.getValue();
+		   // 调节左上点的位置
+			if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() % 2 == 1
+					&& collisionBox.isChoosenLeftUp == false && this.mouseInputHandler.mouse.isInRect(
+							collisionBox.leftUpPoint.sub(Vector2.one().mul(5)), collisionBox.leftUpPoint.add(Vector2.one().mul(5)))) {
+				collisionBox.isChoosenLeftUp = true;
+			}
+
+			if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() % 2 == 0
+					&& collisionBox.isChoosenLeftUp == true) {
+				collisionBox.isChoosenLeftUp = false;
+				Debug.log(Debug.DebugLevel.INFO, name + ":调整过后，左上点坐标为：" + collisionBox.leftUpPoint);
+			}
+
+			if (collisionBox.isChoosenLeftUp) {
+				if (!collisionBox.leftUpPoint.isEqual(this.mouseInputHandler.mouse.getCurPos())) {
+					collisionBox.leftUpPoint = this.mouseInputHandler.mouse.getCurPos();
+				}
+			}
+
+			// 调节右下点的位置
+			if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() % 2 == 1
+					&& collisionBox.isChoosenRightDown == false && this.mouseInputHandler.mouse.isInRect(
+							collisionBox.rightDownPoint.sub(Vector2.one().mul(5)), collisionBox.rightDownPoint.add(Vector2.one().mul(5)))) {
+				collisionBox.isChoosenRightDown = true;
+			}
+
+			if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() % 2 == 0
+					&& collisionBox.isChoosenRightDown == true) {
+				collisionBox.isChoosenRightDown = false;
+				Debug.log(Debug.DebugLevel.INFO, name + ":调整过后，右下点坐标为：" + collisionBox.rightDownPoint);
+			}
+
+			if (collisionBox.isChoosenRightDown) {
+				if (!collisionBox.rightDownPoint.isEqual(this.mouseInputHandler.mouse.getCurPos())) {
+					collisionBox.rightDownPoint = this.mouseInputHandler.mouse.getCurPos();
+				}
+			}
+		 }
 	}
 }

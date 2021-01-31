@@ -13,6 +13,7 @@ public class Sandbox extends Game {
 	
 	int state = 0;
 	
+	@Override
 	public void onStart() {
 		this.setName("SandBox");
 		
@@ -22,6 +23,7 @@ public class Sandbox extends Game {
 		Resources.load(Resources.ResourceType.Music, "walkSound", "res/music/walk.wav");
 	}
 
+	@Override
 	public void onUpdate() {
 		
 		AudioManager.getInstance().playOnce("moneySound");

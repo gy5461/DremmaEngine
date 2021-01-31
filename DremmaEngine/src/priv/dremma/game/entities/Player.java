@@ -1,5 +1,6 @@
 package priv.dremma.game.entities;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.HashMap;
 
@@ -7,6 +8,7 @@ import priv.dremma.game.GameCore;
 import priv.dremma.game.anim.Animation;
 import priv.dremma.game.anim.Animator;
 import priv.dremma.game.audio.AudioManager;
+import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.Resources;
@@ -58,6 +60,8 @@ public class Player extends Entity {
 		state = STATE_NORMAL;
 		this.keyInputHandler = keyInputHandler;
 		this.isMoved = false;
+		this.name = "Player";
+		CollisionBox.collisionBoxs.put(this.name, new CollisionBox(this.position.sub(new Vector2(33,-17)), this.position.add(new Vector2(25,90))));
 	}
 
 	public void setState(int state) {
@@ -174,6 +178,11 @@ public class Player extends Entity {
 			this.position.y = floorY;
 			this.setState(STATE_NORMAL);
 		}
+		
+		CollisionBox.collisionBoxs.get(this.name).leftUpPoint = this.position.sub(new Vector2(33,-17));
+		CollisionBox.collisionBoxs.get(this.name).rightDownPoint = this.position.add(new Vector2(25,90));
+		//Debug.log(Debug.DebugLevel.INFO, ""+this.collisionBox.rightDownPoint.sub(this.position));
+		//this.collisionBox.setPos(this.position.sub(new Vector2(33,-17)), this.position.add(Vector2.one().mul(50)));
 	}
 
 
@@ -294,5 +303,10 @@ public class Player extends Entity {
 
 			this.animator.state = "playerStandDown";
 		}
+	}
+	
+	@Override
+	public void draw(Graphics2D g) {
+		super.draw(g);
 	}
 }

@@ -3,9 +3,10 @@ package priv.dremma.game.collision;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
-import priv.dremma.game.event.MouseInputHandler;
-import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Vector2;
 
@@ -16,6 +17,8 @@ import priv.dremma.game.util.Vector2;
  *
  */
 public class CollisionBox {
+	// 场景中所有的碰撞盒
+	public static HashMap<String, CollisionBox> collisionBoxs = new HashMap<String, CollisionBox>();
 
 	public Vector2 leftUpPoint; // 左上点
 	public Vector2 rightDownPoint; // 右下点
@@ -26,13 +29,14 @@ public class CollisionBox {
 	public boolean isChoosenLeftUp;
 	public boolean isChoosenRightDown;
 
-	public MouseInputHandler mouseInputHandler;
-
-	public CollisionBox(Vector2 leftUpPoint, Vector2 rightDownPoint, MouseInputHandler mouseInputHandler) {
+	public CollisionBox(Vector2 leftUpPoint, Vector2 rightDownPoint) {
 		this.leftUpPoint = new Vector2(leftUpPoint);
 		this.rightDownPoint = new Vector2(rightDownPoint);
 		this.isChoosenLeftUp = false;
-		this.mouseInputHandler = mouseInputHandler;
+	}
+	
+	public static Iterator<Entry<String, CollisionBox>> getCollisionBoxsIterator() {
+		return CollisionBox.collisionBoxs.entrySet().iterator();
 	}
 
 	public void setPos(Vector2 leftUpPoint, Vector2 rightDownPoint) {
@@ -46,49 +50,6 @@ public class CollisionBox {
 
 	public float getHeight() {
 		return (this.rightDownPoint.sub(this.leftUpPoint)).y;
-	}
-
-	public void update() {
-		if (!CollisionBox.isRender) {
-			return;
-		}
-		// 调节左上点的位置
-		if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() % 2 == 1
-				&& this.isChoosenLeftUp == false && this.mouseInputHandler.mouse.isInRect(
-						this.leftUpPoint.sub(Vector2.one().mul(5)), this.leftUpPoint.add(Vector2.one().mul(5)))) {
-			this.isChoosenLeftUp = true;
-		}
-
-		if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() % 2 == 0
-				&& this.isChoosenLeftUp == true) {
-			this.isChoosenLeftUp = false;
-			Debug.log(Debug.DebugLevel.INFO, "调整过后，左上点坐标为：" + this.leftUpPoint);
-		}
-
-		if (this.isChoosenLeftUp) {
-			if (!this.leftUpPoint.isEqual(this.mouseInputHandler.mouse.getCurPos())) {
-				this.leftUpPoint = this.mouseInputHandler.mouse.getCurPos();
-			}
-		}
-
-		// 调节右下点的位置
-		if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() % 2 == 1
-				&& this.isChoosenRightDown == false && this.mouseInputHandler.mouse.isInRect(
-						this.rightDownPoint.sub(Vector2.one().mul(5)), this.rightDownPoint.add(Vector2.one().mul(5)))) {
-			this.isChoosenRightDown = true;
-		}
-
-		if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() % 2 == 0
-				&& this.isChoosenRightDown == true) {
-			this.isChoosenRightDown = false;
-			Debug.log(Debug.DebugLevel.INFO, "调整过后，右下点坐标为：" + this.rightDownPoint);
-		}
-
-		if (this.isChoosenRightDown) {
-			if (!this.rightDownPoint.isEqual(this.mouseInputHandler.mouse.getCurPos())) {
-				this.rightDownPoint = this.mouseInputHandler.mouse.getCurPos();
-			}
-		}
 	}
 
 	public void draw(Graphics2D g) {
