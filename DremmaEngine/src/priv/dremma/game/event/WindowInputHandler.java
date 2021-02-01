@@ -22,12 +22,12 @@ public class WindowInputHandler implements WindowListener {
 	
 	@Override
 	public void windowOpened(WindowEvent event) {
-		Debug.log(Debug.DebugLevel.SERVERE, "Window Opened!");
+		Debug.log(Debug.DebugLevel.WARNING, "Window Opened!");
 	}
 
 	@Override
 	public void windowClosing(WindowEvent event) {
-		Debug.log(Debug.DebugLevel.SERVERE, "Window Closing!");
+		Debug.log(Debug.DebugLevel.WARNING, "Window Closing!");
 	}
 
 	@Override

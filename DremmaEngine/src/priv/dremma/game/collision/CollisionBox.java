@@ -125,29 +125,32 @@ public class CollisionBox {
 			}
 
 			if (!entity.moveVector.isEqual(Vector2.zero())) {
-				// 本entity进行了移动，进行碰撞检测
-				if (collisionBox.isTrigger == false) {
-					// 碰撞盒为非触发器
-					Iterator<Entry<String, CollisionBox>> anotherIterator = CollisionBox.getCollisionBoxsIterator();
-					while (anotherIterator.hasNext()) {
-						HashMap.Entry<String, CollisionBox> anotherEntry = (HashMap.Entry<String, CollisionBox>) anotherIterator
-								.next();
-						String anotherName = anotherEntry.getKey();
-						if (!anotherName.equals(name)) {
-							CollisionBox anotherCollisionBox = anotherEntry.getValue();
+				Iterator<Entry<String, CollisionBox>> anotherIterator = CollisionBox.getCollisionBoxsIterator();
+				while (anotherIterator.hasNext()) {
+					HashMap.Entry<String, CollisionBox> anotherEntry = (HashMap.Entry<String, CollisionBox>) anotherIterator
+							.next();
+					String anotherName = anotherEntry.getKey();
+					if (!anotherName.equals(name)) {
+						CollisionBox anotherCollisionBox = anotherEntry.getValue();
+						if (anotherCollisionBox.isTrigger) {
+							// 进行触发检测
+							if (collisionBox.isIntersected(anotherCollisionBox) == true) {
+								// 发生了碰撞
+								Debug.log(Debug.DebugLevel.INFO, name + " 触发了:" + anotherName);
+							}
+						} else {
+							// 进行碰撞检测
 							CollisionBox nextCollisionBox = collisionBox
 									.translate(entity.moveVector.mul(Time.deltaTime));
 							if (collisionBox.isIntersected(anotherCollisionBox) == false
 									&& nextCollisionBox.isIntersected(anotherCollisionBox) == true) {
 								// 发生了碰撞
-								Debug.log(Debug.DebugLevel.INFO, "撞上了:" + anotherName);
-								entity.position = entity.position.sub(nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint));
+								Debug.log(Debug.DebugLevel.INFO, name + " 撞上了:" + anotherName);
+								entity.position = entity.position
+										.sub(nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint));
 							}
 						}
 					}
-
-				} else {
-					// 碰撞盒为触发器
 				}
 			}
 		}
@@ -155,6 +158,7 @@ public class CollisionBox {
 
 	/**
 	 * 判断两个碰撞盒是否相交
+	 * 
 	 * @param anotherCollisionBox
 	 * @return
 	 */
@@ -173,7 +177,7 @@ public class CollisionBox {
 		float xMax = Math.max(thisXMax, anotherXMax);
 		float yMin = Math.min(thisYMin, anotherYMin);
 		float yMax = Math.max(thisYMax, anotherYMax);
-		
+
 		if (FloatCompare.isLessOrEqual(xMax - xMin, thisXMax - thisXMin + anotherXMax - anotherXMin)
 				&& FloatCompare.isLessOrEqual(yMax - yMin, thisYMax - thisYMin + anotherYMax - anotherYMin)) {
 			return true;

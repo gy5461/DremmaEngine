@@ -154,8 +154,6 @@ public class TileMap {
 		Resources.load(Resources.ResourceType.Tile, "floor4", Resources.path + "images/tiles/floor_4.png");
 	}
 
-	static Entity treeEntity;
-
 	/**
 	 * 根据文件加载地图
 	 */
@@ -198,29 +196,61 @@ public class TileMap {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		Animator tree = new Animator();
-		Animation treeAnim = new Animation();
-		treeAnim.addFrame(Resources.loadImage(Resources.path + "images/entities/tree1.png"), 100);
-		tree.addAnimation("static", treeAnim);
-		tree.state = "static";
-		treeEntity = new Entity(tree);
 		
-		treeEntity.setScale(new Vector2(3f, 3f));
-		treeEntity.name = "tree1";
-		resultMap.addEntity(treeEntity, 2, 5);
+		// tree1
+		Animator tree1Animator = new Animator();
+		Animation tree1Animation = new Animation();
+		tree1Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/tree1.png"), 100);
+		tree1Animator.addAnimation("static", tree1Animation);
+		tree1Animator.state = "static";
+		Entity tree1Entity = new Entity(tree1Animator);
+		
+		tree1Entity.setScale(new Vector2(3f, 3f));
+		tree1Entity.name = "tree1_1";
+		resultMap.addEntity(tree1Entity, 2, 5);
 
-		treeEntity.name = "tree2";
-		treeEntity.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(treeEntity, 4, 5);
+		tree1Entity.name = "tree1_2";
+		tree1Entity.setScale(new Vector2(2f, 2f));
+		resultMap.addEntity(tree1Entity, 4, 5);
 		
-		treeEntity.name = "tree3";
-		treeEntity.setScale(new Vector2(1f, 1f));
-		resultMap.addEntity(treeEntity, 3, 11);
+		tree1Entity.name = "tree1_3";
+		tree1Entity.setScale(new Vector2(1f, 1f));
+		resultMap.addEntity(tree1Entity, 3, 11);
 		
 		// 设置实体碰撞盒位置
-		CollisionBox.collisionBoxs.get("tree1").setPos(new Vector2(338, 216), new Vector2(556, 348));
-		CollisionBox.collisionBoxs.get("tree2").setPos(new Vector2(635, 172), new Vector2(785, 260));
-		CollisionBox.collisionBoxs.get("tree3").setPos(new Vector2(545, 398), new Vector2(617, 440));
+		CollisionBox.collisionBoxs.get("tree1_1").setPos(new Vector2(338, 216), new Vector2(556, 348));
+		CollisionBox.collisionBoxs.get("tree1_2").setPos(new Vector2(635, 172), new Vector2(785, 260));
+		CollisionBox.collisionBoxs.get("tree1_3").setPos(new Vector2(545, 398), new Vector2(617, 440));
+		
+		// archiving
+		Animator archivingAnimator = new Animator();
+		Animation archivingAnimation = new Animation();
+		archivingAnimation.addFrame(Resources.loadImage(Resources.path + "images/entities/archiving.png"), 100);
+		archivingAnimator.addAnimation("static", archivingAnimation);
+		archivingAnimator.state = "static";
+		Entity archivingEntity = new Entity(archivingAnimator);
+		
+		archivingEntity.name = "archiving";
+		archivingEntity.setScale(new Vector2(0.2f,0.2f));
+		resultMap.addEntity(archivingEntity, 3, 21);
+		
+		CollisionBox.collisionBoxs.get("archiving").setPos(new Vector2(88, 73), new Vector2(221, 169));
+		CollisionBox.collisionBoxs.get("archiving").isTrigger = true;	//触发盒子
+		
+		// chair1
+		Animator chair1Animator = new Animator();
+		Animation chair1Animation = new Animation();
+		chair1Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair1.png"), 100);
+		chair1Animator.addAnimation("static", chair1Animation);
+		chair1Animator.state = "static";
+		Entity chair1Entity = new Entity(chair1Animator);
+		
+		chair1Entity.name = "chair1";
+		chair1Entity.setScale(new Vector2(2f,2f));
+		resultMap.addEntity(chair1Entity, 0, 11);
+		
+		CollisionBox.collisionBoxs.get("chair1").setPos(new Vector2(166, 468), new Vector2(265, 523));
+		
 		return resultMap;
 	}
 
