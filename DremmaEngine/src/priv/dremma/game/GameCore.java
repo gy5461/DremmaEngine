@@ -83,13 +83,14 @@ public class GameCore extends Canvas implements Runnable {
 		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
 		map.setPlayer(player);
 		
-		CollisionBox.shouldRender = false;
+		//CollisionBox.shouldRender = false;
 	}
 
 	public void onUpdate() {
 	}
 
 	public void onDestroy() {
+		CollisionBox.save();
 	}
 
 	/**
@@ -111,7 +112,6 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	public synchronized void stop() {
-		onDestroy();
 		isRunning = false;
 
 		try {

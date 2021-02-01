@@ -5,12 +5,15 @@ import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map.Entry;
+import java.util.Queue;
 
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.FloatCompare;
+import priv.dremma.game.util.IOHelper;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
@@ -22,6 +25,7 @@ import priv.dremma.game.util.Vector2;
  *
  */
 public class CollisionBox {
+
 	// 场景中所有的碰撞盒
 	public static HashMap<String, CollisionBox> collisionBoxs = new HashMap<String, CollisionBox>();
 
@@ -36,6 +40,8 @@ public class CollisionBox {
 	public boolean isTrigger;
 	public boolean isChoosenLeftUp;
 	public boolean isChoosenRightDown;
+
+	static String path = Resources.path + "data/collisionBox.dat"; // 数据文件目录
 
 	public CollisionBox(Vector2 leftUpPoint, Vector2 rightDownPoint) {
 		this.leftUpPoint = new Vector2(leftUpPoint);
@@ -185,8 +191,53 @@ public class CollisionBox {
 		return false;
 	}
 
+	/**
+	 * 对碰撞盒进行平移
+	 * 
+	 * @param moveVector
+	 * @return
+	 */
 	private CollisionBox translate(Vector2 moveVector) {
 		return new CollisionBox(new Vector2(this.leftUpPoint.add(moveVector)),
 				new Vector2(this.rightDownPoint.add(moveVector)));
+	}
+
+	/**
+	 * 从文件中加载碰撞盒数据
+	 */
+	@SuppressWarnings("unchecked")
+	public static void load() {
+		String name;
+		Vector2 leftUpPoint, rightDownPoint;
+		Queue<Object> objs = (Queue<Object>)IOHelper.readObject(path);
+		while(!objs.isEmpty()) {
+			name = (String)objs.peek();
+			objs.remove(name);
+			leftUpPoint = (Vector2)objs.peek();
+			objs.remove(leftUpPoint);
+			rightDownPoint = (Vector2)objs.peek();
+			objs.remove(rightDownPoint);
+			
+			CollisionBox.collisionBoxs.get(name).setPos(leftUpPoint, rightDownPoint);
+		}
+	}
+
+	/**
+	 * 将碰撞盒数据存进文件
+	 */
+	public static void save() {
+		Queue<Object> objs = new LinkedList<Object>();
+		Iterator<Entry<String, CollisionBox>> collisionBoxsIterator = CollisionBox.getCollisionBoxsIterator();
+		while (collisionBoxsIterator.hasNext()) {
+			HashMap.Entry<String, CollisionBox> entry = (HashMap.Entry<String, CollisionBox>) collisionBoxsIterator
+					.next();
+			String name = entry.getKey();
+			CollisionBox collisionBox = entry.getValue();
+			
+			objs.add(name);
+			objs.add(collisionBox.leftUpPoint);
+			objs.add(collisionBox.rightDownPoint);
+		}
+		IOHelper.writeObject(path, objs);
 	}
 }

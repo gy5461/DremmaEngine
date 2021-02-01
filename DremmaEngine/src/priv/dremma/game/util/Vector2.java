@@ -1,13 +1,19 @@
 package priv.dremma.game.util;
 
+import java.io.Serializable;
+
 /**
  * 对二维向量的常用方法的封装
  * 
  * @author guoyi
  *
  */
-public class Vector2 {
+public class Vector2 implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6749397976961813275L;
 	public float x, y; // 向量(x,y)在x轴与y轴上的分量
 
 	public static Vector2 zero() {

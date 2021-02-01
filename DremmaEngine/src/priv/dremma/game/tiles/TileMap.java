@@ -217,11 +217,6 @@ public class TileMap {
 		tree1Entity.setScale(new Vector2(1f, 1f));
 		resultMap.addEntity(tree1Entity, 3, 11);
 		
-		// 设置实体碰撞盒位置
-		CollisionBox.collisionBoxs.get("tree1_1").setPos(new Vector2(338, 216), new Vector2(556, 348));
-		CollisionBox.collisionBoxs.get("tree1_2").setPos(new Vector2(635, 172), new Vector2(785, 260));
-		CollisionBox.collisionBoxs.get("tree1_3").setPos(new Vector2(545, 398), new Vector2(617, 440));
-		
 		// archiving
 		Animator archivingAnimator = new Animator();
 		Animation archivingAnimation = new Animation();
@@ -233,8 +228,6 @@ public class TileMap {
 		archivingEntity.name = "archiving";
 		archivingEntity.setScale(new Vector2(0.2f,0.2f));
 		resultMap.addEntity(archivingEntity, 3, 21);
-		
-		CollisionBox.collisionBoxs.get("archiving").setPos(new Vector2(88, 73), new Vector2(221, 169));
 		CollisionBox.collisionBoxs.get("archiving").isTrigger = true;	//触发盒子
 		
 		// chair1
@@ -249,7 +242,7 @@ public class TileMap {
 		chair1Entity.setScale(new Vector2(2f,2f));
 		resultMap.addEntity(chair1Entity, 0, 11);
 		
-		CollisionBox.collisionBoxs.get("chair1").setPos(new Vector2(166, 468), new Vector2(265, 523));
+		CollisionBox.load();
 		
 		return resultMap;
 	}
