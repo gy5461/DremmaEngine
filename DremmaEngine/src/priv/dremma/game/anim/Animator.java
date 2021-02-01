@@ -31,11 +31,6 @@ public class Animator {
 		return animations.get(state);
 	}
 	
-//	public void playOnce(String state) {
-//		this.state = state;
-//		animations.get(state).update();
-//	}
-	
 	public void playLoop(String state) {
 		this.state = state;
 		animations.get(state).update();

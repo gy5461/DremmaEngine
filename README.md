@@ -115,7 +115,155 @@ public void draw(Graphics2D g) {
 
 ![anim](DremmaEngine/gif/anim.gif)
 
+* Animator
+  * HashMap<String, Animation> animations哈希表
+  * String类型的state，表示动画状态，可在外部修改当前动画状态
+  * 提供无参构造函数已经深拷贝的拷贝构造函数
+  * 可以向动画控制器中添加Animation，获取指定状态的动画
+  * 循环播放当前状态动画
+* Animation
+  * 关键帧动画：AnimFrame数组frames
+  * 维护当前帧在关键帧数组中的下标、当前动画播放时长及动画总时长
+  * 提供无参构造函数及深拷贝的拷贝构造函数（用于预制体概念中的克隆）
+  * 可向动画中添加关键帧：图像，该图像显示的时间长度
+  * 支持从头开始播放本动画、根据播放的时长更新动画、获取当前图像、获取当前关键帧
+* AnimFrame
+  * 动画帧：记录图像和本图像播放的结束时间
+  * 提供带参构造函数，使用时endTime即放入帧时的totalDuration
 
+### 地图系统
+
+地图系统涉及游戏中地图的加载，实体及场景的渲染，以及三种坐标系的坐标转换（世界坐标、屏幕坐标及地砖坐标）
+
+* TileMap中保存静态 ArrayList\<Image\>tilesTable：地砖编号与地砖对应的表，在从文件中加载地图时使用
+
+* Image\[\]\[\]数组tiles表示二维地图，每个成员为一块地砖
+
+* HashMap<String, Entity> entities表示游戏中的其他实体，其他是指相对于Player
+
+* player游戏主角，可被玩家操控
+
+* 渲染优先队列PriorityQueue\<Entity\> renderEntities;
+* 提供带参构造函数，传入地砖x轴方向的数量width，y轴方向的数量height
+* 可通过getWidth()，getHeight()获取地砖在各方向上的个数
+* 通过gitTile获取指定地砖坐标的地砖
+* 通过setTile设置指定位置的地砖
+* 通过getPlayer、setPlayer获取、设置游戏主角对象
+* 通过addEntity、removeEntity添加实体到地图中或从地图中删除实体
+* 取得所有实体（除主角对象外）的迭代器
+* 通过loadTiles向tilesTable中填入数据（地砖图片，将自动编号），如果已经存在则丢弃
+* loadTileMap方法根据文件中的地砖编号加载地图
+* 通过addEntity(Entity srcEntity, **int** tileX, **int** tileY)方法克隆srcEntity并添加至地砖坐标为(tileX，tileY)的地方
+* 通过draw方法渲染地图，先绘制地砖，再绘制实体渲染队列
+
+#### 渲染顺序
+
+* 使用内部为二叉堆的优先队列实现，在TileMap中维护渲染优先队列
+
+  ~~~java
+  PriorityQueue<Entity> renderEntities; // 渲染优先队列
+  
+  // 规定优先级
+  renderEntities = new PriorityQueue<Entity>(1, new Comparator<Entity>() {
+    
+    @Override
+    public int compare(Entity o1, Entity o2) {
+      // 解决人树问题，图像底部纵坐标小的实体优先渲染
+      return FloatCompare.isLess(o1.getBottom(), o2.getBottom()) ? -1 : 1;
+    }
+  
+  });
+  
+  // 向实体渲染队列中添加游戏主角
+  renderEntities.add(player);
+  
+  // 向实体渲染队列中添加其他实体
+  Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
+  while (entitiesIterator.hasNext()) {
+    HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
+    renderEntities.add(entry.getValue());
+  }
+  
+  // 渲染优先队列
+  while(!renderEntities.isEmpty()) {
+    renderEntities.peek().draw(g);
+    renderEntities.remove(renderEntities.peek());
+  }
+  ~~~
+
+### 碰撞检测系统
+
+维护游戏场景中所有的碰撞盒到哈希表（String表示碰撞盒名称）HashMap<String, CollisionBox> **collisionBoxs**中，方便在任意地方添加碰撞盒
+
+* 每个碰撞盒由两个点确定（左上点及右下点）
+
+* 碰撞盒默认不为触发器模式，若要设置触发器，将isTrigger置为true即可
+
+* 可通过getWidth、getHeight获取碰撞盒的宽度、长度
+
+* 可通过静态boolean shouldRender控制是否渲染碰撞盒到屏幕上以方便调整，默认为false
+
+  * 碰撞盒的绘制：如果使用默认的g.drawRect绘制碰撞盒，则必须传入整数坐标，为了支持浮点数坐标（**为什么要支持浮点数坐标呢？因为我的Player每帧移动speed*Time.deltaTime，而Time.deltaTime的值很小，如果使用整数粗略地绘制，就无法看到较好的碰撞盒跟随游戏主角移动效果**），这里主要使用g.drawImage(image, affineTransform, observer)方法，affineTransform支持对图片进行浮点数坐标的平移与放大。我的方法是提供两张只有一个像素点的图片
+
+    * 半透明的碰撞盒内部
+    * 不透明的碰撞盒边框及调整点
+
+    ![截屏2021-02-01下午12.05.04.png](https://i.loli.net/2021/02/01/VDmuHf69zkoLNM5.png)
+
+    * 根据碰撞盒的两个定位点绘制collisionBox，使用affineTranform的translate和scale进行平移和放大；同理使用border绘制边框和两个调整点
+
+* 可点击屏幕中碰撞盒的左上或右下点进行调整，点击后点跟随鼠标移动，当再次点击时，该点调整完毕，打印调整后的坐标信息，可通过参考该信息修改碰撞盒位置
+
+  * 这里遇到了一个bug：由于我的鼠标事件监听系统的实现机制是在按键为按压状态时获取到的isPressed为true，就导致如果仅仅判断鼠标是否按压了的话就会触发很多次该判断，而我需要按一下跟随，按一下停止，显然通过这个是办不到的，后来我发现虽然isPressed状态在帧数较高情况下会触发多次，但是pressedTime变量确实只会按压一次增长1，于是我想到去判断pressedTime为奇数还是偶数，当按压后pressedTime为奇数时，进入跟随，偶数时则停止，这个办法在按压正确位置上时呈现效果上还行，但如果按压到除了调整碰撞盒的点以外的地方就会出现问题，比如当我点击别处一下时再点击碰撞盒调整点，此时pressedTime为偶数（2次），应该停止，就没法成功跟随了，故该方法不行；后来我开始考虑是否可以通过维护点击碰撞盒调整点之前的鼠标按压次数来解决这个问题，比如我之前按了3次，那么在点击到碰撞盒调整点时是第3+1次进行跟随，第3+2次则进行停止，这个办法看似可行，但尝试时发现，我没法维护到这个**点击碰撞盒调整点之前的鼠标按压次数**，如果非要维护这个量，我必须排除点击到碰撞盒调整点时的次数，那就要判断游戏中所有的碰撞盒的调整点是否被按压，非常浪费性能；于是我想到我不需要维护除掉所有的碰撞盒的调整点其他位置的按压次数，我可以维护按压到碰撞盒调整点时的按压次数，跟随后点击一次必然停止，故我记录跟随后的按压次数，判断需要停止时当前鼠标按压次数是否比我记录的值大1，如果是则进行停止，停止后记录一下当前鼠标按压次数，再到跟随时判读当前鼠标按压次数是否比我的记录值大1，这个方案可以达到这样的效果：开始时点击调整点，此时当前鼠标按压次数为1，记录值为0，满足跟随条件，进入跟随，记录值等于当前鼠标按压次数等于1，**将isChoosenLeftUp置为true，不进行跟随检查**；调整完再次按压，当前鼠标按压次数为2，记录值为1，满足停止条件，进入停止，记录值为2，**将isChoosenLeftUp置为false，不进行停止检查**，再次按压调整点，将重复上述，区别只是鼠标按压次数增长，本方案可以在按压正确的情况下解决这个问题，但是如果停止后点击其他地方，导致记录值与当前鼠标按压次数的差距大于1，将无法进入跟随或者停止，此时与正确的解决方案已经很接近了，最终的办法就是将比较条件改成当前鼠标按压次数大于记录值，这样无论怎么点击其他地方，都不会对调整碰撞盒造成影响。
+
+* 碰撞探测部分
+
+  * 为了优化，只对移动的实体进行碰撞检测
+
+  * 遍历所有碰撞盒，根据碰撞盒名称得到它在地图中的实体，如果该实体的移动向量不为Vector2.zero()，则进行碰撞检测
+
+  * 在碰撞盒为非触发器的模式下，遍历其他实体，获取当前碰撞盒移动后的下一个碰撞盒，当当前碰撞盒与其他实体碰撞盒没有相交部分，而移动后的碰撞盒与该其他实体有相交部分时，碰撞发生，此时本实体回退移动后的碰撞盒相较移动前增长的部分，保证不穿模
+
+  * 碰撞探测部分用到了检测两个矩形是否相交的方法，我共想到三种实现方案，本引擎采用我想到的最优方案
+
+    1. 遍历一个矩形内的所有像素点，检查该点是否位于另一矩形内，时间复杂度为O(m*n)
+
+    2. 每个矩形四个角的点坐标已知，得出两个坐标轴方向的向量，计算向量的长度，两个矩形的x轴方向向量（仅考虑x轴，y都为0）长度相加与两个矩形中的最小x、最大x构成的向量长度相比较，如果最小x、最大x构成的向量长度小于等于两个矩形的x轴方向向量长度相加则x轴方向满足，同理计算y轴方向，若都满足，则发生了相交，这个方法与我最终采用的方法很像，但存在区别，就是本方法使用到坐标相减求向量，求向量长度（要开方，不能使用sqrMagnitude，因为涉及长度相加）等，会导致计算量较大，Vector2类型需要垃圾回收机制处理，有一定性能浪费，时间复杂度为O(1)
+
+    3. **最终采用的方法**，时间复杂度为O(1)
+
+       分两个方向考虑：
+
+       x轴方向分别获取两个矩形的长度及总的x轴方向的长度
+
+       `总的x轴方向的长度<=获取两个矩形的长度之和`
+
+       y轴同理，当都满足时说明两个矩形一定有相交部分
+
+       ~~~java
+       private boolean isIntersected(CollisionBox anotherCollisionBox) {
+       		float thisXMin = this.leftUpPoint.x;
+       		float thisXMax = this.rightDownPoint.x;
+       		float thisYMin = this.leftUpPoint.y;
+       		float thisYMax = this.rightDownPoint.y;
+       
+       		float anotherXMin = anotherCollisionBox.leftUpPoint.x;
+       		float anotherXMax = anotherCollisionBox.rightDownPoint.x;
+       		float anotherYMin = anotherCollisionBox.leftUpPoint.y;
+       		float anotherYMax = anotherCollisionBox.rightDownPoint.y;
+       
+       		float xMin = Math.min(thisXMin, anotherXMin);
+       		float xMax = Math.max(thisXMax, anotherXMax);
+       		float yMin = Math.min(thisYMin, anotherYMin);
+       		float yMax = Math.max(thisYMax, anotherYMax);
+       		
+       		if (FloatCompare.isLessOrEqual(xMax - xMin, thisXMax - thisXMin + anotherXMax - anotherXMin)
+       				&& FloatCompare.isLessOrEqual(yMax - yMin, thisYMax - thisYMin + anotherYMax - anotherYMin)) {
+             return true;
+           }
+         return false;
+       }
+       ~~~
 
 # DremmaSandbox
 

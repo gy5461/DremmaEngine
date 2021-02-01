@@ -20,7 +20,6 @@ import priv.dremma.game.anim.Animator;
 import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.entities.Player;
-import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Resources;
@@ -40,8 +39,6 @@ public class TileMap {
 	public static HashMap<String, Entity> entities; // 游戏中的其他实体
 	public static Player player; // 主角
 	PriorityQueue<Entity> renderEntities; // 渲染优先队列
-	
-	MouseInputHandler mouseInputHandler;
 
 	/**
 	 * 生成指定宽度与高度的TileMap

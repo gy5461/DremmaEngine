@@ -16,7 +16,7 @@ import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
 /**
- * 2D p碰撞盒
+ * 2D 碰撞盒
  * 
  * @author guoyi
  *
@@ -153,6 +153,11 @@ public class CollisionBox {
 		}
 	}
 
+	/**
+	 * 判断两个碰撞盒是否相交
+	 * @param anotherCollisionBox
+	 * @return
+	 */
 	private boolean isIntersected(CollisionBox anotherCollisionBox) {
 		float thisXMin = this.leftUpPoint.x;
 		float thisXMax = this.rightDownPoint.x;
