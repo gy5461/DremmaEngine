@@ -31,7 +31,8 @@ public class CollisionBox {
 	static Image collisionBox = Resources.loadImage(Resources.path + "images/collisionBox.png");
 	static Image border = Resources.loadImage(Resources.path + "images/border.png");
 
-	public static boolean isRender = true;
+	public static boolean shouldRender = true;
+	public static int pressedTimes = 0;
 	public boolean isTrigger;
 	public boolean isChoosenLeftUp;
 	public boolean isChoosenRightDown;
@@ -61,7 +62,7 @@ public class CollisionBox {
 	}
 
 	public void draw(Graphics2D g) {
-		if (!CollisionBox.isRender) {
+		if (!CollisionBox.shouldRender) {
 			return;
 		}
 		// äÖÈ¾°ëÍ¸Ã÷²¿·Ö
