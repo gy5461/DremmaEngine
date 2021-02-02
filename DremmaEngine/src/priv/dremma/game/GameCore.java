@@ -22,6 +22,7 @@ import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
+import priv.dremma.game.util.TranslateEntityHelper;
 import priv.dremma.game.util.Vector2;
 
 /**
@@ -82,8 +83,9 @@ public class GameCore extends Canvas implements Runnable {
 		// 从文件中加载地图
 		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
 		map.setPlayer(player);
-		
-		//CollisionBox.shouldRender = false;
+
+		// CollisionBox.shouldRender = false;
+		// TranslateEntityHelper.shouldRender = false;
 	}
 
 	public void onUpdate() {
@@ -91,6 +93,7 @@ public class GameCore extends Canvas implements Runnable {
 
 	public void onDestroy() {
 		CollisionBox.save();
+		TranslateEntityHelper.save();
 	}
 
 	/**
@@ -99,6 +102,7 @@ public class GameCore extends Canvas implements Runnable {
 	public void init() {
 		keyInputHandler = new KeyInputHandler(this);
 		mouseInputHandler = new MouseInputHandler(this);
+		
 		screen = new Screen(GameCore.width * GameCore.scale, GameCore.height * GameCore.scale);
 
 		onStart();
@@ -137,10 +141,15 @@ public class GameCore extends Canvas implements Runnable {
 				collisionBoxAjustUpdate();
 				CollisionBox.collisionDetection();
 
+				// 移动帮助
+				translateEntityAjustUpdate();
+				this.mouseInputHandler.update();
+
 				frames++;
 				render();
 
 				animationLoop();
+				
 
 			}
 		}
@@ -168,6 +177,22 @@ public class GameCore extends Canvas implements Runnable {
 					.next();
 			CollisionBox collisionBox = entry.getValue();
 			collisionBox.draw(g);
+		}
+		
+		// 绘制移动帮助
+		Iterator<Entry<String, TranslateEntityHelper>> translateEntitiesIterator = TranslateEntityHelper
+				.getTranslateEntitiesHelperIterator();
+		while (translateEntitiesIterator.hasNext()) {
+			HashMap.Entry<String, TranslateEntityHelper> entry = (HashMap.Entry<String, TranslateEntityHelper>) translateEntitiesIterator
+					.next();
+			TranslateEntityHelper translateEntity = entry.getValue();
+			translateEntity.draw(g);
+
+//			translateEntity.xAxis.draw(g);
+//			
+//			translateEntity.yAxis.draw(g);
+//			
+//			translateEntity.xyAxis.draw(g);
 		}
 	}
 
@@ -212,6 +237,71 @@ public class GameCore extends Canvas implements Runnable {
 		GameCore.name = name;
 		this.window.setTitle(name);
 	}
+	
+	/**
+	 * 用于调整其他实体的位置
+	 */
+	public synchronized void translateEntityAjustUpdate() {
+		if (!TranslateEntityHelper.shouldRender) {
+			return;
+		}
+		
+		Iterator<Entry<String, TranslateEntityHelper>> translateEntitiesIterator = TranslateEntityHelper
+				.getTranslateEntitiesHelperIterator();
+		while (translateEntitiesIterator.hasNext()) {
+			HashMap.Entry<String, TranslateEntityHelper> entry = (HashMap.Entry<String, TranslateEntityHelper>) translateEntitiesIterator
+					.next();
+			String name = entry.getKey();
+			TranslateEntityHelper translateEntity = entry.getValue();
+
+			// 当拖拽x轴时
+			if (this.mouseInputHandler.mouse.isPressed()
+					&& (this.mouseInputHandler.transCurPosIsInRect(translateEntity.xAxis))) {
+				Vector2 curPos = new Vector2(this.mouseInputHandler.getTransCurPos());
+				Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+				float deltaX = curPos.x - lastPos.x;
+				TileMap.entities.get(name).position.x += deltaX;
+				CollisionBox.collisionBoxs.get(name).trans(new Vector2(deltaX, 0));
+			}
+
+			if(!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero()) && this.mouseInputHandler.transCurPosIsInRect(translateEntity.xAxis)) {
+				translateEntity.choosenX = true;
+			} else {
+				translateEntity.choosenX = false;
+			}
+			
+			// 当拖拽y轴时
+			if (this.mouseInputHandler.mouse.isPressed()
+					&& (this.mouseInputHandler.transCurPosIsInRect(translateEntity.yAxis))) {
+				Vector2 curPos = new Vector2(this.mouseInputHandler.getTransCurPos());
+				Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+				float deltaY = curPos.y - lastPos.y;
+				TileMap.entities.get(name).position.y += deltaY;
+				CollisionBox.collisionBoxs.get(name).trans(new Vector2(0, deltaY));
+			}
+
+			if(!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero()) && this.mouseInputHandler.transCurPosIsInRect(translateEntity.yAxis)) {
+				translateEntity.choosenY = true;
+			} else {
+				translateEntity.choosenY = false;
+			}
+
+			// 当拖拽黄色部分时，在两个方向上移动
+			if (this.mouseInputHandler.mouse.isPressed()
+					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.xyAxis)) {
+				Vector2 curPos = new Vector2(this.mouseInputHandler.getTransCurPos());
+				Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+				TileMap.entities.get(name).position = TileMap.entities.get(name).position.add(curPos.sub(lastPos));
+				CollisionBox.collisionBoxs.get(name).trans(curPos.sub(lastPos));
+			}
+			
+			if(!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero()) && this.mouseInputHandler.transCurPosIsInRect(translateEntity.xyAxis)) {
+				translateEntity.choosenXY = true;
+			} else {
+				translateEntity.choosenXY = false;
+			}
+		}
+	}
 
 	/**
 	 * 用于调整碰撞盒
@@ -221,16 +311,17 @@ public class GameCore extends Canvas implements Runnable {
 		if (!CollisionBox.shouldRender) {
 			return;
 		}
-		
+
 		Iterator<Entry<String, CollisionBox>> collisionBoxsIterator = CollisionBox.getCollisionBoxsIterator();
 		while (collisionBoxsIterator.hasNext()) {
 			HashMap.Entry<String, CollisionBox> entry = (HashMap.Entry<String, CollisionBox>) collisionBoxsIterator
 					.next();
 			String name = entry.getKey();
 			CollisionBox collisionBox = entry.getValue();
-			
+
 			// 调节左上点的位置
-			if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
+			if (this.mouseInputHandler.mouse.isPressed()
+					&& this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
 					&& collisionBox.isChoosenLeftUp == false
 					&& this.mouseInputHandler.mouse.isInRect(collisionBox.leftUpPoint.sub(Vector2.one().mul(5)),
 							collisionBox.leftUpPoint.add(Vector2.one().mul(5)))) {
@@ -238,7 +329,8 @@ public class GameCore extends Canvas implements Runnable {
 				CollisionBox.pressedTimes = this.mouseInputHandler.mouse.getPressedTimes();
 			}
 
-			if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
+			if (this.mouseInputHandler.mouse.isPressed()
+					&& this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
 					&& collisionBox.isChoosenLeftUp == true) {
 				collisionBox.isChoosenLeftUp = false;
 				Debug.log(Debug.DebugLevel.INFO, name + ":调整过后，左上点坐标为：" + collisionBox.leftUpPoint);
@@ -246,13 +338,14 @@ public class GameCore extends Canvas implements Runnable {
 			}
 
 			if (collisionBox.isChoosenLeftUp) {
-				if (!collisionBox.leftUpPoint.isEqual(this.mouseInputHandler.mouse.getCurPos())) {
-					collisionBox.leftUpPoint = this.mouseInputHandler.mouse.getCurPos();
+				if (!collisionBox.leftUpPoint.isEqual(this.mouseInputHandler.getCurPos())) {
+					collisionBox.leftUpPoint = this.mouseInputHandler.getCurPos();
 				}
 			}
 
 			// 调节右下点的位置
-			if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
+			if (this.mouseInputHandler.mouse.isPressed()
+					&& this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
 					&& collisionBox.isChoosenRightDown == false
 					&& this.mouseInputHandler.mouse.isInRect(collisionBox.rightDownPoint.sub(Vector2.one().mul(5)),
 							collisionBox.rightDownPoint.add(Vector2.one().mul(5)))) {
@@ -260,7 +353,8 @@ public class GameCore extends Canvas implements Runnable {
 				CollisionBox.pressedTimes = this.mouseInputHandler.mouse.getPressedTimes();
 			}
 
-			if (this.mouseInputHandler.mouse.isPressed() && this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
+			if (this.mouseInputHandler.mouse.isPressed()
+					&& this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
 					&& collisionBox.isChoosenRightDown == true) {
 				collisionBox.isChoosenRightDown = false;
 				Debug.log(Debug.DebugLevel.INFO, name + ":调整过后，右下点坐标为：" + collisionBox.rightDownPoint);
@@ -268,8 +362,8 @@ public class GameCore extends Canvas implements Runnable {
 			}
 
 			if (collisionBox.isChoosenRightDown) {
-				if (!collisionBox.rightDownPoint.isEqual(this.mouseInputHandler.mouse.getCurPos())) {
-					collisionBox.rightDownPoint = this.mouseInputHandler.mouse.getCurPos();
+				if (!collisionBox.rightDownPoint.isEqual(this.mouseInputHandler.getCurPos())) {
+					collisionBox.rightDownPoint = this.mouseInputHandler.getCurPos();
 				}
 			}
 		}

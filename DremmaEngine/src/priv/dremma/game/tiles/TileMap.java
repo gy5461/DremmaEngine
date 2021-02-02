@@ -23,6 +23,7 @@ import priv.dremma.game.entities.Player;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Resources;
+import priv.dremma.game.util.TranslateEntityHelper;
 import priv.dremma.game.util.Vector2;
 
 /**
@@ -243,6 +244,16 @@ public class TileMap {
 		resultMap.addEntity(chair1Entity, 0, 11);
 		
 		CollisionBox.load();
+		
+		// 给所有的entity添加移动帮助
+		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
+		while (entitiesIterator.hasNext()) {
+			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
+			TranslateEntityHelper translateEntityHelper = new TranslateEntityHelper(entry.getValue());
+			TranslateEntityHelper.translateEntities.put(entry.getKey(), translateEntityHelper);
+		}
+		
+		TranslateEntityHelper.load();
 		
 		return resultMap;
 	}

@@ -201,6 +201,17 @@ public class CollisionBox {
 		return new CollisionBox(new Vector2(this.leftUpPoint.add(moveVector)),
 				new Vector2(this.rightDownPoint.add(moveVector)));
 	}
+	
+	/**
+	 * 对碰撞盒进行平移
+	 * 
+	 * @param moveVector
+	 * @return
+	 */
+	public void trans(Vector2 moveVector) {
+		this.leftUpPoint = this.leftUpPoint.add(moveVector);
+		this.rightDownPoint = this.rightDownPoint.add(moveVector);
+	}
 
 	/**
 	 * 从文件中加载碰撞盒数据

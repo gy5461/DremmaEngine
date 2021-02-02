@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 
 import priv.dremma.game.GameCore;
 import priv.dremma.game.util.Debug;
+import priv.dremma.game.util.Rect;
 import priv.dremma.game.util.Vector2;
 
 /**
@@ -18,10 +19,41 @@ import priv.dremma.game.util.Vector2;
 
 public class MouseInputHandler implements MouseListener {
 	GameCore game;
+	private Vector2 curPos = Vector2.zero(); // 鼠标当前位置
+	public Vector2 transCurPos = Vector2.zero();
+	private Vector2 lastTransPos = Vector2.zero();	// 鼠标上一位置
 
 	public MouseInputHandler(GameCore game) {
 		game.addMouseListener(this); // 给游戏窗体添加鼠标监听器
 		this.game = game;
+	}
+	
+	public void update() {
+		transCurPos = this.getTransCurPos();
+		
+		lastTransPos = transCurPos;
+	}
+	
+	public Vector2 getLastPos() {
+		return this.lastTransPos;
+	}
+	
+	public Vector2 getCurPos() {
+		PointerInfo pinfo = MouseInfo.getPointerInfo();
+		curPos = new Vector2(pinfo.getLocation().x, pinfo.getLocation().y);
+		curPos = curPos.sub(new Vector2(game.window.getLocation().x, game.window.getLocation().y + 24));
+		return curPos;
+	}
+	
+	public Vector2 getTransCurPos() {
+		PointerInfo pinfo = MouseInfo.getPointerInfo();
+		transCurPos = new Vector2(pinfo.getLocation().x, pinfo.getLocation().y);
+		transCurPos = transCurPos.sub(new Vector2(240, 109));
+		return transCurPos;
+	}
+	
+	public boolean transCurPosIsInRect(Rect rect) {
+		return transCurPos.isInRect(rect.leftUpPoint, rect.rightDownPoint);
 	}
 
 	/**
@@ -34,14 +66,6 @@ public class MouseInputHandler implements MouseListener {
 		private int pressedTimes = 0; // 鼠标按压次数
 		private boolean isPressed = false; // 鼠标是否被按
 		private Vector2 location; // 鼠标按压位置
-		private Vector2 curPos = Vector2.zero(); // 鼠标当前位置
-
-		public Vector2 getCurPos() {
-			PointerInfo pinfo = MouseInfo.getPointerInfo();
-			curPos = new Vector2(pinfo.getLocation().x, pinfo.getLocation().y);
-			curPos = curPos.sub(new Vector2(game.window.getLocation().x, game.window.getLocation().y + 24));
-			return curPos;
-		}
 
 		public int getPressedTimes() {
 			return pressedTimes;
@@ -68,6 +92,17 @@ public class MouseInputHandler implements MouseListener {
 		 */
 		public boolean isInRect(Vector2 leftUp, Vector2 rightDown) {
 			return this.location.isInRect(leftUp, rightDown);
+		}
+		
+		/**
+		 * 判断鼠标坐标是否在矩形内 矩形：
+		 * 
+		 * @param leftUp    左上点坐标
+		 * @param rightDown 右下点坐标
+		 * @return
+		 */
+		public boolean isInRect(Rect rect) {
+			return this.location.isInRect(rect.leftUpPoint, rect.rightDownPoint);
 		}
 
 		// 触发键
@@ -112,7 +147,6 @@ public class MouseInputHandler implements MouseListener {
 	// 鼠标从Enter状态中退出时触发
 	@Override
 	public void mouseExited(MouseEvent e) {
-
 	}
 
 }

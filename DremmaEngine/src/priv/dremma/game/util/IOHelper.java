@@ -30,6 +30,9 @@ public class IOHelper {
 
 		File file = new File(path);
 		try {
+			if(!file.exists()) {
+				file.createNewFile();
+			}
 			ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(file));
 			try {
 				obj = objIn.readObject();
