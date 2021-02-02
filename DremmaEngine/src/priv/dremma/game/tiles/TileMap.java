@@ -197,7 +197,7 @@ public class TileMap {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		// tree1
 		Animator tree1Animator = new Animator();
 		Animation tree1Animation = new Animation();
@@ -205,19 +205,19 @@ public class TileMap {
 		tree1Animator.addAnimation("static", tree1Animation);
 		tree1Animator.state = "static";
 		Entity tree1Entity = new Entity(tree1Animator);
-		
+
 		tree1Entity.setScale(new Vector2(3f, 3f));
 		tree1Entity.name = "tree1_1";
-		resultMap.addEntity(tree1Entity, 2, 5);
+		resultMap.addEntity(tree1Entity, new Vector2(2, 5));
 
 		tree1Entity.name = "tree1_2";
 		tree1Entity.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(tree1Entity, 4, 5);
-		
+		resultMap.addEntity(tree1Entity, new Vector2(4, 5));
+
 		tree1Entity.name = "tree1_3";
 		tree1Entity.setScale(new Vector2(1f, 1f));
-		resultMap.addEntity(tree1Entity, 3, 11);
-		
+		resultMap.addEntity(tree1Entity, new Vector2(3, 11));
+
 		// archiving
 		Animator archivingAnimator = new Animator();
 		Animation archivingAnimation = new Animation();
@@ -225,12 +225,12 @@ public class TileMap {
 		archivingAnimator.addAnimation("static", archivingAnimation);
 		archivingAnimator.state = "static";
 		Entity archivingEntity = new Entity(archivingAnimator);
-		
+
 		archivingEntity.name = "archiving";
-		archivingEntity.setScale(new Vector2(0.2f,0.2f));
-		resultMap.addEntity(archivingEntity, 3, 21);
-		CollisionBox.collisionBoxs.get("archiving").isTrigger = true;	//触发盒子
-		
+		archivingEntity.setScale(new Vector2(0.2f, 0.2f));
+		resultMap.addEntity(archivingEntity, new Vector2(3, 21));
+		CollisionBox.collisionBoxs.get("archiving").isTrigger = true; // 触发盒子
+
 		// chair1
 		Animator chair1Animator = new Animator();
 		Animation chair1Animation = new Animation();
@@ -238,13 +238,13 @@ public class TileMap {
 		chair1Animator.addAnimation("static", chair1Animation);
 		chair1Animator.state = "static";
 		Entity chair1Entity = new Entity(chair1Animator);
-		
+
 		chair1Entity.name = "chair1";
-		chair1Entity.setScale(new Vector2(2f,2f));
-		resultMap.addEntity(chair1Entity, 0, 11);
-		
-		CollisionBox.load();
-		
+		chair1Entity.setScale(new Vector2(2f, 2f));
+		resultMap.addEntity(chair1Entity, new Vector2(0, 11));
+
+		//CollisionBox.load();
+
 		// 给所有的entity添加移动帮助
 		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
 		while (entitiesIterator.hasNext()) {
@@ -252,9 +252,9 @@ public class TileMap {
 			TranslateEntityHelper translateEntityHelper = new TranslateEntityHelper(entry.getValue());
 			TranslateEntityHelper.translateEntities.put(entry.getKey(), translateEntityHelper);
 		}
-		
-		TranslateEntityHelper.load();
-		
+
+		//TranslateEntityHelper.load();
+
 		return resultMap;
 	}
 
@@ -265,21 +265,22 @@ public class TileMap {
 	 * @param tileX
 	 * @param tileY
 	 */
-	public void addEntity(Entity srcEntity, int tileX, int tileY) {
+	public void addEntity(Entity srcEntity, Vector2 tile) {
 		if (srcEntity != null) {
 			// 从主实体中复制实体（深拷贝）
 			Entity entity = new Entity(srcEntity);
 			entity.position = new Vector2(
-					GUtils.worldTileCenterToWorldPixel(tileX, tileY, this.getTile(tileX, tileY).getWidth(null),
-							this.getTile(tileX, tileY).getHeight(null)).x
-							+ GUtils.worldTileCenterToWorldPixel(1, 1, this.getTile(tileX, tileY).getWidth(null),
-									this.getTile(tileX, tileY).getHeight(null)).x
+					GUtils.worldTileCenterToWorldPixel(tile, this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
+							this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null)).x
+							+ GUtils.worldTileCenterToWorldPixel(Vector2.one(), this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
+									this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null)).x
 							- entity.getWidth() / 2,
-					GUtils.worldTileCenterToWorldPixel(tileX, tileY + 1, this.getTile(tileX, tileY).getWidth(null),
-							this.getTile(tileX, tileY).getHeight(null)).y - entity.getHeight());
+					GUtils.worldTileCenterToWorldPixel(new Vector2(tile.x, tile.y + 1), this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
+							this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null)).y - entity.getHeight());
 
 			TileMap.addEntity(entity.name, entity);
-			CollisionBox.collisionBoxs.put(entity.name, new CollisionBox(entity.position, entity.position.add(Vector2.one().mul(50))));
+			CollisionBox.collisionBoxs.put(entity.name,
+					new CollisionBox(entity.position, entity.position.add(Vector2.one().mul(50))));
 		}
 	}
 
@@ -289,14 +290,17 @@ public class TileMap {
 	 * @param g
 	 */
 	public synchronized void draw(Graphics2D g) {
-		int offsetX = Math.round(GameCore.screen.width / 2.0f - player.position.x);
+		float offsetX = GameCore.screen.width / 2.0f - player.position.x;
 //		offsetX = Math.max(offsetX, 0);
 //		offsetX = Math.min(offsetX, Math.round(GUtils.worldTileCenterToWorldPixel(this.getWidth(), this.getHeight(), 130, 76).x));
 
-		int offsetY = Math.round(GameCore.screen.height / 2.0f - player.position.y);
+		float offsetY = GameCore.screen.height / 2.0f - player.position.y;
 //		offsetY = Math.max(offsetY, 0 );
 //		offsetY = Math.min(offsetY, Math.round(GUtils.worldTileCenterToWorldPixel(this.getWidth(), this.getHeight(), 130, 76).y));
 		GameCore.screen.setOffset(offsetX, offsetY);
+
+		offsetX *= 10000;
+		offsetY *= 10000;
 
 		// Debug.log(Debug.DebugLevel.INFO, "offsetX:"+offsetX+", offsetY:"+offsetY);
 		// 绘制地图
@@ -305,7 +309,7 @@ public class TileMap {
 				if (j % 2 == 1) {
 					AffineTransform transform = new AffineTransform();
 					transform.scale(2, 2);
-					transform.translate(i * 130 - 130 / 2, j * 88 - 44 - j * 50); // scale会对translate产生影响
+					transform.translate(i * 130 - 130 / 2 + offsetX, j * 88 - 44 - j * 50 + offsetY); // scale会对translate产生影响
 
 					g.drawImage(this.getTile(i, j), transform, null);
 					// Debug.log(Debug.DebugLevel.INFO, "x:"+(i * 130 - 130 / 2)+"y:"+(j * 88 - 44 -
@@ -313,13 +317,13 @@ public class TileMap {
 				} else {
 					AffineTransform transform = new AffineTransform();
 					transform.scale(2, 2);
-					transform.translate(i * 130, j * 88 - 44 - j * 50);
+					transform.translate(i * 130 + offsetX, j * 88 - 44 - j * 50 + offsetY);
 					g.drawImage(this.getTile(i, j), transform, null);
 					// Debug.log(Debug.DebugLevel.INFO, "x:"+(i * 130)+"y:"+(j * 88 - 44 - j * 50));
 				}
 			}
 		}
-		
+
 		// 向实体渲染队列中添加游戏主角
 		renderEntities.add(player);
 
@@ -327,11 +331,12 @@ public class TileMap {
 		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
 		while (entitiesIterator.hasNext()) {
 			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
+			//entry.getValue().position = entry.getValue().position.add(new Vector2(offsetX/8, offsetY/8)).sub(this.player.moveVector.mul(Time.deltaTime));
 			renderEntities.add(entry.getValue());
 		}
-		
+
 		// 渲染优先队列
-		while(!renderEntities.isEmpty()) {
+		while (!renderEntities.isEmpty()) {
 			renderEntities.peek().draw(g);
 			renderEntities.remove(renderEntities.peek());
 		}

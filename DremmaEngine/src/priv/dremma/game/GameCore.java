@@ -67,7 +67,7 @@ public class GameCore extends Canvas implements Runnable {
 
 	public void onStart() {
 		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // …Ë÷√2D”Œœ∑ ”Ω«
-		player = new Player(this.keyInputHandler, 60f);
+		player = new Player(this.keyInputHandler, 0.004f);
 		player.loadAnimation();
 
 		player.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.height / 2f);
@@ -89,6 +89,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	public void onUpdate() {
+		Debug.log(Debug.DebugLevel.INFO, ""+TileMap.player.position);
 	}
 
 	public void onDestroy() {

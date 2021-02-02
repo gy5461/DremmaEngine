@@ -45,12 +45,11 @@ public final class GUtils {
      * @param basePointY: 视口左上角的世界y像素坐标；
      * return 世界像素坐标.
      **/
-    public static int[] viewPortToWorldPixel(int vx, int vy, int basePointX,
-                                             int basePointY) {
-        int[] piexl = new int[2];
-        piexl[0] = vx + basePointX;
-        piexl[1] = vy + basePointY;
-        return piexl;        
+    public static Vector2 viewPortToWorldPixel(Vector2 viewport, Vector2 basePoint) {
+        Vector2 pixel = Vector2.zero();
+        pixel.x = viewport.x + basePoint.x;
+        pixel.y = viewport.y + basePoint.y;
+        return pixel;        
         
     }
 
@@ -63,11 +62,10 @@ public final class GUtils {
      * return 视口坐标.
      *
      **/
-    public static float[] worldPixelToViewPort(float tx, float ty, float basePointX,
-    		float basePointY) {
-    	float[] view = new float[2];
-        view[0] = tx - basePointX;
-        view[1] = ty - basePointY;
+    public static Vector2 worldPixelToViewPort(Vector2 world, Vector2 basePoint) {
+    	Vector2 view = Vector2.zero();
+        view.x = world.x - basePoint.x;
+        view.y = world.y - basePoint.y;
         return view;
     }
 
@@ -77,56 +75,56 @@ public final class GUtils {
      * @ param y: 世界像素y坐标；
      * @ renturn 世界tile坐标。
      **/
-    public static int[] worldPixelToWorldTile(int x, int y, int tileWidth, int tileHeight ) {
-        int Atx, Aty, centerx, centery;
-        if (x >= 0) {
-            Atx = x / tileWidth;
+    public static Vector2 worldPixelToWorldTile(Vector2 world, float tileWidth, float tileHeight ) {
+        float Atx, Aty, centerx, centery;
+        if (world.x >= 0) {
+            Atx = world.x / tileWidth;
         }
         else {
-            Atx = x / tileWidth - 1;
+            Atx = world.x / tileWidth - 1;
         }
-        if (y >= 0) {
-            Aty = ( (y / tileHeight) << 1) + 1;
+        if (world.y >= 0) {
+            Aty = ( (world.y / tileHeight) *2) + 1;
         }
         else {
-            Aty = ( (y / tileHeight) << 1) - 1;
+            Aty = ( (world.y / tileHeight) *2) - 1;
         }
 
-        centerx = Atx * tileWidth + (tileWidth >> 1);
+        centerx = Atx * tileWidth + (tileWidth /2);
 
-        centery = (Aty >> 1) * tileHeight + (tileHeight >> 1);
-        centery = centery << 1;
-        y = y << 1;
+        centery = (Aty *2) * tileHeight + (tileHeight /2);
+        centery = centery /2;
+        world.y = world.y *2;
 
-        centerx = x - centerx;
-        centery = y - centery;
+        centerx = world.x - centerx;
+        centery = world.y - centery;
 
         if (centerx >= 0) {
             if (centery >= 0) {
-                return (centerx + centery) > tileHeight ? new int[] {
-                    Atx + 1, Aty + 1}
-                    : new int[] {
-                    Atx, Aty};
+                return (centerx + centery) > tileHeight ? new Vector2 (
+                    Atx + 1, Aty + 1)
+                    : new Vector2 (
+                    Atx, Aty);
             }
             else {
-                return (centerx - centery) > tileHeight ? new int[] {
-                    Atx + 1, Aty - 1}
-                     : new int[] {
-                    Atx, Aty};
+                return (centerx - centery) > tileHeight ? new Vector2 (
+                    Atx + 1, Aty - 1)
+                     : new Vector2 (
+                    Atx, Aty);
             }
         }
         else {
             if (centery >= 0) {
-                return (centery - centerx) > tileHeight ? new int[] {
-                    Atx, Aty + 1}
-                     : new int[] {
-                    Atx, Aty};
+                return (centery - centerx) > tileHeight ? new Vector2 (
+                    Atx, Aty + 1)
+                     : new Vector2 (
+                    Atx, Aty);
             }
             else {
-                return ( -centerx - centery) > tileHeight ? new int[] {
-                    Atx, Aty - 1}
-                     : new int[] {
-                    Atx, Aty};
+                return ( -centerx - centery) > tileHeight ? new Vector2 (
+                    Atx, Aty - 1)
+                     : new Vector2 (
+                    Atx, Aty);
             }
         }
     }
@@ -139,12 +137,11 @@ public final class GUtils {
      * @param basePointY: 视口左上角的世界y像素坐标；
      * return 世界tile坐标.
      **/
-    public static int[] viewPortToWorldTile(int vx, int vy,
-                                            int basePointX, int basePointY,
-                                            int tileWidth, int tileHeight) {
-        int[] worldPiexl = new int[2];
-        worldPiexl = viewPortToWorldPixel(vx, vy, basePointX, basePointY);
-        return worldPixelToWorldTile(worldPiexl[0], worldPiexl[1], tileWidth, tileHeight );
+    public static Vector2 viewPortToWorldTile(Vector2 viewport,
+                                              Vector2 basePoint,
+                                            float tileWidth, float tileHeight) {
+        Vector2 worldPiexl = viewPortToWorldPixel(viewport, basePoint);
+        return worldPixelToWorldTile(worldPiexl, tileWidth, tileHeight );
     }
 
     /**
@@ -155,17 +152,17 @@ public final class GUtils {
      * @param basePointY: 视口左上角的世界y像素坐标；
      * return 视口坐标.
      **/
-    public static Vector2 worldTileCenterToWorldPixel( int tx, int ty,
-                                                     int tileWidth, int tileHeight) {
+    public static Vector2 worldTileCenterToWorldPixel( Vector2 tile,
+                                                     float tileWidth, float tileHeight) {
     	Vector2 piexl = Vector2.zero();
-        if (ty % 2 == 0) {
-            piexl.x = tx * tileWidth;
-            piexl.y = ty * (tileHeight/2.0f);
+        if (tile.y % 2 == 0) {
+            piexl.x = tile.x * tileWidth;
+            piexl.y = tile.y * (tileHeight/2.0f);
             return piexl;
         }
         else {
-            piexl.x = tx * tileWidth + tileWidth/2.0f;
-            piexl.y = ty * (tileHeight/2.0f);
+            piexl.x = tile.x * tileWidth + tileWidth/2.0f;
+            piexl.y = tile.y * (tileHeight/2.0f);
             return piexl;
         }
     }
@@ -178,18 +175,18 @@ public final class GUtils {
      * @param basePointY: 视口左上角的世界y像素坐标；
      * return 视口坐标.
      **/
-    public static int[] worldTileCenterToViewPort(int tx, int ty,
-                                                  int basePointX, int basePointY,
-                                                  int tileWidth, int tileHeight ) {
-        int[] piexl = new int[2];
-        if (ty % 2 == 0) {
-            piexl[0] = tx * tileWidth - basePointX;
-            piexl[1] = ty * (tileHeight/2) - basePointY;
+    public static Vector2 worldTileCenterToViewPort(Vector2 tile,
+                                                  Vector2 basePoint,
+                                                  float tileWidth, float tileHeight ) {
+        Vector2 piexl = Vector2.zero();
+        if (tile.y % 2 == 0) {
+            piexl.x = tile.x * tileWidth - basePoint.x;
+            piexl.y = tile.y * (tileHeight/2) - basePoint.y;
             return piexl;
         }
         else {
-            piexl[0] = tx * tileWidth + (tileWidth/2) - basePointX;
-            piexl[1] = ty * (tileHeight/2) - basePointY;
+            piexl.x = tile.x * tileWidth + (tileWidth/2) - basePoint.x;
+            piexl.y = tile.y * (tileHeight/2) - basePoint.y;
             return piexl;
         }
     }
@@ -198,23 +195,23 @@ public final class GUtils {
     //在斜坐标系中，从原点沿x方向走到中间点，它的x坐标与目标点的x坐标相同，
     //这个中间点，在直坐标系中相对与原点的坐标为mx和my；然后从中间点出发沿着斜坐标系的y轴向目标点前进。
     //在此旅途中顺序经过的点的直坐标表现出很强的规律性，据此我们得到目标点相对与原点的直坐标。
-    public static int[] slantTileToWorldTile(int originX, int originY, int tx, int ty) {
-        int[] tileXY = new int[2];
-        int mx = originX + (originY % 2 + tx) / 2;
-        int my = originY + tx;
-        tileXY[0] = mx - ( (my + 1) % 2 + ty) / 2;
-        tileXY[1] = my + ty;
+    public static Vector2 slantTileToWorldTile(Vector2 origin, Vector2 tile) {
+        Vector2 tileXY = Vector2.zero();
+        float mx = origin.x + (origin.y % 2 + tile.x) / 2;
+        float my = origin.y + tile.x;
+        tileXY.x = mx - ( (my + 1) % 2 + tile.y) / 2;
+        tileXY.y = my + tile.y;
         return tileXY;
     }
 
     //把一个世界tile的直坐标（destX,destY）转换成以另一个tile坐标（oringX,oringY）为原点的坐标系
-    public static int[] worldTileToSlantTile(int oringX, int oringY, int destX, int destY) {
-        int[] destination = new int[2];
-        int tempX, tempY ;
-        int distantY = destY - oringY;
+    public static Vector2 worldTileToSlantTile(Vector2 origin, Vector2 dest) {
+        Vector2 destination = Vector2.zero();
+        float tempX, tempY ;
+        float distantY = dest.y - origin.y;
         //在直坐标系中，从原点在x方向上走到中间点，它的x坐标与目标点的x坐标相同；
         //这个中间点，在斜坐标系中的相对与原点的坐标为下面的tempX和tempY。
-        tempX = destX - oringX;
+        tempX = dest.x - origin.x;
         tempY = -tempX;
         //从中间点出发，沿着直角坐标系的y轴，向目标点前进；
         //在这个旅途中顺序经过的点的斜坐标表现出很强的规律行:分两种情况：
@@ -222,23 +219,23 @@ public final class GUtils {
         //这样，目标点的斜坐标自然就得到了。
         //向上走：首先第一步时y坐标减1，第二步x坐标减1，如此交替，直到x坐标与y坐标之和为distantY，即到达目标点。
         if (distantY > 0) {
-            tempX += distantY >> 1;
-            tempY += distantY >> 1;
+            tempX += distantY/2;
+            tempY += distantY/2;
         } else {
-            tempX += (distantY + 1) >> 1;
-            tempY += (distantY + 1) >> 1;
+            tempX += (distantY + 1)/2;
+            tempY += (distantY + 1)/2;
         }
-        if ( ( (destY - oringY) & 1) != 0) {
-            if (destY > oringY) {
-                tempX += 1 - (oringY & 1);
-                tempY += oringY & 1;
+        if ( ( (int)(dest.y - origin.y) & 1) != 0) {
+            if (dest.y > origin.y) {
+                tempX += 1 - ((int)origin.y & 1);
+                tempY += (int)origin.y & 1;
             } else {
-                tempX -= oringY & 1;
-                tempY -= 1 - (oringY & 1);
+                tempX -= (int)origin.y & 1;
+                tempY -= 1 - ((int)origin.y & 1);
             }
         }
-        destination[0] = tempX;
-        destination[1] = tempY;
+        destination.x = tempX;
+        destination.y = tempY;
 
         return destination;
     }
