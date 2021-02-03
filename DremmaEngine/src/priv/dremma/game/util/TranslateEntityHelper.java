@@ -29,7 +29,7 @@ public class TranslateEntityHelper {
 	// 双轴
 	public Rect xyAxis;
 	public boolean choosenXY;
-	
+
 	static String path = Resources.path + "data/translateEntities.dat"; // 数据文件目录
 
 	public TranslateEntityHelper(Entity entity) {
@@ -52,15 +52,19 @@ public class TranslateEntityHelper {
 
 		// x
 		if (this.choosenX == false) {
+			Vector2 xArrowScreenPos = GUtils.worldPixelToViewPort(this.entity.position);
 			AffineTransform xArrowTransform = new AffineTransform();
-			xArrowTransform.translate(this.entity.position.x, this.entity.position.y);
+			xArrowTransform.translate(xArrowScreenPos.x, xArrowScreenPos.y);
 			xArrowTransform.scale(length, 1);
 			g.drawImage(Resources.loadImage(Resources.path + "images/xArrow.png"), xArrowTransform, null);
 
 			Image xArrowHead = Resources.loadImage(Resources.path + "images/xArrowHead.png");
+			Vector2 xArrowHeadScreenPos = GUtils
+					.worldPixelToViewPort(
+							new Vector2(this.entity.position.x + length + xArrowHead.getHeight(null) * 0.25f,
+									this.entity.position.y - xArrowHead.getWidth(null) * 0.25f / 2 + 1));
 			AffineTransform xArrowHeadTransform = new AffineTransform();
-			xArrowHeadTransform.translate(this.entity.position.x + length + xArrowHead.getHeight(null) * 0.25,
-					this.entity.position.y - xArrowHead.getWidth(null) * 0.25 / 2 + 1);
+			xArrowHeadTransform.translate(xArrowHeadScreenPos.x, xArrowHeadScreenPos.y);
 			xArrowHeadTransform.rotate(Math.toRadians(90));
 			xArrowHeadTransform.scale(0.25, 0.25);
 			g.drawImage(xArrowHead, xArrowHeadTransform, null);
@@ -71,15 +75,19 @@ public class TranslateEntityHelper {
 					new Vector2(this.entity.position.x + length + xArrowHead.getHeight(null) * 0.25f,
 							this.entity.position.y + xArrowHead.getWidth(null) * 0.25f / 2 + 1f));
 		} else {
+			Vector2 xArrowScreenPos = GUtils.worldPixelToViewPort(this.entity.position);
 			AffineTransform xArrowTransform = new AffineTransform();
-			xArrowTransform.translate(this.entity.position.x, this.entity.position.y);
+			xArrowTransform.translate(xArrowScreenPos.x, xArrowScreenPos.y);
 			xArrowTransform.scale(length, 1);
 			g.drawImage(Resources.loadImage(Resources.path + "images/choosen.png"), xArrowTransform, null);
 
 			Image xArrowHead = Resources.loadImage(Resources.path + "images/choosenArrowHead.png");
+			Vector2 xArrowHeadScreenPos = GUtils
+					.worldPixelToViewPort(
+							new Vector2(this.entity.position.x + length + xArrowHead.getHeight(null) * 0.25f,
+									this.entity.position.y - xArrowHead.getWidth(null) * 0.25f / 2 + 1));
 			AffineTransform xArrowHeadTransform = new AffineTransform();
-			xArrowHeadTransform.translate(this.entity.position.x + length + xArrowHead.getHeight(null) * 0.25,
-					this.entity.position.y - xArrowHead.getWidth(null) * 0.25 / 2 + 1);
+			xArrowHeadTransform.translate(xArrowHeadScreenPos.x, xArrowHeadScreenPos.y);
 			xArrowHeadTransform.rotate(Math.toRadians(90));
 			xArrowHeadTransform.scale(0.25, 0.25);
 			g.drawImage(xArrowHead, xArrowHeadTransform, null);
@@ -93,36 +101,46 @@ public class TranslateEntityHelper {
 
 		// y
 		if (this.choosenY == false) {
+			Vector2 yArrowScreenPos = GUtils.worldPixelToViewPort(this.entity.position);
 			AffineTransform yArrowTransform = new AffineTransform();
-			yArrowTransform.translate(this.entity.position.x, this.entity.position.y);
+			yArrowTransform.translate(yArrowScreenPos.x, yArrowScreenPos.y);
 			yArrowTransform.scale(1, length);
 			g.drawImage(Resources.loadImage(Resources.path + "images/yArrow.png"), yArrowTransform, null);
 
 			Image yArrowHead = Resources.loadImage(Resources.path + "images/yArrowHead.png");
+			Vector2 yArrowHeadScreenPos = GUtils
+					.worldPixelToViewPort(
+							new Vector2(this.entity.position.x + yArrowHead.getWidth(null) * 0.25f / 2 + 0.5f,
+									this.entity.position.y + length + yArrowHead.getHeight(null) * 0.25f));
 			AffineTransform yArrowHeadTransform = new AffineTransform();
-			yArrowHeadTransform.translate(this.entity.position.x + yArrowHead.getWidth(null) * 0.25 / 2 + 0.5,
-					this.entity.position.y + length + yArrowHead.getHeight(null) * 0.25);
+			yArrowHeadTransform.translate(yArrowHeadScreenPos.x, yArrowHeadScreenPos.y);
 			yArrowHeadTransform.rotate(Math.toRadians(180));
 			yArrowHeadTransform.scale(0.25, 0.25);
 			g.drawImage(yArrowHead, yArrowHeadTransform, null);
+			
 			this.yAxis = new Rect(
 					new Vector2(this.entity.position.x - yArrowHead.getWidth(null) * 0.25f / 2,
 							this.entity.position.y + 1),
 					new Vector2(this.entity.position.x + yArrowHead.getWidth(null) * 0.25f / 2 + 0.5f,
 							this.entity.position.y + length + yArrowHead.getHeight(null) * 0.25f));
 		} else {
+			Vector2 yArrowScreenPos = GUtils.worldPixelToViewPort(this.entity.position);
 			AffineTransform yArrowTransform = new AffineTransform();
-			yArrowTransform.translate(this.entity.position.x, this.entity.position.y);
+			yArrowTransform.translate(yArrowScreenPos.x, yArrowScreenPos.y);
 			yArrowTransform.scale(1, length);
 			g.drawImage(Resources.loadImage(Resources.path + "images/choosen.png"), yArrowTransform, null);
 
 			Image yArrowHead = Resources.loadImage(Resources.path + "images/choosenArrowHead.png");
+			Vector2 yArrowHeadScreenPos = GUtils
+					.worldPixelToViewPort(
+							new Vector2(this.entity.position.x + yArrowHead.getWidth(null) * 0.25f / 2 + 0.5f,
+									this.entity.position.y + length + yArrowHead.getHeight(null) * 0.25f));
 			AffineTransform yArrowHeadTransform = new AffineTransform();
-			yArrowHeadTransform.translate(this.entity.position.x + yArrowHead.getWidth(null) * 0.25 / 2 + 0.5,
-					this.entity.position.y + length + yArrowHead.getHeight(null) * 0.25);
+			yArrowHeadTransform.translate(yArrowHeadScreenPos.x, yArrowHeadScreenPos.y);
 			yArrowHeadTransform.rotate(Math.toRadians(180));
 			yArrowHeadTransform.scale(0.25, 0.25);
 			g.drawImage(yArrowHead, yArrowHeadTransform, null);
+			
 			this.yAxis = new Rect(
 					new Vector2(this.entity.position.x - yArrowHead.getWidth(null) * 0.25f / 2,
 							this.entity.position.y + 1),
@@ -133,23 +151,27 @@ public class TranslateEntityHelper {
 		// xy
 		if (this.choosenXY == false) {
 			float xyScale = 15f;
+			Vector2 xyScreenPos = GUtils.worldPixelToViewPort(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1));
 			AffineTransform choosen = new AffineTransform();
-			choosen.translate(this.entity.position.x + 1, this.entity.position.y + 1);
+			choosen.translate(xyScreenPos.x, xyScreenPos.y);
 			choosen.scale(xyScale, xyScale);
 			g.drawImage(Resources.loadImage(Resources.path + "images/collisionBox.png"), choosen, null);
+			
 			this.xyAxis = new Rect(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1),
 					new Vector2(this.entity.position.x + 1 + xyScale, this.entity.position.y + 1 + xyScale));
 		} else {
 			float xyScale = 15f;
+			Vector2 xyScreenPos = GUtils.worldPixelToViewPort(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1));
 			AffineTransform choosen = new AffineTransform();
-			choosen.translate(this.entity.position.x + 1, this.entity.position.y + 1);
+			choosen.translate(xyScreenPos.x, xyScreenPos.y);
 			choosen.scale(xyScale, xyScale);
 			g.drawImage(Resources.loadImage(Resources.path + "images/choosen.png"), choosen, null);
+			
 			this.xyAxis = new Rect(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1),
 					new Vector2(this.entity.position.x + 1 + xyScale, this.entity.position.y + 1 + xyScale));
 		}
 	}
-	
+
 	/**
 	 * 从文件中加载碰撞盒数据
 	 */
@@ -157,13 +179,13 @@ public class TranslateEntityHelper {
 	public static void load() {
 		String name;
 		Vector2 position;
-		Queue<Object> objs = (Queue<Object>)IOHelper.readObject(path);
-		while(!objs.isEmpty()) {
-			name = (String)objs.peek();
+		Queue<Object> objs = (Queue<Object>) IOHelper.readObject(path);
+		while (!objs.isEmpty()) {
+			name = (String) objs.peek();
 			objs.remove(name);
-			position = (Vector2)objs.peek();
+			position = (Vector2) objs.peek();
 			objs.remove(position);
-			
+
 			TranslateEntityHelper.translateEntities.get(name).entity.position = position;
 		}
 	}
@@ -173,13 +195,14 @@ public class TranslateEntityHelper {
 	 */
 	public static void save() {
 		Queue<Object> objs = new LinkedList<Object>();
-		Iterator<Entry<String, TranslateEntityHelper>> translateEntitiesIterator = TranslateEntityHelper.getTranslateEntitiesHelperIterator();
+		Iterator<Entry<String, TranslateEntityHelper>> translateEntitiesIterator = TranslateEntityHelper
+				.getTranslateEntitiesHelperIterator();
 		while (translateEntitiesIterator.hasNext()) {
 			HashMap.Entry<String, TranslateEntityHelper> entry = (HashMap.Entry<String, TranslateEntityHelper>) translateEntitiesIterator
 					.next();
 			String name = entry.getKey();
 			TranslateEntityHelper translateEntity = entry.getValue();
-			
+
 			objs.add(name);
 			objs.add(translateEntity.entity.position);
 		}

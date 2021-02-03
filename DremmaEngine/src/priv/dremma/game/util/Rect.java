@@ -24,6 +24,10 @@ public class Rect {
 	public float getHeight() {
 		return (this.rightDownPoint.sub(this.leftUpPoint)).y;
 	}
+	
+	public Rect getScreenRect() {
+		return new Rect(GUtils.worldPixelToViewPort(this.leftUpPoint), GUtils.worldPixelToViewPort(this.rightDownPoint));
+	}
 
 	public void draw(Graphics2D g) {
 		// äÖÈ¾°ëÍ¸Ã÷²¿·Ö

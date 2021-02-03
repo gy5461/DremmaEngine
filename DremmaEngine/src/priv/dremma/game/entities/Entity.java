@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.awt.geom.AffineTransform;
 
 import priv.dremma.game.anim.Animator;
+import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Vector2;
 
 public class Entity {
@@ -105,8 +106,10 @@ public class Entity {
 	 * @param g
 	 */
 	public void draw(Graphics2D g) {
+		Vector2 screenPos = GUtils.worldPixelToViewPort(this.position);
+		
 		AffineTransform transform = new AffineTransform();
-		transform.translate(this.position.x - this.getWidth() * this.scale.x / 2f, this.position.y - this.getHeight() * this.scale.y / 2f);
+		transform.translate(screenPos.x - this.getWidth() * this.scale.x / 2f, screenPos.y - this.getHeight() * this.scale.y / 2f);
 		transform.scale(this.scale.x, this.scale.y);
 		g.drawImage(this.getImage(), transform, null);
 	}

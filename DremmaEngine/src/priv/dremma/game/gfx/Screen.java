@@ -1,21 +1,22 @@
 package priv.dremma.game.gfx;
 
+import priv.dremma.game.util.Vector2;
+
 public class Screen {
 	
-	public float xOffset = 0;
-	public float yOffset = 0;
-
 	public int width;
 	public int height;
+	
+	public static Vector2 leftUpPoint;		//ÆÁÄ»×óÉÏµã×ø±ê
 	
 	public Screen(int width, int height) {
 		this.width = width;
 		this.height = height;
+		leftUpPoint = Vector2.zero();
 	}
 	
-	public void setOffset(float xOffset, float yOffset) {
-		this.xOffset = xOffset;
-		this.yOffset = yOffset;
+	public void setleftUpPoint(Vector2 point) {
+		leftUpPoint = point;
 	}
 
 }

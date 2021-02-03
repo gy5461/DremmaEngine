@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 
 import priv.dremma.game.GameCore;
 import priv.dremma.game.util.Debug;
+import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Rect;
 import priv.dremma.game.util.Vector2;
 
@@ -53,7 +54,7 @@ public class MouseInputHandler implements MouseListener {
 	}
 	
 	public boolean transCurPosIsInRect(Rect rect) {
-		return transCurPos.isInRect(rect.leftUpPoint, rect.rightDownPoint);
+		return GUtils.viewPortToWorldPixel(transCurPos).isInRect(rect.leftUpPoint, rect.rightDownPoint);
 	}
 
 	/**
@@ -91,7 +92,7 @@ public class MouseInputHandler implements MouseListener {
 		 * @return
 		 */
 		public boolean isInRect(Vector2 leftUp, Vector2 rightDown) {
-			return this.location.isInRect(leftUp, rightDown);
+			return GUtils.viewPortToWorldPixel(this.location).isInRect(leftUp, rightDown);
 		}
 		
 		/**
@@ -102,7 +103,7 @@ public class MouseInputHandler implements MouseListener {
 		 * @return
 		 */
 		public boolean isInRect(Rect rect) {
-			return this.location.isInRect(rect.leftUpPoint, rect.rightDownPoint);
+			return GUtils.viewPortToWorldPixel(this.location).isInRect(rect.leftUpPoint, rect.rightDownPoint);
 		}
 
 		// ´¥·¢¼ü

@@ -37,6 +37,8 @@ public class TileMap {
 	public static ArrayList<Image> tilesTable = new ArrayList<Image>();
 
 	private Image[][] tiles; // 地砖
+	private Vector2 scale;
+	private Vector2 tileSize;
 	public static HashMap<String, Entity> entities; // 游戏中的其他实体
 	public static Player player; // 主角
 	PriorityQueue<Entity> renderEntities; // 渲染优先队列
@@ -59,6 +61,17 @@ public class TileMap {
 			}
 
 		});
+		this.scale = Vector2.one();
+		this.tileSize = Vector2.one();
+	}
+
+	public void setScale(Vector2 scale) {
+		this.scale.x = scale.x;
+		this.scale.y = scale.y;
+	}
+
+	public Vector2 getSize() {
+		return this.tileSize;
 	}
 
 	/**
@@ -186,6 +199,8 @@ public class TileMap {
 
 			height = lines.size();
 			resultMap = new TileMap(width, height);
+			resultMap.setScale(new Vector2(2, 2));
+			resultMap.tileSize = new Vector2(130, 76);
 			// 从上到下分析文本
 			for (int y = 0; y < height; y++) {
 				String line = (String) lines.get(y);
@@ -243,7 +258,7 @@ public class TileMap {
 		chair1Entity.setScale(new Vector2(2f, 2f));
 		resultMap.addEntity(chair1Entity, new Vector2(0, 11));
 
-		//CollisionBox.load();
+		CollisionBox.load(); // 从数据文件中加载碰撞盒数据
 
 		// 给所有的entity添加移动帮助
 		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
@@ -253,8 +268,7 @@ public class TileMap {
 			TranslateEntityHelper.translateEntities.put(entry.getKey(), translateEntityHelper);
 		}
 
-		//TranslateEntityHelper.load();
-
+		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
 		return resultMap;
 	}
 
@@ -270,13 +284,17 @@ public class TileMap {
 			// 从主实体中复制实体（深拷贝）
 			Entity entity = new Entity(srcEntity);
 			entity.position = new Vector2(
-					GUtils.worldTileCenterToWorldPixel(tile, this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
-							this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null)).x
-							+ GUtils.worldTileCenterToWorldPixel(Vector2.one(), this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
-									this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null)).x
+					GUtils.worldTileCenterToWorldPixel(tile,
+							this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
+							this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null), this.scale).x
+							+ GUtils.worldTileCenterToWorldPixel(Vector2.one(),
+									this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
+									this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null), this.scale).x
 							- entity.getWidth() / 2,
-					GUtils.worldTileCenterToWorldPixel(new Vector2(tile.x, tile.y + 1), this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
-							this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null)).y - entity.getHeight());
+					GUtils.worldTileCenterToWorldPixel(new Vector2(tile.x, tile.y + 1),
+							this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
+							this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null), this.scale).y
+							- entity.getHeight());
 
 			TileMap.addEntity(entity.name, entity);
 			CollisionBox.collisionBoxs.put(entity.name,
@@ -290,36 +308,48 @@ public class TileMap {
 	 * @param g
 	 */
 	public synchronized void draw(Graphics2D g) {
-		float offsetX = GameCore.screen.width / 2.0f - player.position.x;
-//		offsetX = Math.max(offsetX, 0);
-//		offsetX = Math.min(offsetX, Math.round(GUtils.worldTileCenterToWorldPixel(this.getWidth(), this.getHeight(), 130, 76).x));
+		float screenleftUpPointX = player.position.x - GameCore.screen.width / 2.0f;
 
-		float offsetY = GameCore.screen.height / 2.0f - player.position.y;
-//		offsetY = Math.max(offsetY, 0 );
-//		offsetY = Math.min(offsetY, Math.round(GUtils.worldTileCenterToWorldPixel(this.getWidth(), this.getHeight(), 130, 76).y));
-		GameCore.screen.setOffset(offsetX, offsetY);
+		Vector2 worldEndTileCenter = GUtils.worldTileCenterToWorldPixel(new Vector2(this.getWidth(), this.getHeight()),
+				this.tileSize.x, this.tileSize.y, this.scale);
 
-		offsetX *= 10000;
-		offsetY *= 10000;
+		screenleftUpPointX = Math.max(screenleftUpPointX, 0);
+		screenleftUpPointX = Math.min(screenleftUpPointX,
+				worldEndTileCenter.x + this.tileSize.x * this.scale.x - GameCore.screen.width);
 
-		// Debug.log(Debug.DebugLevel.INFO, "offsetX:"+offsetX+", offsetY:"+offsetY);
+		float screenleftUpPointY = player.position.y - GameCore.screen.height / 2.0f;
+
+		screenleftUpPointY = Math.max(screenleftUpPointY, 0);
+		screenleftUpPointY = Math.min(screenleftUpPointY,
+				worldEndTileCenter.y + (this.tileSize.y / 2 + 10) * this.scale.y - GameCore.screen.height);
+
+		GameCore.screen.setleftUpPoint(new Vector2(screenleftUpPointX, screenleftUpPointY));
+
 		// 绘制地图
 		for (int j = 0; j < this.getHeight(); j++) {
 			for (int i = 0; i < this.getWidth(); i++) {
 				if (j % 2 == 1) {
+					// Debug.log(Debug.DebugLevel.INFO, "世界坐标第"+j+"列："+new Vector2(i * this.tileSize.x - this.tileSize.x /
+					// 2, j * 88 - this.tileSize.y/2 - j * 50).mul(this.scale));
+					Vector2 screenPos = GUtils
+							.worldPixelToViewPort(new Vector2(i * this.tileSize.x - this.tileSize.x / 2, j * this.tileSize.y / 2 - this.tileSize.y / 2).mul(this.scale));
 					AffineTransform transform = new AffineTransform();
-					transform.scale(2, 2);
-					transform.translate(i * 130 - 130 / 2 + offsetX, j * 88 - 44 - j * 50 + offsetY); // scale会对translate产生影响
+
+					transform.translate(screenPos.x, screenPos.y);
+					transform.scale(this.scale.x, this.scale.y);
 
 					g.drawImage(this.getTile(i, j), transform, null);
-					// Debug.log(Debug.DebugLevel.INFO, "x:"+(i * 130 - 130 / 2)+"y:"+(j * 88 - 44 -
-					// j * 50));
 				} else {
+					// Debug.log(Debug.DebugLevel.INFO, "世界坐标第"+j+"列："+new Vector2(i * this.tileSize.x - this.tileSize.x /
+					// 2, j * 88 - this.tileSize.y/2 - j * 50).mul(this.scale));
+					Vector2 screenPos = GUtils
+							.worldPixelToViewPort(new Vector2(i * this.tileSize.x, j * this.tileSize.y / 2 - this.tileSize.y / 2).mul(this.scale));
 					AffineTransform transform = new AffineTransform();
-					transform.scale(2, 2);
-					transform.translate(i * 130 + offsetX, j * 88 - 44 - j * 50 + offsetY);
+
+					transform.translate(screenPos.x, screenPos.y);
+					transform.scale(this.scale.x, this.scale.y);
+
 					g.drawImage(this.getTile(i, j), transform, null);
-					// Debug.log(Debug.DebugLevel.INFO, "x:"+(i * 130)+"y:"+(j * 88 - 44 - j * 50));
 				}
 			}
 		}
@@ -331,7 +361,9 @@ public class TileMap {
 		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
 		while (entitiesIterator.hasNext()) {
 			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
-			//entry.getValue().position = entry.getValue().position.add(new Vector2(offsetX/8, offsetY/8)).sub(this.player.moveVector.mul(Time.deltaTime));
+			// entry.getValue().position = entry.getValue().position.add(new
+			// Vector2(offsetX/8,
+			// offsetY/8)).sub(this.player.moveVector.mul(Time.deltaTime));
 			renderEntities.add(entry.getValue());
 		}
 
