@@ -2,6 +2,11 @@ package priv.dremma.game.gfx;
 
 import priv.dremma.game.util.Vector2;
 
+/**
+ * фад╩юЮ
+ * @author guoyi
+ *
+ */
 public class Screen {
 	
 	public int width;

@@ -235,7 +235,9 @@ public class CollisionBox {
 			objs.remove(leftUpPoint);
 			rightDownPoint = (Vector2)objs.peek();
 			objs.remove(rightDownPoint);
-			
+//			if(name.equals("chair1")) {
+//				continue;
+//			}
 			CollisionBox.collisionBoxs.get(name).setPos(leftUpPoint, rightDownPoint);
 		}
 	}

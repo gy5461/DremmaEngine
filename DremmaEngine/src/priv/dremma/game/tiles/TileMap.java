@@ -256,7 +256,55 @@ public class TileMap {
 
 		chair1Entity.name = "chair1";
 		chair1Entity.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(chair1Entity, new Vector2(0, 11));
+		resultMap.addEntity(chair1Entity, new Vector2(4, 8));
+
+		// chair2
+		Animator chair2Animator = new Animator();
+		Animation chair2Animation = new Animation();
+		chair2Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair2.png"), 100);
+		chair2Animator.addAnimation("static", chair2Animation);
+		chair2Animator.state = "static";
+		Entity chair2Entity = new Entity(chair2Animator);
+
+		chair2Entity.name = "chair2";
+		chair2Entity.setScale(new Vector2(2f, 2f));
+		resultMap.addEntity(chair2Entity, new Vector2(4, 5));
+
+		// chair3
+		Animator chair3Animator = new Animator();
+		Animation chair3Animation = new Animation();
+		chair3Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair3.png"), 100);
+		chair3Animator.addAnimation("static", chair3Animation);
+		chair3Animator.state = "static";
+		Entity chair3Entity = new Entity(chair3Animator);
+
+		chair3Entity.name = "chair3";
+		chair3Entity.setScale(new Vector2(2f, 2f));
+		resultMap.addEntity(chair3Entity, new Vector2(4, 11));
+
+		// chair4
+		Animator chair4Animator = new Animator();
+		Animation chair4Animation = new Animation();
+		chair4Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair4.png"), 100);
+		chair4Animator.addAnimation("static", chair4Animation);
+		chair4Animator.state = "static";
+		Entity chair4Entity = new Entity(chair4Animator);
+
+		chair4Entity.name = "chair4";
+		chair4Entity.setScale(new Vector2(2f, 2f));
+		resultMap.addEntity(chair4Entity, new Vector2(5, 5));
+		
+		// chair4
+		Animator deskAnimator = new Animator();
+		Animation deskAnimation = new Animation();
+		deskAnimation.addFrame(Resources.loadImage(Resources.path + "images/entities/desk.png"), 100);
+		deskAnimator.addAnimation("static", deskAnimation);
+		deskAnimator.state = "static";
+		Entity deskEntity = new Entity(deskAnimator);
+
+		deskEntity.name = "desk";
+		deskEntity.setScale(new Vector2(2f, 2f));
+		resultMap.addEntity(deskEntity, new Vector2(5, 8));
 
 		CollisionBox.load(); // 从数据文件中加载碰撞盒数据
 
@@ -284,17 +332,8 @@ public class TileMap {
 			// 从主实体中复制实体（深拷贝）
 			Entity entity = new Entity(srcEntity);
 			entity.position = new Vector2(
-					GUtils.worldTileCenterToWorldPixel(tile,
-							this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
-							this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null), this.scale).x
-							+ GUtils.worldTileCenterToWorldPixel(Vector2.one(),
-									this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
-									this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null), this.scale).x
-							- entity.getWidth() / 2,
-					GUtils.worldTileCenterToWorldPixel(new Vector2(tile.x, tile.y + 1),
-							this.getTile(Math.round(tile.x), Math.round(tile.y)).getWidth(null),
-							this.getTile(Math.round(tile.x), Math.round(tile.y)).getHeight(null), this.scale).y
-							- entity.getHeight());
+					GUtils.worldTileCenterToWorldPixel(tile, this.tileSize.x, this.tileSize.y, this.scale).x,
+					GUtils.worldTileCenterToWorldPixel(tile, this.tileSize.x, this.tileSize.y, this.scale).y);
 
 			TileMap.addEntity(entity.name, entity);
 			CollisionBox.collisionBoxs.put(entity.name,
@@ -329,10 +368,12 @@ public class TileMap {
 		for (int j = 0; j < this.getHeight(); j++) {
 			for (int i = 0; i < this.getWidth(); i++) {
 				if (j % 2 == 1) {
-					// Debug.log(Debug.DebugLevel.INFO, "世界坐标第"+j+"列："+new Vector2(i * this.tileSize.x - this.tileSize.x /
+					// Debug.log(Debug.DebugLevel.INFO, "世界坐标第"+j+"列："+new Vector2(i *
+					// this.tileSize.x - this.tileSize.x /
 					// 2, j * 88 - this.tileSize.y/2 - j * 50).mul(this.scale));
 					Vector2 screenPos = GUtils
-							.worldPixelToViewPort(new Vector2(i * this.tileSize.x - this.tileSize.x / 2, j * this.tileSize.y / 2 - this.tileSize.y / 2).mul(this.scale));
+							.worldPixelToViewPort(new Vector2(i * this.tileSize.x - this.tileSize.x / 2,
+									j * this.tileSize.y / 2 - this.tileSize.y / 2).mul(this.scale));
 					AffineTransform transform = new AffineTransform();
 
 					transform.translate(screenPos.x, screenPos.y);
@@ -340,10 +381,12 @@ public class TileMap {
 
 					g.drawImage(this.getTile(i, j), transform, null);
 				} else {
-					// Debug.log(Debug.DebugLevel.INFO, "世界坐标第"+j+"列："+new Vector2(i * this.tileSize.x - this.tileSize.x /
+					// Debug.log(Debug.DebugLevel.INFO, "世界坐标第"+j+"列："+new Vector2(i *
+					// this.tileSize.x - this.tileSize.x /
 					// 2, j * 88 - this.tileSize.y/2 - j * 50).mul(this.scale));
-					Vector2 screenPos = GUtils
-							.worldPixelToViewPort(new Vector2(i * this.tileSize.x, j * this.tileSize.y / 2 - this.tileSize.y / 2).mul(this.scale));
+					Vector2 screenPos = GUtils.worldPixelToViewPort(
+							new Vector2(i * this.tileSize.x, j * this.tileSize.y / 2 - this.tileSize.y / 2)
+									.mul(this.scale));
 					AffineTransform transform = new AffineTransform();
 
 					transform.translate(screenPos.x, screenPos.y);
@@ -361,9 +404,6 @@ public class TileMap {
 		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
 		while (entitiesIterator.hasNext()) {
 			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
-			// entry.getValue().position = entry.getValue().position.add(new
-			// Vector2(offsetX/8,
-			// offsetY/8)).sub(this.player.moveVector.mul(Time.deltaTime));
 			renderEntities.add(entry.getValue());
 		}
 
