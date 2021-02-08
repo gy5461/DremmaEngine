@@ -62,7 +62,7 @@ public class Entity {
 	 * 根据时间更新Entity的动画
 	 */
 	public void update() {
-		this.animator.playLoop(animator.state);
+		this.animator.update();
 	}
 
 	/**

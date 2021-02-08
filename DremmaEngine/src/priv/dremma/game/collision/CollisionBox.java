@@ -149,7 +149,7 @@ public class CollisionBox {
 							// 进行触发检测
 							if (collisionBox.isIntersected(anotherCollisionBox) == true) {
 								// 发生了碰撞
-								Debug.log(Debug.DebugLevel.INFO, name + " 触发了:" + anotherName);
+								collisionBox.onTriggerEnter(name, anotherName);
 							}
 						} else {
 							// 进行碰撞检测
@@ -158,15 +158,33 @@ public class CollisionBox {
 							if (collisionBox.isIntersected(anotherCollisionBox) == false
 									&& nextCollisionBox.isIntersected(anotherCollisionBox) == true) {
 								// 发生了碰撞
-								Debug.log(Debug.DebugLevel.INFO, name + " 撞上了:" + anotherName);
 								entity.position = entity.position
 										.sub(nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint));
+								collisionBox.onCollision(name, anotherName);
 							}
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 碰撞盒撞到别的碰撞盒时调用
+	 * @param name 本碰撞盒的名称
+	 * @param anotherName 被撞到的碰撞盒的名称
+	 */
+	public void onCollision (String name, String anotherName) {
+		Debug.log(Debug.DebugLevel.INFO, name + " 撞上了:" + anotherName);
+	}
+	
+	/**
+	 * 碰撞盒触发别的触发器碰撞盒时调用
+	 * @param name 本碰撞盒的名称
+	 * @param anotherName 被撞到的碰撞盒的名称
+	 */
+	public void onTriggerEnter(String name, String anotherName) {
+		Debug.log(Debug.DebugLevel.INFO, name + " 触发了:" + anotherName);
 	}
 
 	/**

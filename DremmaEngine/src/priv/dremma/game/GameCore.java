@@ -66,6 +66,8 @@ public class GameCore extends Canvas implements Runnable {
 	private TileMap map;
 	public static Screen screen;
 
+	public static boolean willSave = true;
+
 	public void onStart() {
 		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // 设置2D游戏视角
 		player = new Player(this.keyInputHandler, 60f);
@@ -90,12 +92,14 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	public void onUpdate() {
-		//Debug.log(Debug.DebugLevel.INFO, ""+TileMap.player.position);
+		// Debug.log(Debug.DebugLevel.INFO, ""+TileMap.player.position);
 	}
 
 	public void onDestroy() {
-		CollisionBox.save();
-		TranslateEntityHelper.save();
+		if (GameCore.willSave) {
+			CollisionBox.save();
+			TranslateEntityHelper.save();
+		}
 	}
 
 	/**
@@ -104,7 +108,7 @@ public class GameCore extends Canvas implements Runnable {
 	public void init() {
 		keyInputHandler = new KeyInputHandler(this);
 		mouseInputHandler = new MouseInputHandler(this);
-		
+
 		screen = new Screen(GameCore.width * GameCore.scale, GameCore.height * GameCore.scale);
 
 		onStart();
@@ -129,31 +133,37 @@ public class GameCore extends Canvas implements Runnable {
 
 	@Override
 	public void run() {
-		init();
-		while (isRunning) { // 游戏循环
+		try {
+			init();
 
-			Time.update();
+			while (isRunning) { // 游戏循环
 
-			// Time.shouldRender = true; //解除shouldRender对于60帧左右的限制
-			if (Time.shouldRender) {
-				// 游戏开发者更新
-				onUpdate();
+				Time.update();
 
-				// 碰撞
-				collisionBoxAjustUpdate();
-				CollisionBox.collisionDetection();
+				// Time.shouldRender = true; //解除shouldRender对于60帧左右的限制
+				if (Time.shouldRender) {
+					// 游戏开发者更新
+					onUpdate();
 
-				// 移动帮助
-				translateEntityAjustUpdate();
-				this.mouseInputHandler.update();
+					// 碰撞
+					collisionBoxAjustUpdate();
+					CollisionBox.collisionDetection();
 
-				frames++;
-				render();
+					// 移动帮助
+					translateEntityAjustUpdate();
+					this.mouseInputHandler.update();
 
-				animationLoop();
-				
+					frames++;
+					render();
 
+					animationLoop();
+
+				}
 			}
+		} catch (Exception e) {
+			Debug.log(Debug.DebugLevel.SERVERE, "出错啦!!!");
+			e.printStackTrace();
+			willSave = false;
 		}
 	}
 
@@ -180,7 +190,7 @@ public class GameCore extends Canvas implements Runnable {
 			CollisionBox collisionBox = entry.getValue();
 			collisionBox.draw(g);
 		}
-		
+
 		// 绘制移动帮助
 		Iterator<Entry<String, TranslateEntityHelper>> translateEntitiesIterator = TranslateEntityHelper
 				.getTranslateEntitiesHelperIterator();
@@ -189,12 +199,6 @@ public class GameCore extends Canvas implements Runnable {
 					.next();
 			TranslateEntityHelper translateEntity = entry.getValue();
 			translateEntity.draw(g);
-
-//			translateEntity.xAxis.draw(g);
-//			
-//			translateEntity.yAxis.draw(g);
-//			
-//			translateEntity.xyAxis.draw(g);
 		}
 	}
 
@@ -239,7 +243,7 @@ public class GameCore extends Canvas implements Runnable {
 		GameCore.name = name;
 		this.window.setTitle(name);
 	}
-	
+
 	/**
 	 * 用于调整其他实体的位置
 	 */
@@ -247,7 +251,7 @@ public class GameCore extends Canvas implements Runnable {
 		if (!TranslateEntityHelper.shouldRender) {
 			return;
 		}
-		
+
 		Iterator<Entry<String, TranslateEntityHelper>> translateEntitiesIterator = TranslateEntityHelper
 				.getTranslateEntitiesHelperIterator();
 		while (translateEntitiesIterator.hasNext()) {
@@ -266,12 +270,13 @@ public class GameCore extends Canvas implements Runnable {
 				CollisionBox.collisionBoxs.get(name).trans(new Vector2(deltaX, 0));
 			}
 
-			if(!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero()) && this.mouseInputHandler.transCurPosIsInRect(translateEntity.xAxis)) {
+			if (!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero())
+					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.xAxis)) {
 				translateEntity.choosenX = true;
 			} else {
 				translateEntity.choosenX = false;
 			}
-			
+
 			// 当拖拽y轴时
 			if (this.mouseInputHandler.mouse.isPressed()
 					&& (this.mouseInputHandler.transCurPosIsInRect(translateEntity.yAxis))) {
@@ -282,7 +287,8 @@ public class GameCore extends Canvas implements Runnable {
 				CollisionBox.collisionBoxs.get(name).trans(new Vector2(0, deltaY));
 			}
 
-			if(!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero()) && this.mouseInputHandler.transCurPosIsInRect(translateEntity.yAxis)) {
+			if (!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero())
+					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.yAxis)) {
 				translateEntity.choosenY = true;
 			} else {
 				translateEntity.choosenY = false;
@@ -296,8 +302,9 @@ public class GameCore extends Canvas implements Runnable {
 				TileMap.entities.get(name).position = TileMap.entities.get(name).position.add(curPos.sub(lastPos));
 				CollisionBox.collisionBoxs.get(name).trans(curPos.sub(lastPos));
 			}
-			
-			if(!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero()) && this.mouseInputHandler.transCurPosIsInRect(translateEntity.xyAxis)) {
+
+			if (!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero())
+					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.xyAxis)) {
 				translateEntity.choosenXY = true;
 			} else {
 				translateEntity.choosenXY = false;
@@ -340,7 +347,8 @@ public class GameCore extends Canvas implements Runnable {
 			}
 
 			if (collisionBox.isChoosenLeftUp) {
-				if (!collisionBox.leftUpPoint.isEqual(GUtils.viewPortToWorldPixel(this.mouseInputHandler.getCurPos()))) {
+				if (!collisionBox.leftUpPoint
+						.isEqual(GUtils.viewPortToWorldPixel(this.mouseInputHandler.getCurPos()))) {
 					collisionBox.leftUpPoint = GUtils.viewPortToWorldPixel(this.mouseInputHandler.getCurPos());
 				}
 			}
@@ -364,7 +372,8 @@ public class GameCore extends Canvas implements Runnable {
 			}
 
 			if (collisionBox.isChoosenRightDown) {
-				if (!collisionBox.rightDownPoint.isEqual(GUtils.viewPortToWorldPixel(this.mouseInputHandler.getCurPos()))) {
+				if (!collisionBox.rightDownPoint
+						.isEqual(GUtils.viewPortToWorldPixel(this.mouseInputHandler.getCurPos()))) {
 					collisionBox.rightDownPoint = GUtils.viewPortToWorldPixel(this.mouseInputHandler.getCurPos());
 				}
 			}
