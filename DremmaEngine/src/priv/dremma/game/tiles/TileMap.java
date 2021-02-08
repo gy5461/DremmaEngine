@@ -216,7 +216,7 @@ public class TileMap {
 		Animation tree1Animation = new Animation();
 		tree1Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/tree1.png"), 100);
 		tree1Animator.addAnimation("static", tree1Animation);
-		tree1Animator.state = "static";
+		tree1Animator.setState("static", false);
 		Entity tree1Entity = new Entity(tree1Animator);
 
 		tree1Entity.setScale(new Vector2(3f, 3f));
@@ -236,7 +236,7 @@ public class TileMap {
 		Animation archivingAnimation = new Animation();
 		archivingAnimation.addFrame(Resources.loadImage(Resources.path + "images/entities/archiving.png"), 100);
 		archivingAnimator.addAnimation("static", archivingAnimation);
-		archivingAnimator.state = "static";
+		archivingAnimator.setState("static", false);
 		Entity archivingEntity = new Entity(archivingAnimator);
 
 		archivingEntity.name = "archiving";
@@ -249,7 +249,7 @@ public class TileMap {
 		Animation chair1Animation = new Animation();
 		chair1Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair1.png"), 100);
 		chair1Animator.addAnimation("static", chair1Animation);
-		chair1Animator.state = "static";
+		chair1Animator.setState("static", false);
 		Entity chair1Entity = new Entity(chair1Animator);
 
 		chair1Entity.name = "chair1";
@@ -261,7 +261,7 @@ public class TileMap {
 		Animation chair2Animation = new Animation();
 		chair2Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair2.png"), 100);
 		chair2Animator.addAnimation("static", chair2Animation);
-		chair2Animator.state = "static";
+		chair2Animator.setState("static", false);
 		Entity chair2Entity = new Entity(chair2Animator);
 
 		chair2Entity.name = "chair2";
@@ -273,7 +273,7 @@ public class TileMap {
 		Animation chair3Animation = new Animation();
 		chair3Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair3.png"), 100);
 		chair3Animator.addAnimation("static", chair3Animation);
-		chair3Animator.state = "static";
+		chair3Animator.setState("static", false);
 		Entity chair3Entity = new Entity(chair3Animator);
 
 		chair3Entity.name = "chair3";
@@ -285,7 +285,7 @@ public class TileMap {
 		Animation chair4Animation = new Animation();
 		chair4Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair4.png"), 100);
 		chair4Animator.addAnimation("static", chair4Animation);
-		chair4Animator.state = "static";
+		chair4Animator.setState("static", false);
 		Entity chair4Entity = new Entity(chair4Animator);
 
 		chair4Entity.name = "chair4";
@@ -297,7 +297,7 @@ public class TileMap {
 		Animation deskAnimation = new Animation();
 		deskAnimation.addFrame(Resources.loadImage(Resources.path + "images/entities/desk.png"), 100);
 		deskAnimator.addAnimation("static", deskAnimation);
-		deskAnimator.state = "static";
+		deskAnimator.setState("static", false);
 		Entity deskEntity = new Entity(deskAnimator);
 
 		deskEntity.name = "desk";

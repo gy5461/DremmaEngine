@@ -16,9 +16,11 @@ public class Animation {
 
 	private ArrayList<AnimFrame> frames; // 动画关键帧数组
 	private int curFrameIndex; // 当前帧在关键帧数组中的下标
-	private float curAnimTime; // 当前动画播放时长
+	public float curAnimTime; // 当前动画播放时长
 
-	private float totalDuration; // 动画总时长
+	public float totalDuration; // 动画总时长
+	
+	public boolean hasExitTime = false;
 
 	/**
 	 * 构造新的Animation

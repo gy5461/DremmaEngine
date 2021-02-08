@@ -81,7 +81,8 @@ public class GameCore extends Canvas implements Runnable {
 		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");
 		AudioManager.getInstance().playLoop("backgroundSound");
 
-		Resources.load(Resources.ResourceType.Music, "walkSound", Resources.path + "music/walk.wav");
+		Resources.load(Resources.ResourceType.Music, "runSound", Resources.path + "music/run.wav");
+		Resources.load(Resources.ResourceType.Music, "attackSound", Resources.path + "music/attack.wav");
 
 		// 从文件中加载地图
 		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");

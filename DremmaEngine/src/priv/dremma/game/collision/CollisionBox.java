@@ -87,7 +87,8 @@ public class CollisionBox {
 		borderLeftTransform.scale(borderWidth, this.getHeight());
 		g.drawImage(border, borderLeftTransform, null);
 
-		Vector2 borderRightScreenPos = GUtils.worldPixelToViewPort(new Vector2(this.leftUpPoint.x + this.getWidth(), this.leftUpPoint.y));
+		Vector2 borderRightScreenPos = GUtils
+				.worldPixelToViewPort(new Vector2(this.leftUpPoint.x + this.getWidth(), this.leftUpPoint.y));
 		AffineTransform borderRightTransform = new AffineTransform();
 		borderRightTransform.translate(borderRightScreenPos.x, borderRightScreenPos.y);
 		borderRightTransform.scale(borderWidth, this.getHeight());
@@ -99,7 +100,8 @@ public class CollisionBox {
 		borderUpTransform.scale(this.getWidth(), borderWidth);
 		g.drawImage(border, borderUpTransform, null);
 
-		Vector2 borderDownScreenPos = GUtils.worldPixelToViewPort(new Vector2(this.leftUpPoint.x, this.leftUpPoint.y + this.getHeight()));
+		Vector2 borderDownScreenPos = GUtils
+				.worldPixelToViewPort(new Vector2(this.leftUpPoint.x, this.leftUpPoint.y + this.getHeight()));
 		AffineTransform borderDownTransform = new AffineTransform();
 		borderDownTransform.translate(borderDownScreenPos.x, borderDownScreenPos.y);
 		borderDownTransform.scale(this.getWidth(), borderWidth);
@@ -107,13 +109,15 @@ public class CollisionBox {
 
 		// 渲染两角的点
 		int pointWidth = 5;
-		Vector2 leftUpPointScreenPos = GUtils.worldPixelToViewPort(new Vector2(this.leftUpPoint.x - pointWidth, this.leftUpPoint.y - pointWidth));
+		Vector2 leftUpPointScreenPos = GUtils
+				.worldPixelToViewPort(new Vector2(this.leftUpPoint.x - pointWidth, this.leftUpPoint.y - pointWidth));
 		AffineTransform leftUpPointTransform = new AffineTransform();
 		leftUpPointTransform.translate(leftUpPointScreenPos.x, leftUpPointScreenPos.y);
 		leftUpPointTransform.scale(pointWidth * 2, pointWidth * 2);
 		g.drawImage(border, leftUpPointTransform, null);
 
-		Vector2 rightDownPointScreenPos = GUtils.worldPixelToViewPort(new Vector2(this.rightDownPoint.x - pointWidth, this.rightDownPoint.y - pointWidth));
+		Vector2 rightDownPointScreenPos = GUtils.worldPixelToViewPort(
+				new Vector2(this.rightDownPoint.x - pointWidth, this.rightDownPoint.y - pointWidth));
 		AffineTransform rightDownPointTransform = new AffineTransform();
 		rightDownPointTransform.translate(rightDownPointScreenPos.x, rightDownPointScreenPos.y);
 		rightDownPointTransform.scale(pointWidth * 2, pointWidth * 2);
@@ -137,50 +141,51 @@ public class CollisionBox {
 				entity = TileMap.entities.get(name);
 			}
 
-			if (!entity.moveVector.isEqual(Vector2.zero())) {
-				Iterator<Entry<String, CollisionBox>> anotherIterator = CollisionBox.getCollisionBoxsIterator();
-				while (anotherIterator.hasNext()) {
-					HashMap.Entry<String, CollisionBox> anotherEntry = (HashMap.Entry<String, CollisionBox>) anotherIterator
-							.next();
-					String anotherName = anotherEntry.getKey();
-					if (!anotherName.equals(name)) {
-						CollisionBox anotherCollisionBox = anotherEntry.getValue();
-						if (anotherCollisionBox.isTrigger) {
-							// 进行触发检测
-							if (collisionBox.isIntersected(anotherCollisionBox) == true) {
-								// 发生了碰撞
-								collisionBox.onTriggerEnter(name, anotherName);
-							}
-						} else {
-							// 进行碰撞检测
-							CollisionBox nextCollisionBox = collisionBox
-									.translate(entity.moveVector.mul(Time.deltaTime));
-							if (collisionBox.isIntersected(anotherCollisionBox) == false
-									&& nextCollisionBox.isIntersected(anotherCollisionBox) == true) {
-								// 发生了碰撞
-								entity.position = entity.position
-										.sub(nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint));
-								collisionBox.onCollision(name, anotherName);
-							}
+			// if (!entity.moveVector.isEqual(Vector2.zero())) {
+			Iterator<Entry<String, CollisionBox>> anotherIterator = CollisionBox.getCollisionBoxsIterator();
+			while (anotherIterator.hasNext()) {
+				HashMap.Entry<String, CollisionBox> anotherEntry = (HashMap.Entry<String, CollisionBox>) anotherIterator
+						.next();
+				String anotherName = anotherEntry.getKey();
+				if (!anotherName.equals(name)) {
+					CollisionBox anotherCollisionBox = anotherEntry.getValue();
+					if (anotherCollisionBox.isTrigger) {
+						// 进行触发检测
+						if (collisionBox.isIntersected(anotherCollisionBox) == true) {
+							// 发生了触发
+							collisionBox.onTriggerEnter(name, anotherName);
+						}
+					} else {
+						// 进行碰撞检测
+						CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector.mul(Time.deltaTime));
+						if (collisionBox.isIntersected(anotherCollisionBox) == false
+								&& nextCollisionBox.isIntersected(anotherCollisionBox) == true) {
+							// 发生了碰撞
+							entity.position = entity.position
+									.sub(nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint));
+							collisionBox.onCollision(name, anotherName);
 						}
 					}
 				}
 			}
+			// }
 		}
 	}
-	
+
 	/**
 	 * 碰撞盒撞到别的碰撞盒时调用
-	 * @param name 本碰撞盒的名称
+	 * 
+	 * @param name        本碰撞盒的名称
 	 * @param anotherName 被撞到的碰撞盒的名称
 	 */
-	public void onCollision (String name, String anotherName) {
+	public void onCollision(String name, String anotherName) {
 		Debug.log(Debug.DebugLevel.INFO, name + " 撞上了:" + anotherName);
 	}
-	
+
 	/**
 	 * 碰撞盒触发别的触发器碰撞盒时调用
-	 * @param name 本碰撞盒的名称
+	 * 
+	 * @param name        本碰撞盒的名称
 	 * @param anotherName 被撞到的碰撞盒的名称
 	 */
 	public void onTriggerEnter(String name, String anotherName) {
@@ -226,7 +231,7 @@ public class CollisionBox {
 		return new CollisionBox(new Vector2(this.leftUpPoint.add(moveVector)),
 				new Vector2(this.rightDownPoint.add(moveVector)));
 	}
-	
+
 	/**
 	 * 对碰撞盒进行平移
 	 * 
@@ -245,17 +250,17 @@ public class CollisionBox {
 	public static void load() {
 		String name;
 		Vector2 leftUpPoint, rightDownPoint;
-		Queue<Object> objs = (Queue<Object>)IOHelper.readObject(path);
-		while(!objs.isEmpty()) {
-			name = (String)objs.peek();
+		Queue<Object> objs = (Queue<Object>) IOHelper.readObject(path);
+		while (!objs.isEmpty()) {
+			name = (String) objs.peek();
 			objs.remove(name);
-			leftUpPoint = (Vector2)objs.peek();
+			leftUpPoint = (Vector2) objs.peek();
 			objs.remove(leftUpPoint);
-			rightDownPoint = (Vector2)objs.peek();
+			rightDownPoint = (Vector2) objs.peek();
 			objs.remove(rightDownPoint);
-//			if(name.equals("chair1")) {
-//				continue;
-//			}
+			if (name.equals("attack")) {
+				continue;
+			}
 			CollisionBox.collisionBoxs.get(name).setPos(leftUpPoint, rightDownPoint);
 		}
 	}
@@ -271,7 +276,7 @@ public class CollisionBox {
 					.next();
 			String name = entry.getKey();
 			CollisionBox collisionBox = entry.getValue();
-			
+
 			objs.add(name);
 			objs.add(collisionBox.leftUpPoint);
 			objs.add(collisionBox.rightDownPoint);

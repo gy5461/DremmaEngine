@@ -25,13 +25,9 @@ import priv.dremma.game.util.Vector2;
  */
 public class Player extends Entity {
 
-	public static final int STATE_NORMAL = 0;
-	public static final float GRAVITY = 0.002f;
-
 	public boolean isMoved;
 
 	KeyInputHandler keyInputHandler;
-	private int state;
 
 	// 站立动画
 	HashMap<Integer, Image> playerStandUp = new HashMap<Integer, Image>();
@@ -68,7 +64,6 @@ public class Player extends Entity {
 
 	public Player(KeyInputHandler keyInputHandler, float speed) {
 		super();
-		state = STATE_NORMAL;
 		this.keyInputHandler = keyInputHandler;
 		this.isMoved = false;
 		this.name = "Player";
@@ -77,101 +72,232 @@ public class Player extends Entity {
 				new CollisionBox(this.position.sub(new Vector2(33, -17)), this.position.add(new Vector2(25, 90))));
 	}
 
-	public void setState(int state) {
-		this.state = state;
-	}
-
-	public int getState() {
-		return state;
-	}
-
 	Vector2 lastMoveVector = Vector2.zero();
 
 	public synchronized void update() {
-		if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2DOT5) {
-			this.moveVector = lastMoveVector;
-			float modifier = TileMap.TILE_SIZE.y / TileMap.TILE_SIZE.x; // 2.5D视角时，需要进行速度修正才不会走歪
-			this.isMoved = false;
-			if (this.keyInputHandler.up.isPressed()) {
-				this.animator.state = "playerRunUp";
-				this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(-1, -1));
-				isMoved = true;
-			} else if (this.keyInputHandler.down.isPressed()) {
-				this.animator.state = "playerRunDown";
-				this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(1, 1));
-				isMoved = true;
-			} else if (this.keyInputHandler.left.isPressed()) {
-				this.animator.state = "playerRunLeft";
-				this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(-1, 1));
-				isMoved = true;
-			} else if (this.keyInputHandler.right.isPressed()) {
-				this.animator.state = "playerRunRight";
-				this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(1, -1));
-				isMoved = true;
+		switch (GameCore.viewAngle) {
+		case ViewAngle2DOT5:
+			// 根据当前动画状态初始化角色状态
+			if (this.animator.getState() != null && (this.animator.getState().contains("playerRun")
+					|| (this.animator.getState().contains("playerStand")))) {
+				this.state = Entity.EntityState.STAND; // 站立/跑步动画播放中，角色处于站立状态
 			}
 
-			if (!isMoved) {
-				if (FloatCompare.isBigger(this.moveVector.x, 0) && FloatCompare.isBigger(this.moveVector.y, 0)) {
-					this.animator.state = "playerStandDown";
+			if (this.animator.getState() != null && this.animator.getState().contains("playerAttack")) {
+				this.state = Entity.EntityState.ATTACK; // 攻击动画播放中，角色处于攻击状态
+			}
+
+			// Debug.log(Debug.DebugLevel.INFO, ""+this.state);
+
+			// 处理攻击
+			if (this.keyInputHandler.key.keyCode == KeyEvent.VK_J && this.keyInputHandler.key.isPressed()) {
+				AudioManager.getInstance().stopPlay("runSound");
+				AudioManager.getInstance().playLoop("attackSound");
+
+				switch (this.direction) {
+				case UP:
+					this.animator.setState("playerAttackUp", true);
+					this.animator.setState("playerStandUp", false);
+
+					// 近战碰撞盒 Up
+					Animator playerAttackUpAnimator = new Animator();
+					playerAttackUpAnimator.addAnimation("playerAttackUp", this.playerAttackUpAnimation);
+					Entity playerAttackUpEntity = new Entity(playerAttackUpAnimator);
+					playerAttackUpEntity.animator.setState("playerAttackUp", true);
+					playerAttackUpEntity.position = new Vector2(this.position);
+					playerAttackUpEntity.setScale(this.getScale());
+
+					TileMap.addEntity("playerAttackUp", playerAttackUpEntity);
+
+					CollisionBox.collisionBoxs.put("playerAttackUp", new CollisionBox(
+							playerAttackUpEntity.position.sub(
+									new Vector2(playerAttackUpEntity.getWidth() * playerAttackUpEntity.getScale().x / 2,
+											playerAttackUpEntity.getHeight() * playerAttackUpEntity.getScale().y / 2)),
+							playerAttackUpEntity.position));
+					CollisionBox.collisionBoxs.get("playerAttackUp").isTrigger = true;
+					break;
+				case DOWN:
+					this.animator.setState("playerAttackDown", true);
+					this.animator.setState("playerStandDown", false);
+
+					// 近战碰撞盒 Down
+					Animator playerAttackDownAnimator = new Animator();
+					playerAttackDownAnimator.addAnimation("playerAttackDown", this.playerAttackDownAnimation);
+					Entity playerAttackDownEntity = new Entity(playerAttackDownAnimator);
+					playerAttackDownEntity.animator.setState("playerAttackDown", true);
+					playerAttackDownEntity.position = new Vector2(this.position);
+					playerAttackDownEntity.setScale(this.getScale());
+
+					TileMap.addEntity("playerAttackDown", playerAttackDownEntity);
+
+					CollisionBox.collisionBoxs.put("playerAttackDown", new CollisionBox(playerAttackDownEntity.position,
+							playerAttackDownEntity.position.add(new Vector2(
+									playerAttackDownEntity.getWidth() * playerAttackDownEntity.getScale().x / 2,
+									playerAttackDownEntity.getHeight() * playerAttackDownEntity.getScale().y / 2))));
+					CollisionBox.collisionBoxs.get("playerAttackDown").isTrigger = true;
+					break;
+				case LEFT:
+					this.animator.setState("playerAttackLeft", true);
+					this.animator.setState("playerStandLeft", false);
+
+					// 近战碰撞盒 Left
+					Animator playerAttackLeftAnimator = new Animator();
+					playerAttackLeftAnimator.addAnimation("playerAttackLeft", this.playerAttackLeftAnimation);
+					Entity playerAttackLeftEntity = new Entity(playerAttackLeftAnimator);
+					playerAttackLeftEntity.animator.setState("playerAttackLeft", true);
+					playerAttackLeftEntity.position = new Vector2(this.position);
+					playerAttackLeftEntity.setScale(this.getScale());
+
+					TileMap.addEntity("playerAttackLeft", playerAttackLeftEntity);
+
+					CollisionBox.collisionBoxs.put("playerAttackLeft", new CollisionBox(
+							playerAttackLeftEntity.position.sub(new Vector2(
+									playerAttackLeftEntity.getWidth() * playerAttackLeftEntity.getScale().x / 2, 0)),
+							playerAttackLeftEntity.position.add(new Vector2(0,
+									playerAttackLeftEntity.getHeight() * playerAttackLeftEntity.getScale().y / 2))));
+					CollisionBox.collisionBoxs.get("playerAttackLeft").isTrigger = true;
+					break;
+				case RIGHT:
+					this.animator.setState("playerAttackRight", true);
+					this.animator.setState("playerStandRight", false);
+
+					// 近战碰撞盒 Right
+					Animator playerAttackRightAnimator = new Animator();
+					playerAttackRightAnimator.addAnimation("playerAttackRight", this.playerAttackRightAnimation);
+					Entity playerAttackRightEntity = new Entity(playerAttackRightAnimator);
+					playerAttackRightEntity.animator.setState("playerAttackRight", true);
+					playerAttackRightEntity.position = new Vector2(this.position);
+					playerAttackRightEntity.setScale(this.getScale());
+
+					TileMap.addEntity("playerAttackRight", playerAttackRightEntity);
+
+					CollisionBox.collisionBoxs.put("playerAttackRight",
+							new CollisionBox(
+									playerAttackRightEntity.position.sub(new Vector2(0,
+											playerAttackRightEntity.getHeight() * playerAttackRightEntity.getScale().y
+													/ 2)),
+									playerAttackRightEntity.position.add(new Vector2(playerAttackRightEntity.getWidth()
+											* playerAttackRightEntity.getScale().x / 2, 0))));
+					CollisionBox.collisionBoxs.get("playerAttackRight").isTrigger = true;
+					break;
 				}
-				if (FloatCompare.isBigger(this.moveVector.x, 0) && FloatCompare.isLess(this.moveVector.y, 0)) {
-					this.animator.state = "playerStandRight";
+				this.state = Entity.EntityState.ATTACK;
+			}
+
+			// 处理移动
+			this.moveVector = lastMoveVector;
+			float modifier = TileMap.TILE_SIZE.y / TileMap.TILE_SIZE.x; // 2.5D视角时，需要进行速度修正才不会走歪
+			if (this.state == Entity.EntityState.STAND) {
+				if (this.keyInputHandler.up.isPressed()) {
+					this.animator.setState("playerRunUp", false);
+					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(-1, -1));
+					this.direction = Entity.EntityDirection.UP;
+					this.state = Entity.EntityState.RUN;
+				} else if (this.keyInputHandler.down.isPressed()) {
+					this.animator.setState("playerRunDown", false);
+					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(1, 1));
+					this.direction = Entity.EntityDirection.DOWN;
+					this.state = Entity.EntityState.RUN;
+				} else if (this.keyInputHandler.left.isPressed()) {
+					this.animator.setState("playerRunLeft", false);
+					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(-1, 1));
+					this.direction = Entity.EntityDirection.LEFT;
+					this.state = Entity.EntityState.RUN;
+				} else if (this.keyInputHandler.right.isPressed()) {
+					this.animator.setState("playerRunRight", false);
+					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(1, -1));
+					this.direction = Entity.EntityDirection.RIGHT;
+					this.state = Entity.EntityState.RUN;
 				}
-				if (FloatCompare.isLess(this.moveVector.x, 0) && FloatCompare.isBigger(this.moveVector.y, 0)) {
-					this.animator.state = "playerStandLeft";
+			}
+
+			// 处理站立
+			if (this.state == Entity.EntityState.STAND) {
+				CollisionBox.collisionBoxs.remove("playerAttackUp");
+				CollisionBox.collisionBoxs.remove("playerAttackDown");
+				CollisionBox.collisionBoxs.remove("playerAttackLeft");
+				CollisionBox.collisionBoxs.remove("playerAttackRight");
+				TileMap.entities.remove("playerAttackUp");
+				TileMap.entities.remove("playerAttackDown");
+				TileMap.entities.remove("playerAttackLeft");
+				TileMap.entities.remove("playerAttackRight");
+
+				switch (this.direction) {
+				case UP:
+					this.animator.setState("playerStandUp", false);
+					break;
+				case DOWN:
+					this.animator.setState("playerStandDown", false);
+					break;
+				case LEFT:
+					this.animator.setState("playerStandLeft", false);
+					break;
+				case RIGHT:
+					this.animator.setState("playerStandRight", false);
+					break;
 				}
-				if (FloatCompare.isLess(this.moveVector.x, 0) && FloatCompare.isLess(this.moveVector.y, 0)) {
-					this.animator.state = "playerStandUp";
-				}
-				AudioManager.getInstance().stopPlay("walkSound");
-			} else {
-				AudioManager.getInstance().playLoop("walkSound");
+				AudioManager.getInstance().stopPlay("runSound");
+				AudioManager.getInstance().stopPlay("attackSound");
+
+			} else if (this.state == Entity.EntityState.RUN) {
+				CollisionBox.collisionBoxs.remove("playerAttackUp");
+				CollisionBox.collisionBoxs.remove("playerAttackDown");
+				CollisionBox.collisionBoxs.remove("playerAttackLeft");
+				CollisionBox.collisionBoxs.remove("playerAttackRight");
+				TileMap.entities.remove("playerAttackUp");
+				TileMap.entities.remove("playerAttackDown");
+				TileMap.entities.remove("playerAttackLeft");
+				TileMap.entities.remove("playerAttackRight");
+
+				AudioManager.getInstance().stopPlay("attackSound");
+				AudioManager.getInstance().playLoop("runSound");
+
 				this.position = this.position.add(this.moveVector.mul(Time.deltaTime));
 				lastMoveVector = this.moveVector;
 			}
-			if(this.keyInputHandler.key.keyCode == KeyEvent.VK_J && this.keyInputHandler.key.isPressed()) {
-				this.animator.state = "playerAttackDown";
-			}
-		} else if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2) {
+
+			break;
+		case ViewAngle2:
 			this.moveVector = lastMoveVector;
 			this.isMoved = false;
 			if (this.keyInputHandler.up.isPressed()) {
-				this.animator.state = "playerRunUp";
+				this.animator.setState("playerRunUp", false);
 				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(0, -1));
 				isMoved = true;
 			} else if (this.keyInputHandler.down.isPressed()) {
-				this.animator.state = "playerRunDown";
+				this.animator.setState("playerRunDown", false);
 				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(0, 1));
 				isMoved = true;
 			} else if (this.keyInputHandler.left.isPressed()) {
-				this.animator.state = "playerRunLeft";
+				this.animator.setState("playerRunLeft", false);
 				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(-1, 0));
 				isMoved = true;
 			} else if (this.keyInputHandler.right.isPressed()) {
-				this.animator.state = "playerRunRight";
+				this.animator.setState("playerRunRight", false);
 				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(1, 0));
 				isMoved = true;
 			}
 
 			if (!isMoved) {
 				if (FloatCompare.isEqual(this.moveVector.x, 0f) && FloatCompare.isBigger(this.moveVector.y, 0f)) {
-					this.animator.state = "playerStandDown";
+					this.animator.setState("playerStandDown", false);
 				}
 				if (FloatCompare.isBigger(this.moveVector.x, 0f) && FloatCompare.isEqual(this.moveVector.y, 0f)) {
-					this.animator.state = "playerStandRight";
+					this.animator.setState("playerStandRight", false);
 				}
 				if (FloatCompare.isLess(this.moveVector.x, 0f) && FloatCompare.isEqual(this.moveVector.y, 0f)) {
-					this.animator.state = "playerStandLeft";
+					this.animator.setState("playerStandLeft", false);
 				}
 				if (FloatCompare.isEqual(this.moveVector.x, 0f) && FloatCompare.isLess(this.moveVector.y, 0f)) {
-					this.animator.state = "playerStandUp";
+					this.animator.setState("playerStandUp", false);
 				}
-				AudioManager.getInstance().stopPlay("walkSound"); // 停止播放脚步声
+				AudioManager.getInstance().stopPlay("runSound"); // 停止播放脚步声
 			} else {
-				AudioManager.getInstance().playLoop("walkSound"); // 循环播放脚步声
+				AudioManager.getInstance().playLoop("runSound"); // 循环播放脚步声
 				this.position = this.position.add(this.moveVector.mul(Time.deltaTime));
 				lastMoveVector = this.moveVector;
 			}
+			break;
 		}
 
 		super.update();
@@ -179,10 +305,6 @@ public class Player extends Entity {
 		// 设置碰撞盒坐标
 		CollisionBox.collisionBoxs.get(this.name).leftUpPoint = this.position.sub(new Vector2(33, -17));
 		CollisionBox.collisionBoxs.get(this.name).rightDownPoint = this.position.add(new Vector2(25, 90));
-		// Debug.log(Debug.DebugLevel.INFO,
-		// ""+this.collisionBox.rightDownPoint.sub(this.position));
-		// this.collisionBox.setPos(this.position.sub(new Vector2(33,-17)),
-		// this.position.add(Vector2.one().mul(50)));
 	}
 
 	/**
@@ -193,11 +315,11 @@ public class Player extends Entity {
 			this.animator = new Animator();
 		}
 		float duration = 1.0f / 8.0f; // 人物动画每组8张，一秒播放8次
-		
-		float attackDuration = 1.0f/10.0f;	// 人物动画每组10张，一秒播放10次
 
-		if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2DOT5) {
+		float attackDuration = 1.0f / 10.0f; // 人物动画每组10张，半秒播放10次
 
+		switch (GameCore.viewAngle) {
+		case ViewAngle2DOT5:
 			// up
 			for (int i = 48; i <= 55; i++) {
 				playerStandUp.put(i, Resources
@@ -212,12 +334,11 @@ public class Player extends Entity {
 			this.animator.addAnimation("playerRunUp", playerRunUpAnimation);
 
 			for (int i = 21; i <= 30; i++) {
-				this.playerAttackUp.put(i,
-						Resources.loadImage(Resources.path + "images/animations/player_attack/player_attack_" + i + ".png"));
+				this.playerAttackUp.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_attack/player_attack_" + i + ".png"));
 				this.playerAttackUpAnimation.addFrame(this.playerAttackUp.get(i), attackDuration);
 			}
 			this.animator.addAnimation("playerAttackUp", this.playerAttackUpAnimation);
-			
 
 			// down
 			for (int i = 40; i <= 47; i++) {
@@ -231,10 +352,10 @@ public class Player extends Entity {
 			}
 			this.animator.addAnimation("playerStandDown", playerStandDownAnimation);
 			this.animator.addAnimation("playerRunDown", playerRunDownAnimation);
-			
+
 			for (int i = 1; i <= 10; i++) {
-				this.playerAttackDown.put(i,
-						Resources.loadImage(Resources.path + "images/animations/player_attack/player_attack_" + i + ".png"));
+				this.playerAttackDown.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_attack/player_attack_" + i + ".png"));
 				this.playerAttackDownAnimation.addFrame(this.playerAttackDown.get(i), attackDuration);
 			}
 			this.animator.addAnimation("playerAttackDown", this.playerAttackDownAnimation);
@@ -251,10 +372,10 @@ public class Player extends Entity {
 			}
 			this.animator.addAnimation("playerStandRight", playerStandRightAnimation);
 			this.animator.addAnimation("playerRunRight", playerRunRightAnimation);
-			
+
 			for (int i = 31; i <= 40; i++) {
-				this.playerAttackRight.put(i,
-						Resources.loadImage(Resources.path + "images/animations/player_attack/player_attack_" + i + ".png"));
+				this.playerAttackRight.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_attack/player_attack_" + i + ".png"));
 				this.playerAttackRightAnimation.addFrame(this.playerAttackRight.get(i), attackDuration);
 			}
 			this.animator.addAnimation("playerAttackRight", this.playerAttackRightAnimation);
@@ -271,16 +392,69 @@ public class Player extends Entity {
 			}
 			this.animator.addAnimation("playerStandLeft", playerStandLeftAnimation);
 			this.animator.addAnimation("playerRunLeft", playerRunLeftAnimation);
-			
+
 			for (int i = 11; i <= 20; i++) {
-				this.playerAttackLeft.put(i,
-						Resources.loadImage(Resources.path + "images/animations/player_attack/player_attack_" + i + ".png"));
+				this.playerAttackLeft.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_attack/player_attack_" + i + ".png"));
 				this.playerAttackLeftAnimation.addFrame(this.playerAttackLeft.get(i), attackDuration);
 			}
 			this.animator.addAnimation("playerAttackLeft", this.playerAttackLeftAnimation);
 
-			this.animator.state = "playerStandDown";	// 初始化动画状态
-		} else if (GameCore.viewAngle == GameCore.GameViewAngle.ViewAngle2) {
+			// 初始化动画状态
+			switch (this.state) {
+			case STAND:
+				switch (this.direction) {
+				case UP:
+					this.animator.setState("playerStandUp", false);
+					break;
+				case DOWN:
+					this.animator.setState("playerStandDown", false);
+					break;
+				case LEFT:
+					this.animator.setState("playerStandLeft", false);
+					break;
+				case RIGHT:
+					this.animator.setState("playerStandRight", false);
+					break;
+				}
+				break;
+			case RUN:
+				switch (this.direction) {
+				case UP:
+					this.animator.setState("playerRUNUp", false);
+					break;
+				case DOWN:
+					this.animator.setState("playerRUNDown", false);
+					break;
+				case LEFT:
+					this.animator.setState("playerRUNLeft", false);
+					break;
+				case RIGHT:
+					this.animator.setState("playerRUNRight", false);
+					break;
+				}
+				break;
+			case ATTACK:
+				switch (this.direction) {
+				case UP:
+					this.animator.setState("playerAttackUp", false);
+					break;
+				case DOWN:
+					this.animator.setState("playerAttackDown", false);
+					break;
+				case LEFT:
+					this.animator.setState("playerAttackLeft", false);
+					break;
+				case RIGHT:
+					this.animator.setState("playerAttackRight", false);
+					break;
+				}
+				break;
+			case DEAD:
+				break;
+			}
+			break;
+		case ViewAngle2:
 			// up
 			for (int i = 24; i <= 31; i++) {
 				playerStandUp.put(i, Resources
@@ -333,7 +507,8 @@ public class Player extends Entity {
 			this.animator.addAnimation("playerStandLeft", playerStandLeftAnimation);
 			this.animator.addAnimation("playerRunLeft", playerRunLeftAnimation);
 
-			this.animator.state = "playerStandDown";
+			this.animator.setState("playerStandDown", false);
+			break;
 		}
 	}
 

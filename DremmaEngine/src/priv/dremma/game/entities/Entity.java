@@ -18,12 +18,26 @@ public class Entity {
 	public Vector2 moveVector; // 速度
 	private Vector2 scale; // 缩放
 	public String name;
+	
+	public static enum EntityState {
+		STAND, RUN, ATTACK, DEAD;
+	}
+	
+	public static enum EntityDirection {
+		UP, DOWN, LEFT, RIGHT;
+	}
+	
+	public EntityState state;
+	public EntityDirection direction;
 
 	public Entity() {
 		this.position = Vector2.zero();
 		this.speed = 0;
 		this.moveVector = Vector2.zero();
 		this.scale = Vector2.one();
+		
+		this.state = Entity.EntityState.STAND;
+		this.direction = Entity.EntityDirection.DOWN;
 	}
 	
 	public Entity(Entity e) {
@@ -33,6 +47,9 @@ public class Entity {
 		this.moveVector = new Vector2(e.moveVector);
 		this.scale = new Vector2(e.scale);
 		this.name = new String(e.name);
+		
+		this.state = Entity.EntityState.STAND;
+		this.direction = Entity.EntityDirection.DOWN;
 	}
 
 	/**
@@ -46,6 +63,9 @@ public class Entity {
 		this.speed = 0;
 		this.moveVector = Vector2.zero();
 		this.scale = Vector2.one();
+		
+		this.state = Entity.EntityState.STAND;
+		this.direction = Entity.EntityDirection.DOWN;
 	}
 
 	public void setAnimator(Animator animator) {
@@ -57,11 +77,18 @@ public class Entity {
 		this.scale.y = scale.y;
 		this.speed *= scale.x;
 	}
+	
+	public Vector2 getScale() {
+		return this.scale;
+	}
 
 	/**
 	 * 根据时间更新Entity的动画
 	 */
 	public void update() {
+		if(this.animator == null) {
+			return;
+		}
 		this.animator.update();
 	}
 
@@ -89,7 +116,7 @@ public class Entity {
 	 * @return
 	 */
 	public Image getImage() {
-		return animator.getAnimation(animator.state).getImage();
+		return animator.getAnimation(animator.getState()).getImage();
 	}
 
 	/**
