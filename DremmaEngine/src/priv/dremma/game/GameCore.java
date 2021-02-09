@@ -200,6 +200,8 @@ public class GameCore extends Canvas implements Runnable {
 					.next();
 			TranslateEntityHelper translateEntity = entry.getValue();
 			translateEntity.draw(g);
+//			translateEntity.xAxis.draw(g);
+//			translateEntity.yAxis.draw(g);
 		}
 	}
 
@@ -264,14 +266,14 @@ public class GameCore extends Canvas implements Runnable {
 			// 当拖拽x轴时
 			if (this.mouseInputHandler.mouse.isPressed()
 					&& (this.mouseInputHandler.transCurPosIsInRect(translateEntity.xAxis))) {
-				Vector2 curPos = new Vector2(this.mouseInputHandler.getTransCurPos());
+				Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 				Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 				float deltaX = curPos.x - lastPos.x;
 				TileMap.entities.get(name).position.x += deltaX;
 				CollisionBox.collisionBoxs.get(name).trans(new Vector2(deltaX, 0));
 			}
 
-			if (!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero())
+			if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
 					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.xAxis)) {
 				translateEntity.choosenX = true;
 			} else {
@@ -281,14 +283,14 @@ public class GameCore extends Canvas implements Runnable {
 			// 当拖拽y轴时
 			if (this.mouseInputHandler.mouse.isPressed()
 					&& (this.mouseInputHandler.transCurPosIsInRect(translateEntity.yAxis))) {
-				Vector2 curPos = new Vector2(this.mouseInputHandler.getTransCurPos());
+				Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 				Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 				float deltaY = curPos.y - lastPos.y;
 				TileMap.entities.get(name).position.y += deltaY;
 				CollisionBox.collisionBoxs.get(name).trans(new Vector2(0, deltaY));
 			}
 
-			if (!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero())
+			if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
 					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.yAxis)) {
 				translateEntity.choosenY = true;
 			} else {
@@ -298,13 +300,13 @@ public class GameCore extends Canvas implements Runnable {
 			// 当拖拽黄色部分时，在两个方向上移动
 			if (this.mouseInputHandler.mouse.isPressed()
 					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.xyAxis)) {
-				Vector2 curPos = new Vector2(this.mouseInputHandler.getTransCurPos());
+				Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 				Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 				TileMap.entities.get(name).position = TileMap.entities.get(name).position.add(curPos.sub(lastPos));
 				CollisionBox.collisionBoxs.get(name).trans(curPos.sub(lastPos));
 			}
 
-			if (!this.mouseInputHandler.transCurPos.isEqual(Vector2.zero())
+			if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
 					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.xyAxis)) {
 				translateEntity.choosenXY = true;
 			} else {

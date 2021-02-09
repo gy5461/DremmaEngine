@@ -49,6 +49,7 @@ public class TranslateEntityHelper {
 		}
 		// 绘制箭头
 		float length = 50f;
+		float xyScale = 15f;	// xy的方块大小
 
 		// x
 		if (this.choosenX == false) {
@@ -70,7 +71,7 @@ public class TranslateEntityHelper {
 			g.drawImage(xArrowHead, xArrowHeadTransform, null);
 
 			this.xAxis = new Rect(
-					new Vector2(this.entity.position.x + 1,
+					new Vector2(this.entity.position.x + 1 + xyScale,
 							this.entity.position.y - xArrowHead.getWidth(null) * 0.25f / 2),
 					new Vector2(this.entity.position.x + length + xArrowHead.getHeight(null) * 0.25f,
 							this.entity.position.y + xArrowHead.getWidth(null) * 0.25f / 2 + 1f));
@@ -93,7 +94,7 @@ public class TranslateEntityHelper {
 			g.drawImage(xArrowHead, xArrowHeadTransform, null);
 
 			this.xAxis = new Rect(
-					new Vector2(this.entity.position.x + 1,
+					new Vector2(this.entity.position.x + 1 + xyScale,
 							this.entity.position.y - xArrowHead.getWidth(null) * 0.25f / 2),
 					new Vector2(this.entity.position.x + length + xArrowHead.getHeight(null) * 0.25f,
 							this.entity.position.y + xArrowHead.getWidth(null) * 0.25f / 2 + 1f));
@@ -120,7 +121,7 @@ public class TranslateEntityHelper {
 			
 			this.yAxis = new Rect(
 					new Vector2(this.entity.position.x - yArrowHead.getWidth(null) * 0.25f / 2,
-							this.entity.position.y + 1),
+							this.entity.position.y + 1 + xyScale),
 					new Vector2(this.entity.position.x + yArrowHead.getWidth(null) * 0.25f / 2 + 0.5f,
 							this.entity.position.y + length + yArrowHead.getHeight(null) * 0.25f));
 		} else {
@@ -143,14 +144,13 @@ public class TranslateEntityHelper {
 			
 			this.yAxis = new Rect(
 					new Vector2(this.entity.position.x - yArrowHead.getWidth(null) * 0.25f / 2,
-							this.entity.position.y + 1),
+							this.entity.position.y + 1 + xyScale),
 					new Vector2(this.entity.position.x + yArrowHead.getWidth(null) * 0.25f / 2 + 0.5f,
 							this.entity.position.y + length + yArrowHead.getHeight(null) * 0.25f));
 		}
 
 		// xy
 		if (this.choosenXY == false) {
-			float xyScale = 15f;
 			Vector2 xyScreenPos = GUtils.worldPixelToViewPort(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1));
 			AffineTransform choosen = new AffineTransform();
 			choosen.translate(xyScreenPos.x, xyScreenPos.y);
@@ -160,7 +160,6 @@ public class TranslateEntityHelper {
 			this.xyAxis = new Rect(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1),
 					new Vector2(this.entity.position.x + 1 + xyScale, this.entity.position.y + 1 + xyScale));
 		} else {
-			float xyScale = 15f;
 			Vector2 xyScreenPos = GUtils.worldPixelToViewPort(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1));
 			AffineTransform choosen = new AffineTransform();
 			choosen.translate(xyScreenPos.x, xyScreenPos.y);

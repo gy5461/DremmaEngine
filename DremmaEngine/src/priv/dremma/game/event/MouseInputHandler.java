@@ -20,9 +20,8 @@ import priv.dremma.game.util.Vector2;
 
 public class MouseInputHandler implements MouseListener {
 	GameCore game;
-	private Vector2 curPos = Vector2.zero(); // 鼠标当前位置
-	public Vector2 transCurPos = Vector2.zero();
-	private Vector2 lastTransPos = Vector2.zero(); // 鼠标上一位置
+	public Vector2 curPos = Vector2.zero(); // 鼠标当前位置
+	private Vector2 lastPos = Vector2.zero(); // 鼠标上一位置
 
 	public MouseInputHandler(GameCore game) {
 		game.addMouseListener(this); // 给游戏窗体添加鼠标监听器
@@ -30,13 +29,13 @@ public class MouseInputHandler implements MouseListener {
 	}
 
 	public void update() {
-		transCurPos = this.getTransCurPos();
+		curPos = this.getCurPos();
 
-		lastTransPos = transCurPos;
+		lastPos = curPos;
 	}
 
 	public Vector2 getLastPos() {
-		return this.lastTransPos;
+		return this.lastPos;
 	}
 
 	public Vector2 getCurPos() {
@@ -46,15 +45,8 @@ public class MouseInputHandler implements MouseListener {
 		return curPos;
 	}
 
-	public Vector2 getTransCurPos() {
-		PointerInfo pinfo = MouseInfo.getPointerInfo();
-		transCurPos = new Vector2(pinfo.getLocation().x, pinfo.getLocation().y);
-		transCurPos = transCurPos.sub(new Vector2(game.window.getLocation().x, game.window.getLocation().y + 27));
-		return transCurPos;
-	}
-
 	public boolean transCurPosIsInRect(Rect rect) {
-		return GUtils.viewPortToWorldPixel(transCurPos).isInRect(rect.leftUpPoint, rect.rightDownPoint);
+		return GUtils.viewPortToWorldPixel(curPos).isInRect(rect.leftUpPoint, rect.rightDownPoint);
 	}
 
 	/**

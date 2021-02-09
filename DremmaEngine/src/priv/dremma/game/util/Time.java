@@ -15,7 +15,7 @@ public class Time {
 	public static long lastFramensTime = System.nanoTime(); // 记录上一帧的纳秒数
 	// 每秒1e9纳秒，每秒渲染60帧画面是人眼上限，指在每秒渲染60帧画面的前提下，每帧需要多少纳秒
 	public static final float NSPERFRAME = 1000000000.0f / 60.0f;
-	public static float deltaFrame = 0; // 纳秒数的变化除以nsPerFrame，即变化的帧数
+	private static float deltaFrame = 0; // 纳秒数的变化除以nsPerFrame，即变化的帧数
 	public static float deltaTime = 0; // 每帧的用时，单位为秒
 	public static float elapsedTime = 0; // 过去的时间
 	public static long curnsTime; // 记录当前纳秒数

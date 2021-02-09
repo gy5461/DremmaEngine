@@ -177,4 +177,18 @@ public class Vector2 implements Serializable {
 	public boolean isInRect(Vector2 leftUp, Vector2 rightDown) {
 		return this.isLessOrEqual(rightDown) && this.isBiggerOrEqual(leftUp);
 	}
+	
+	/**
+	 * 二维向量的插值函数
+	 * @param startPos 开始位置
+	 * @param endPos 结束位置
+	 * @param time 插值时间（0.0f～1.0f）
+	 * @return
+	 */
+	public static Vector2 lerp(Vector2 startPos, Vector2 endPos, float time) {
+		if(FloatCompare.isBigger(time, 1.0f)) {
+			time = 1.0f;
+		}
+		return startPos.add(endPos.sub(startPos).mul(time));
+	}
 }

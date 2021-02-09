@@ -19,6 +19,8 @@ public class Entity {
 	private Vector2 scale; // 缩放
 	public String name;
 	
+	public boolean visible = true;	// 是否可见
+	
 	public static enum EntityState {
 		STAND, RUN, ATTACK, DEAD;
 	}
@@ -133,6 +135,10 @@ public class Entity {
 	 * @param g
 	 */
 	public void draw(Graphics2D g) {
+		if(this.visible == false) {
+			return;
+		}
+		
 		Vector2 screenPos = GUtils.worldPixelToViewPort(this.position);
 		
 		AffineTransform transform = new AffineTransform();

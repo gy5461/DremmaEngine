@@ -16,7 +16,6 @@ import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.IOHelper;
 import priv.dremma.game.util.Resources;
-import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
 /**
@@ -141,34 +140,36 @@ public class CollisionBox {
 				entity = TileMap.entities.get(name);
 			}
 
-			// if (!entity.moveVector.isEqual(Vector2.zero())) {
-			Iterator<Entry<String, CollisionBox>> anotherIterator = CollisionBox.getCollisionBoxsIterator();
-			while (anotherIterator.hasNext()) {
-				HashMap.Entry<String, CollisionBox> anotherEntry = (HashMap.Entry<String, CollisionBox>) anotherIterator
-						.next();
-				String anotherName = anotherEntry.getKey();
-				if (!anotherName.equals(name)) {
-					CollisionBox anotherCollisionBox = anotherEntry.getValue();
-					if (anotherCollisionBox.isTrigger) {
-						// 进行触发检测
-						if (collisionBox.isIntersected(anotherCollisionBox) == true) {
-							// 发生了触发
-							collisionBox.onTriggerEnter(name, anotherName);
-						}
-					} else {
-						// 进行碰撞检测
-						CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector.mul(Time.deltaTime));
-						if (collisionBox.isIntersected(anotherCollisionBox) == false
-								&& nextCollisionBox.isIntersected(anotherCollisionBox) == true) {
-							// 发生了碰撞
-							entity.position = entity.position
-									.sub(nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint));
-							collisionBox.onCollision(name, anotherName);
+			if (!entity.moveVector.isEqual(Vector2.zero())) {
+				Iterator<Entry<String, CollisionBox>> anotherIterator = CollisionBox.getCollisionBoxsIterator();
+				while (anotherIterator.hasNext()) {
+					HashMap.Entry<String, CollisionBox> anotherEntry = (HashMap.Entry<String, CollisionBox>) anotherIterator
+							.next();
+					String anotherName = anotherEntry.getKey();
+					if (!anotherName.equals(name)) {
+						CollisionBox anotherCollisionBox = anotherEntry.getValue();
+						if (anotherCollisionBox.isTrigger) {
+							// 进行触发检测
+							if (collisionBox.isIntersected(anotherCollisionBox) == true) {
+								// 发生了触发
+								collisionBox.onTriggerEnter(name, anotherName);
+							}
+						} else {
+							// 进行碰撞检测
+							CollisionBox nextCollisionBox = collisionBox
+									.translate(entity.moveVector);
+							//Debug.log(Debug.DebugLevel.INFO, "\t"+anotherName+"\tlf:"+anotherCollisionBox.leftUpPoint+"\tri:"+anotherCollisionBox.rightDownPoint);
+							if (collisionBox.isIntersected(anotherCollisionBox) == false
+									&& nextCollisionBox.isIntersected(anotherCollisionBox) == true) {
+								// 发生了碰撞
+								entity.position = entity.position
+										.sub(nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint));
+								collisionBox.onCollision(name, anotherName);
+							}
 						}
 					}
 				}
 			}
-			// }
 		}
 	}
 
