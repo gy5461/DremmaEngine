@@ -259,7 +259,7 @@ public class CollisionBox {
 			objs.remove(leftUpPoint);
 			rightDownPoint = (Vector2) objs.peek();
 			objs.remove(rightDownPoint);
-			if (name.equals("attack")) {
+			if (name.equals("до╪╚оинл")) {
 				continue;
 			}
 			CollisionBox.collisionBoxs.get(name).setPos(leftUpPoint, rightDownPoint);

@@ -121,9 +121,10 @@ public class Vector2 implements Serializable {
 	public String toString() {
 		return "Vector2 [x=" + x + ", y=" + y + "]";
 	}
-	
+
 	/**
 	 * 向量是否相等
+	 * 
 	 * @param another
 	 * @return
 	 */
@@ -133,43 +134,47 @@ public class Vector2 implements Serializable {
 
 	/**
 	 * 向量是否大于another
+	 * 
 	 * @param another
 	 * @return
 	 */
 	public boolean isBigger(Vector2 another) {
 		return FloatCompare.isBigger(this.x, another.x) && FloatCompare.isBigger(this.y, another.y);
 	}
-	
+
 	/**
 	 * 向量是否大于等于another
+	 * 
 	 * @param another
 	 * @return
 	 */
 	public boolean isBiggerOrEqual(Vector2 another) {
 		return this.isBigger(another) || this.isEqual(another);
 	}
-	
 
 	/**
 	 * 向量是否小于another
+	 * 
 	 * @param another
 	 * @return
 	 */
 	public boolean isLess(Vector2 another) {
 		return FloatCompare.isLess(this.x, another.x) && FloatCompare.isLess(this.y, another.y);
 	}
-	
+
 	/**
 	 * 向量是否小于等于another
+	 * 
 	 * @param another
 	 * @return
 	 */
 	public boolean isLessOrEqual(Vector2 another) {
 		return this.isLess(another) || this.isEqual(another);
 	}
-	
+
 	/**
 	 * 当前坐标是否在一个矩形内
+	 * 
 	 * @param leftUp
 	 * @param rightDown
 	 * @return
@@ -177,16 +182,21 @@ public class Vector2 implements Serializable {
 	public boolean isInRect(Vector2 leftUp, Vector2 rightDown) {
 		return this.isLessOrEqual(rightDown) && this.isBiggerOrEqual(leftUp);
 	}
-	
+
 	/**
 	 * 二维向量的插值函数
+	 * 
 	 * @param startPos 开始位置
-	 * @param endPos 结束位置
-	 * @param time 插值时间（0.0f～1.0f）
+	 * @param endPos   结束位置
+	 * @param time     插值时间（0.0f～1.0f）
 	 * @return
 	 */
 	public static Vector2 lerp(Vector2 startPos, Vector2 endPos, float time) {
-		if(FloatCompare.isBigger(time, 1.0f)) {
+		if (FloatCompare.isLess(time, 0.0f)) {
+			time = 0.0f;
+		}
+
+		if (FloatCompare.isBigger(time, 1.0f)) {
 			time = 1.0f;
 		}
 		return startPos.add(endPos.sub(startPos).mul(time));

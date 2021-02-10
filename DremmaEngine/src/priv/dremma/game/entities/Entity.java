@@ -22,7 +22,7 @@ public class Entity {
 	public boolean visible = true;	// ÊÇ·ñ¿É¼û
 	
 	public static enum EntityState {
-		STAND, RUN, ATTACK, DEAD;
+		STAND, MOVE, ATTACK, DEAD;
 	}
 	
 	public static enum EntityDirection {

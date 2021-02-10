@@ -71,7 +71,6 @@ public class GameCore extends Canvas implements Runnable {
 	public void onStart() {
 		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // 设置2D游戏视角
 		player = new Player(this.keyInputHandler, 60f);
-		player.loadAnimation();
 
 		player.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.height / 2f);
 
@@ -83,6 +82,7 @@ public class GameCore extends Canvas implements Runnable {
 
 		Resources.load(Resources.ResourceType.Music, "runSound", Resources.path + "music/run.wav");
 		Resources.load(Resources.ResourceType.Music, "attackSound", Resources.path + "music/attack.wav");
+		Resources.load(Resources.ResourceType.Music, "ghostFloatSound", Resources.path + "music/鬼漂浮声.wav");
 
 		// 从文件中加载地图
 		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
@@ -157,6 +157,7 @@ public class GameCore extends Canvas implements Runnable {
 					frames++;
 					render();
 
+					map.update();
 					animationLoop();
 
 				}
@@ -169,8 +170,6 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	public void animationLoop() {
-		player.update();
-
 		Graphics2D g = this.getGraphics2D();
 		draw(g);
 		g.dispose();

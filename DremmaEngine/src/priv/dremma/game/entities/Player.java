@@ -25,8 +25,6 @@ import priv.dremma.game.util.Vector2;
  */
 public class Player extends Entity {
 
-	public boolean isMoved;
-
 	KeyInputHandler keyInputHandler;
 
 	// 站立动画
@@ -61,21 +59,22 @@ public class Player extends Entity {
 	Animation playerAttackDownAnimation = new Animation();
 	Animation playerAttackRightAnimation = new Animation();
 	Animation playerAttackLeftAnimation = new Animation();
+	
+	Vector2 lastMoveVector = Vector2.zero();	// 上一个moveVector
+	
+	public static final float ATTACK_LERP = 135f;	// 攻击动作插值距离
+	public static final float ATTACK_OFFSETX = 130f;	// 为了得到合适大小的攻击碰撞盒x方向的偏移量
+	public static final float ATTACK_OFFSETY = 115f;	// 为了得到合适大小的攻击碰撞盒y方向的偏移量
 
 	public Player(KeyInputHandler keyInputHandler, float speed) {
 		super();
 		this.keyInputHandler = keyInputHandler;
-		this.isMoved = false;
 		this.name = "Player";
 		this.speed = speed;
 		CollisionBox.collisionBoxs.put(this.name,
 				new CollisionBox(this.position.sub(new Vector2(33, -17)), this.position.add(new Vector2(25, 90))));
+		this.loadAnimation();
 	}
-
-	Vector2 lastMoveVector = Vector2.zero();
-	public static final float ATTACK_LERP = 135f;
-	public static final float ATTACK_OFFSETX = 130f;
-	public static final float ATTACK_OFFSETY = 115f;
 
 	public synchronized void update() {
 		switch (GameCore.viewAngle) {
@@ -95,28 +94,32 @@ public class Player extends Entity {
 			if (this.state == Entity.EntityState.ATTACK) {
 				if (this.animator.getState().contains("Up")) {
 					// 插值，从(0, 0)到(-ATTACK_LERP, -ATTACK_LERP * modifier)
-					Vector2 transValue = Vector2.lerp(Vector2.zero(), new Vector2(-ATTACK_LERP, -ATTACK_LERP * modifier), Time.deltaTime);
+					Vector2 transValue = Vector2.lerp(Vector2.zero(),
+							new Vector2(-ATTACK_LERP, -ATTACK_LERP * modifier), Time.deltaTime);
 					TileMap.entities.get("playerAttackUp").moveVector = transValue;
 					CollisionBox.collisionBoxs.get("playerAttackUp").trans(transValue);
 				}
-				
+
 				if (this.animator.getState().contains("Down")) {
 					// 插值，从(0, 0)到(ATTACK_LERP, ATTACK_LERP * modifier)
-					Vector2 transValue = Vector2.lerp(Vector2.zero(), new Vector2(ATTACK_LERP, ATTACK_LERP * modifier), Time.deltaTime);
+					Vector2 transValue = Vector2.lerp(Vector2.zero(), new Vector2(ATTACK_LERP, ATTACK_LERP * modifier),
+							Time.deltaTime);
 					TileMap.entities.get("playerAttackDown").moveVector = transValue;
 					CollisionBox.collisionBoxs.get("playerAttackDown").trans(transValue);
 				}
-				
+
 				if (this.animator.getState().contains("Left")) {
 					// 插值，从(0, 0)到(-ATTACK_LERP, ATTACK_LERP * modifier)
-					Vector2 transValue = Vector2.lerp(Vector2.zero(), new Vector2(-ATTACK_LERP, ATTACK_LERP * modifier), Time.deltaTime);
+					Vector2 transValue = Vector2.lerp(Vector2.zero(), new Vector2(-ATTACK_LERP, ATTACK_LERP * modifier),
+							Time.deltaTime);
 					TileMap.entities.get("playerAttackLeft").moveVector = transValue;
 					CollisionBox.collisionBoxs.get("playerAttackLeft").trans(transValue);
 				}
-				
+
 				if (this.animator.getState().contains("Right")) {
 					// 插值，从(0, 0)到(-ATTACK_LERP, -ATTACK_LERP * modifier)
-					Vector2 transValue = Vector2.lerp(Vector2.zero(), new Vector2(ATTACK_LERP, -ATTACK_LERP * modifier), Time.deltaTime);
+					Vector2 transValue = Vector2.lerp(Vector2.zero(), new Vector2(ATTACK_LERP, -ATTACK_LERP * modifier),
+							Time.deltaTime);
 					TileMap.entities.get("playerAttackRight").moveVector = transValue;
 					CollisionBox.collisionBoxs.get("playerAttackRight").trans(transValue);
 				}
@@ -150,7 +153,8 @@ public class Player extends Entity {
 					if (playerAttackUpEntity != null && !CollisionBox.collisionBoxs.containsKey("playerAttackUp")) {
 						CollisionBox.collisionBoxs.put("playerAttackUp",
 								new CollisionBox(playerAttackUpEntity.position.sub(new Vector2(
-										playerAttackUpEntity.getWidth() * playerAttackUpEntity.getScale().x / 2 - ATTACK_OFFSETX,
+										playerAttackUpEntity.getWidth() * playerAttackUpEntity.getScale().x / 2
+												- ATTACK_OFFSETX,
 										playerAttackUpEntity.getHeight() * playerAttackUpEntity.getScale().y / 2
 												- ATTACK_OFFSETY)),
 										playerAttackUpEntity.position));
@@ -160,18 +164,21 @@ public class Player extends Entity {
 							.isLessOrEqual(TileMap.entities.get("playerAttackUp").position
 									.sub(new Vector2(
 											TileMap.entities.get("playerAttackUp").getWidth()
-													* TileMap.entities.get("playerAttackUp").getScale().x / 2 - ATTACK_OFFSETX,
+													* TileMap.entities.get("playerAttackUp").getScale().x / 2
+													- ATTACK_OFFSETX,
 											TileMap.entities.get("playerAttackUp").getHeight()
-													* TileMap.entities.get("playerAttackUp").getScale().y / 2 - ATTACK_OFFSETY))
+													* TileMap.entities.get("playerAttackUp").getScale().y / 2
+													- ATTACK_OFFSETY))
 									.add(new Vector2(-ATTACK_LERP, -ATTACK_LERP * modifier)))) {
-						CollisionBox.collisionBoxs.get("playerAttackUp").trans(new Vector2(ATTACK_LERP, ATTACK_LERP * modifier));
+						CollisionBox.collisionBoxs.get("playerAttackUp")
+								.trans(new Vector2(ATTACK_LERP, ATTACK_LERP * modifier));
 					}
 
 					break;
 				case DOWN:
 					this.animator.setState("playerAttackDown", true);
 					this.animator.setState("playerStandDown", false);
-					
+
 					// 近战碰撞盒 Down
 					Animator playerAttackDownAnimator = null;
 					Entity playerAttackDownEntity = null;
@@ -188,18 +195,22 @@ public class Player extends Entity {
 					}
 
 					if (playerAttackDownEntity != null && !CollisionBox.collisionBoxs.containsKey("playerAttackDown")) {
-						CollisionBox.collisionBoxs.put("playerAttackDown", new CollisionBox(playerAttackDownEntity.position,
+						CollisionBox.collisionBoxs.put("playerAttackDown", new CollisionBox(
+								playerAttackDownEntity.position,
 								playerAttackDownEntity.position.add(new Vector2(
-										playerAttackDownEntity.getWidth() * playerAttackDownEntity.getScale().x / 2 - ATTACK_OFFSETX,
-										playerAttackDownEntity.getHeight() * playerAttackDownEntity.getScale().y / 2 - ATTACK_OFFSETY))));
+										playerAttackDownEntity.getWidth() * playerAttackDownEntity.getScale().x / 2
+												- ATTACK_OFFSETX,
+										playerAttackDownEntity.getHeight() * playerAttackDownEntity.getScale().y / 2
+												- ATTACK_OFFSETY))));
 					}
 
 					if (CollisionBox.collisionBoxs.get("playerAttackDown").leftUpPoint
 							.isBiggerOrEqual(TileMap.entities.get("playerAttackDown").position
 									.add(new Vector2(ATTACK_LERP, ATTACK_LERP * modifier)))) {
-						CollisionBox.collisionBoxs.get("playerAttackDown").trans(new Vector2(-ATTACK_LERP, -ATTACK_LERP * modifier));
+						CollisionBox.collisionBoxs.get("playerAttackDown")
+								.trans(new Vector2(-ATTACK_LERP, -ATTACK_LERP * modifier));
 					}
-					
+
 					break;
 				case LEFT:
 					this.animator.setState("playerAttackLeft", true);
@@ -223,24 +234,31 @@ public class Player extends Entity {
 					if (playerAttackLeftEntity != null && !CollisionBox.collisionBoxs.containsKey("playerAttackLeft")) {
 						CollisionBox.collisionBoxs.put("playerAttackLeft", new CollisionBox(
 								playerAttackLeftEntity.position.sub(new Vector2(
-										playerAttackLeftEntity.getWidth() * playerAttackLeftEntity.getScale().x / 2 - Player.ATTACK_OFFSETX, 0)),
+										playerAttackLeftEntity.getWidth() * playerAttackLeftEntity.getScale().x / 2
+												- Player.ATTACK_OFFSETX,
+										0)),
 								playerAttackLeftEntity.position.add(new Vector2(0,
-										playerAttackLeftEntity.getHeight() * playerAttackLeftEntity.getScale().y / 2 - Player.ATTACK_OFFSETY))));
+										playerAttackLeftEntity.getHeight() * playerAttackLeftEntity.getScale().y / 2
+												- Player.ATTACK_OFFSETY))));
 					}
-					
+
 					Vector2 endPointLeft = TileMap.entities.get("playerAttackLeft").position.sub(new Vector2(
-							TileMap.entities.get("playerAttackLeft").getWidth() * TileMap.entities.get("playerAttackLeft").getScale().x / 2 - Player.ATTACK_OFFSETX, 0))
-							.add(new Vector2(-ATTACK_LERP, ATTACK_LERP * modifier));
-					if (FloatCompare.isLessOrEqual(CollisionBox.collisionBoxs.get("playerAttackLeft").leftUpPoint.x, endPointLeft.x) &&
-							FloatCompare.isBiggerOrEqual(CollisionBox.collisionBoxs.get("playerAttackLeft").leftUpPoint.y, endPointLeft.y)) {
-						CollisionBox.collisionBoxs.get("playerAttackLeft").trans(new Vector2(ATTACK_LERP, -ATTACK_LERP * modifier));
+							TileMap.entities.get("playerAttackLeft").getWidth()
+									* TileMap.entities.get("playerAttackLeft").getScale().x / 2 - Player.ATTACK_OFFSETX,
+							0)).add(new Vector2(-ATTACK_LERP, ATTACK_LERP * modifier));
+					if (FloatCompare.isLessOrEqual(CollisionBox.collisionBoxs.get("playerAttackLeft").leftUpPoint.x,
+							endPointLeft.x)
+							&& FloatCompare.isBiggerOrEqual(
+									CollisionBox.collisionBoxs.get("playerAttackLeft").leftUpPoint.y, endPointLeft.y)) {
+						CollisionBox.collisionBoxs.get("playerAttackLeft")
+								.trans(new Vector2(ATTACK_LERP, -ATTACK_LERP * modifier));
 					}
-					
+
 					break;
 				case RIGHT:
 					this.animator.setState("playerAttackRight", true);
 					this.animator.setState("playerStandRight", false);
-					
+
 					// 近战碰撞盒 Right
 					Animator playerAttackRightAnimator = null;
 					Entity playerAttackRightEntity = null;
@@ -256,25 +274,35 @@ public class Player extends Entity {
 						TileMap.addEntity("playerAttackRight", playerAttackRightEntity);
 					}
 
-					if (playerAttackRightEntity != null && !CollisionBox.collisionBoxs.containsKey("playerAttackRight")) {
+					if (playerAttackRightEntity != null
+							&& !CollisionBox.collisionBoxs.containsKey("playerAttackRight")) {
 						CollisionBox.collisionBoxs.put("playerAttackRight",
 								new CollisionBox(
 										playerAttackRightEntity.position.sub(new Vector2(0,
-												playerAttackRightEntity.getHeight() * playerAttackRightEntity.getScale().y
-														/ 2 - Player.ATTACK_OFFSETY)),
-										playerAttackRightEntity.position.add(new Vector2(playerAttackRightEntity.getWidth()
-												* playerAttackRightEntity.getScale().x / 2 - Player.ATTACK_OFFSETX, 0))));
+												playerAttackRightEntity.getHeight()
+														* playerAttackRightEntity.getScale().y / 2
+														- Player.ATTACK_OFFSETY)),
+										playerAttackRightEntity.position
+												.add(new Vector2(playerAttackRightEntity.getWidth()
+														* playerAttackRightEntity.getScale().x / 2
+														- Player.ATTACK_OFFSETX, 0))));
 					}
-					
-					Vector2 endPointRight = TileMap.entities.get("playerAttackRight").position.sub(new Vector2(0,
-							TileMap.entities.get("playerAttackRight").getHeight() * TileMap.entities.get("playerAttackRight").getScale().y
-							/ 2 - Player.ATTACK_OFFSETY))
+
+					Vector2 endPointRight = TileMap.entities.get("playerAttackRight").position
+							.sub(new Vector2(0,
+									TileMap.entities.get("playerAttackRight").getHeight()
+											* TileMap.entities.get("playerAttackRight").getScale().y / 2
+											- Player.ATTACK_OFFSETY))
 							.add(new Vector2(ATTACK_LERP, -ATTACK_LERP * modifier));
-					if (FloatCompare.isBiggerOrEqual(CollisionBox.collisionBoxs.get("playerAttackRight").leftUpPoint.x, endPointRight.x) &&
-							FloatCompare.isLessOrEqual(CollisionBox.collisionBoxs.get("playerAttackRight").leftUpPoint.y, endPointRight.y)) {
-						CollisionBox.collisionBoxs.get("playerAttackRight").trans(new Vector2(-ATTACK_LERP, ATTACK_LERP * modifier));
+					if (FloatCompare.isBiggerOrEqual(CollisionBox.collisionBoxs.get("playerAttackRight").leftUpPoint.x,
+							endPointRight.x)
+							&& FloatCompare.isLessOrEqual(
+									CollisionBox.collisionBoxs.get("playerAttackRight").leftUpPoint.y,
+									endPointRight.y)) {
+						CollisionBox.collisionBoxs.get("playerAttackRight")
+								.trans(new Vector2(-ATTACK_LERP, ATTACK_LERP * modifier));
 					}
-					
+
 					break;
 				}
 				this.state = Entity.EntityState.ATTACK;
@@ -287,25 +315,25 @@ public class Player extends Entity {
 					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(-1, -1))
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.UP;
-					this.state = Entity.EntityState.RUN;
+					this.state = Entity.EntityState.MOVE;
 				} else if (this.keyInputHandler.down.isPressed()) {
 					this.animator.setState("playerRunDown", false);
 					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(1, 1))
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.DOWN;
-					this.state = Entity.EntityState.RUN;
+					this.state = Entity.EntityState.MOVE;
 				} else if (this.keyInputHandler.left.isPressed()) {
 					this.animator.setState("playerRunLeft", false);
 					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(-1, 1))
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.LEFT;
-					this.state = Entity.EntityState.RUN;
+					this.state = Entity.EntityState.MOVE;
 				} else if (this.keyInputHandler.right.isPressed()) {
 					this.animator.setState("playerRunRight", false);
 					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(1, -1))
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.RIGHT;
-					this.state = Entity.EntityState.RUN;
+					this.state = Entity.EntityState.MOVE;
 				}
 			}
 
@@ -338,7 +366,7 @@ public class Player extends Entity {
 				AudioManager.getInstance().stopPlay("attackSound");
 				this.moveVector = Vector2.zero();
 
-			} else if (this.state == Entity.EntityState.RUN) {
+			} else if (this.state == Entity.EntityState.MOVE) {
 				CollisionBox.collisionBoxs.remove("playerAttackUp");
 				CollisionBox.collisionBoxs.remove("playerAttackDown");
 				CollisionBox.collisionBoxs.remove("playerAttackLeft");
@@ -357,45 +385,64 @@ public class Player extends Entity {
 
 			break;
 		case ViewAngle2:
-			this.moveVector = lastMoveVector;
-			this.isMoved = false;
-			if (this.keyInputHandler.up.isPressed()) {
-				this.animator.setState("playerRunUp", false);
-				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(0, -1));
-				isMoved = true;
-			} else if (this.keyInputHandler.down.isPressed()) {
-				this.animator.setState("playerRunDown", false);
-				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(0, 1));
-				isMoved = true;
-			} else if (this.keyInputHandler.left.isPressed()) {
-				this.animator.setState("playerRunLeft", false);
-				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(-1, 0));
-				isMoved = true;
-			} else if (this.keyInputHandler.right.isPressed()) {
-				this.animator.setState("playerRunRight", false);
-				this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(1, 0));
-				isMoved = true;
+			this.state = Entity.EntityState.STAND;
+
+			// 处理移动
+			if (this.state == Entity.EntityState.STAND) {
+				if (this.keyInputHandler.up.isPressed()) {
+					this.animator.setState("playerRunUp", false);
+					this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(0, -1))
+							.mul(Time.deltaTime);
+					this.direction = Entity.EntityDirection.UP;
+					this.state = Entity.EntityState.MOVE;
+				} else if (this.keyInputHandler.down.isPressed()) {
+					this.animator.setState("playerRunDown", false);
+					this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(0, 1))
+							.mul(Time.deltaTime);
+					this.direction = Entity.EntityDirection.DOWN;
+					this.state = Entity.EntityState.MOVE;
+				} else if (this.keyInputHandler.left.isPressed()) {
+					this.animator.setState("playerRunLeft", false);
+					this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(-1, 0))
+							.mul(Time.deltaTime);
+					this.direction = Entity.EntityDirection.LEFT;
+					this.state = Entity.EntityState.MOVE;
+				} else if (this.keyInputHandler.right.isPressed()) {
+					this.animator.setState("playerRunRight", false);
+					this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(1, 0))
+							.mul(Time.deltaTime);
+					this.direction = Entity.EntityDirection.RIGHT;
+					this.state = Entity.EntityState.MOVE;
+				}
 			}
 
-			if (!isMoved) {
-				if (FloatCompare.isEqual(this.moveVector.x, 0f) && FloatCompare.isBigger(this.moveVector.y, 0f)) {
-					this.animator.setState("playerStandDown", false);
-				}
-				if (FloatCompare.isBigger(this.moveVector.x, 0f) && FloatCompare.isEqual(this.moveVector.y, 0f)) {
-					this.animator.setState("playerStandRight", false);
-				}
-				if (FloatCompare.isLess(this.moveVector.x, 0f) && FloatCompare.isEqual(this.moveVector.y, 0f)) {
-					this.animator.setState("playerStandLeft", false);
-				}
-				if (FloatCompare.isEqual(this.moveVector.x, 0f) && FloatCompare.isLess(this.moveVector.y, 0f)) {
+			// 处理站立
+			if (this.state == Entity.EntityState.STAND) {
+
+				switch (this.direction) {
+				case UP:
 					this.animator.setState("playerStandUp", false);
+					break;
+				case DOWN:
+					this.animator.setState("playerStandDown", false);
+					break;
+				case LEFT:
+					this.animator.setState("playerStandLeft", false);
+					break;
+				case RIGHT:
+					this.animator.setState("playerStandRight", false);
+					break;
 				}
-				AudioManager.getInstance().stopPlay("runSound"); // 停止播放脚步声
-			} else {
-				AudioManager.getInstance().playLoop("runSound"); // 循环播放脚步声
-				this.position = this.position.add(this.moveVector.mul(Time.deltaTime));
+				AudioManager.getInstance().stopPlay("runSound");
+				this.moveVector = Vector2.zero();
+
+			} else if (this.state == Entity.EntityState.MOVE) {
+				AudioManager.getInstance().playLoop("runSound");
+
+				this.position = this.position.add(this.moveVector);
 				lastMoveVector = this.moveVector;
 			}
+
 			break;
 		}
 
@@ -517,7 +564,7 @@ public class Player extends Entity {
 					break;
 				}
 				break;
-			case RUN:
+			case MOVE:
 				switch (this.direction) {
 				case UP:
 					this.animator.setState("playerRUNUp", false);

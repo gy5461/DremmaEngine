@@ -1,5 +1,6 @@
 package priv.dremma.game.gfx;
 
+import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
 /**
@@ -21,7 +22,8 @@ public class Screen {
 	}
 	
 	public void setleftUpPoint(Vector2 point) {
-		leftUpPoint = point;
+		// 使摄像头平滑地跟随
+		leftUpPoint = Vector2.lerp(leftUpPoint, point, 2.5f*Time.deltaTime);
 	}
 
 }

@@ -18,7 +18,9 @@ import priv.dremma.game.GameCore;
 import priv.dremma.game.anim.Animation;
 import priv.dremma.game.anim.Animator;
 import priv.dremma.game.collision.CollisionBox;
+import priv.dremma.game.entities.ConversationalNPC;
 import priv.dremma.game.entities.Entity;
+import priv.dremma.game.entities.NPC;
 import priv.dremma.game.entities.Player;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
@@ -231,6 +233,18 @@ public class TileMap {
 		tree1Entity.setScale(new Vector2(1f, 1f));
 		resultMap.addEntity(tree1Entity, new Vector2(3, 11));
 
+		// tree2
+		Animator tree2Animator = new Animator();
+		Animation tree2Animation = new Animation();
+		tree2Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/tree2.png"), 100);
+		tree2Animator.addAnimation("static", tree2Animation);
+		tree2Animator.setState("static", false);
+		Entity tree2Entity = new Entity(tree2Animator);
+
+		tree2Entity.name = "tree2";
+		tree2Entity.setScale(new Vector2(2f, 2f));
+		resultMap.addEntity(tree2Entity, new Vector2(4, 8));
+
 		// archiving
 		Animator archivingAnimator = new Animator();
 		Animation archivingAnimation = new Animation();
@@ -291,7 +305,7 @@ public class TileMap {
 		chair4Entity.name = "chair4";
 		chair4Entity.setScale(new Vector2(2f, 2f));
 		resultMap.addEntity(chair4Entity, new Vector2(5, 5));
-		
+
 		// chair4
 		Animator deskAnimator = new Animator();
 		Animation deskAnimation = new Animation();
@@ -303,6 +317,12 @@ public class TileMap {
 		deskEntity.name = "desk";
 		deskEntity.setScale(new Vector2(2f, 2f));
 		resultMap.addEntity(deskEntity, new Vector2(5, 8));
+
+		// 南极仙翁（对话NPC）
+		ConversationalNPC talkNPC = new ConversationalNPC(30);
+		talkNPC.name = "南极仙翁";
+		talkNPC.setScale(new Vector2(2f, 2f));
+		resultMap.addEntity(talkNPC, new Vector2(6, 8));
 
 		CollisionBox.load(); // 从数据文件中加载碰撞盒数据
 
@@ -327,15 +347,45 @@ public class TileMap {
 	 */
 	public void addEntity(Entity srcEntity, Vector2 tile) {
 		if (srcEntity != null) {
-			// 从主实体中复制实体（深拷贝）
-			Entity entity = new Entity(srcEntity);
-			entity.position = new Vector2(
-					GUtils.worldTileCenterToWorldPixel(tile, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y, this.scale).x,
-					GUtils.worldTileCenterToWorldPixel(tile, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y, this.scale).y);
+			if (srcEntity instanceof NPC) {
+				srcEntity.position = new Vector2(
+						GUtils.worldTileCenterToWorldPixel(tile, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
+								this.scale).x,
+						GUtils.worldTileCenterToWorldPixel(tile, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
+								this.scale).y);
 
-			TileMap.addEntity(entity.name, entity);
-			CollisionBox.collisionBoxs.put(entity.name,
-					new CollisionBox(entity.position.sub(Vector2.one().mul(50)), entity.position.add(Vector2.one().mul(50))));
+				TileMap.addEntity(srcEntity.name, srcEntity);
+				CollisionBox.collisionBoxs.put(srcEntity.name, new CollisionBox(srcEntity.position.sub(Vector2.one().mul(50)),
+						srcEntity.position.add(Vector2.one().mul(50))));
+			} else {
+				// 从主实体中复制实体（深拷贝）
+				Entity entity = new Entity(srcEntity);
+				entity.position = new Vector2(
+						GUtils.worldTileCenterToWorldPixel(tile, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
+								this.scale).x,
+						GUtils.worldTileCenterToWorldPixel(tile, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
+								this.scale).y);
+
+				TileMap.addEntity(entity.name, entity);
+				CollisionBox.collisionBoxs.put(entity.name, new CollisionBox(entity.position.sub(Vector2.one().mul(50)),
+						entity.position.add(Vector2.one().mul(50))));
+			}
+		}
+	}
+
+	/**
+	 * 更新地图
+	 */
+	public void update() {
+		TileMap.player.update();
+		
+		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
+		while (entitiesIterator.hasNext()) {
+			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
+			if(entry.getKey().contains("player")) {
+				continue;
+			}
+			entry.getValue().update();
 		}
 	}
 
