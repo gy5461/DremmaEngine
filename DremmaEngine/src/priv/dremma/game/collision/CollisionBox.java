@@ -10,12 +10,14 @@ import java.util.Map.Entry;
 import java.util.Queue;
 
 import priv.dremma.game.entities.Entity;
+import priv.dremma.game.entities.NPC;
 import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.IOHelper;
 import priv.dremma.game.util.Resources;
+import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
 /**
@@ -67,6 +69,11 @@ public class CollisionBox {
 		return (this.rightDownPoint.sub(this.leftUpPoint)).y;
 	}
 
+	/**
+	 * 渲染碰撞盒
+	 * 
+	 * @param g
+	 */
 	public void draw(Graphics2D g) {
 		if (!CollisionBox.shouldRender) {
 			return;
@@ -133,12 +140,7 @@ public class CollisionBox {
 					.next();
 			String name = entry.getKey();
 			CollisionBox collisionBox = entry.getValue();
-			Entity entity;
-			if (name == "Player") {
-				entity = TileMap.player;
-			} else {
-				entity = TileMap.entities.get(name);
-			}
+			Entity entity = TileMap.getEntity(name);
 
 			if (!entity.moveVector.isEqual(Vector2.zero())) {
 				Iterator<Entry<String, CollisionBox>> anotherIterator = CollisionBox.getCollisionBoxsIterator();
@@ -156,15 +158,36 @@ public class CollisionBox {
 							}
 						} else {
 							// 进行碰撞检测
-							CollisionBox nextCollisionBox = collisionBox
-									.translate(entity.moveVector);
-							//Debug.log(Debug.DebugLevel.INFO, "\t"+anotherName+"\tlf:"+anotherCollisionBox.leftUpPoint+"\tri:"+anotherCollisionBox.rightDownPoint);
-							if (collisionBox.isIntersected(anotherCollisionBox) == false
-									&& nextCollisionBox.isIntersected(anotherCollisionBox) == true) {
-								// 发生了碰撞
-								entity.position = entity.position
-										.sub(nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint));
-								collisionBox.onCollision(name, anotherName);
+							Entity anotherEntity = TileMap.getEntity(anotherName);
+							if (anotherEntity.moveVector.isEqual(Vector2.zero())) {
+								// 如果另一个实体静止
+								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector);
+								
+								if (collisionBox.isIntersected(anotherCollisionBox) == false
+										&& nextCollisionBox.isIntersected(anotherCollisionBox) == true) {
+									// 发生了碰撞
+									entity.position = entity.position.sub(entity.moveVector);
+
+									collisionBox.onCollision(name, anotherName);
+								} else if(collisionBox.isIntersected(anotherCollisionBox) == true
+										&& nextCollisionBox.isIntersected(anotherCollisionBox) == true) {
+									// 修复穿模
+									entity.position = entity.position.sub(entity.moveVector.mul(2));
+								}
+							} else {
+								// 如果另一个实体也是运动状态
+								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector);
+								CollisionBox nextAnotherCollisionBox = anotherCollisionBox.translate(anotherEntity.moveVector);
+								if (collisionBox.isIntersected(anotherCollisionBox) == false
+										&& nextCollisionBox.isIntersected(nextAnotherCollisionBox) == true) {
+									// 发生了碰撞
+									anotherEntity.position = anotherEntity.position.sub(anotherEntity.moveVector);
+									
+									collisionBox.onCollision(name, anotherName);
+								} else if(collisionBox.isIntersected(anotherCollisionBox) == true
+										&& nextCollisionBox.isIntersected(nextAnotherCollisionBox) == true) {
+									anotherEntity.position = anotherEntity.position.sub(anotherEntity.moveVector.mul(2));
+								}
 							}
 						}
 					}
@@ -181,6 +204,36 @@ public class CollisionBox {
 	 */
 	public void onCollision(String name, String anotherName) {
 		Debug.log(Debug.DebugLevel.INFO, name + " 撞上了:" + anotherName);
+
+		Entity entity = TileMap.getEntity(name);
+		if (entity instanceof NPC) {
+			// 碰撞后顺时针转向
+			switch (entity.direction) {
+			case UP:
+				entity.direction = Entity.EntityDirection.RIGHT;
+				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier)).mul(new Vector2(1, -1))
+						.mul(Time.deltaTime);
+				break;
+			case DOWN:
+				entity.direction = Entity.EntityDirection.LEFT;
+				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier)).mul(new Vector2(-1, 1))
+						.mul(Time.deltaTime);
+				break;
+			case LEFT:
+				entity.direction = Entity.EntityDirection.UP;
+				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier))
+						.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
+				break;
+			case RIGHT:
+				entity.direction = Entity.EntityDirection.DOWN;
+				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier)).mul(new Vector2(1, 1))
+						.mul(Time.deltaTime);
+				break;
+			}
+
+			((NPC) entity).startPos = entity.position;
+			((NPC) entity).endPos = ((NPC) entity).startPos.add(entity.moveVector.mul(((NPC) entity).distance));
+		}
 	}
 
 	/**
@@ -259,9 +312,9 @@ public class CollisionBox {
 			objs.remove(leftUpPoint);
 			rightDownPoint = (Vector2) objs.peek();
 			objs.remove(rightDownPoint);
-			if (name.equals("南极仙翁")) {
-				continue;
-			}
+//			if (name.contains("南极仙翁")) {
+//				continue;
+//			}
 			CollisionBox.collisionBoxs.get(name).setPos(leftUpPoint, rightDownPoint);
 		}
 	}

@@ -20,7 +20,6 @@ import priv.dremma.game.anim.Animator;
 import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.entities.ConversationalNPC;
 import priv.dremma.game.entities.Entity;
-import priv.dremma.game.entities.NPC;
 import priv.dremma.game.entities.Player;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
@@ -41,9 +40,12 @@ public class TileMap {
 	private Image[][] tiles; // 地砖
 	private Vector2 scale;
 	public static final Vector2 TILE_SIZE = new Vector2(130, 76);
+	public static float modifier = TileMap.TILE_SIZE.y / TileMap.TILE_SIZE.x; // 2.5D视角时，需要进行速度修正才不会走歪
 	public static HashMap<String, Entity> entities; // 游戏中的其他实体
 	public static Player player; // 主角
 	PriorityQueue<Entity> renderEntities; // 渲染优先队列
+
+	Vector2 worldEndTileCenter = Vector2.zero();
 
 	/**
 	 * 生成指定宽度与高度的TileMap
@@ -141,6 +143,16 @@ public class TileMap {
 		entities.put(name, entity);
 	}
 
+	public static Entity getEntity(String name) {
+		if (name.equals(TileMap.player.name)) {
+			return TileMap.player;
+		}
+		if (TileMap.entities.containsKey(name)) {
+			return TileMap.entities.get(name);
+		}
+		return null;
+	}
+
 	/**
 	 * 从地图中删除实体
 	 * 
@@ -209,6 +221,11 @@ public class TileMap {
 					resultMap.setTile(x, y, TileMap.tilesTable.get(Integer.valueOf(words[x])));
 				}
 			}
+			resultMap.worldEndTileCenter = GUtils.worldTileCenterToWorldPixel(
+					new Vector2(resultMap.getWidth(), resultMap.getHeight()), TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
+					resultMap.scale);
+			resultMap.worldEndTileCenter.x += TileMap.TILE_SIZE.x * resultMap.scale.x;
+			resultMap.worldEndTileCenter.y += (TileMap.TILE_SIZE.y / 2 + 10) * resultMap.scale.y;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -319,10 +336,45 @@ public class TileMap {
 		resultMap.addEntity(deskEntity, new Vector2(5, 8));
 
 		// 南极仙翁（对话NPC）
-		ConversationalNPC talkNPC = new ConversationalNPC(30);
+		ConversationalNPC talkNPC = new ConversationalNPC(0);
 		talkNPC.name = "南极仙翁";
 		talkNPC.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(talkNPC, new Vector2(6, 8));
+		resultMap.addNPC(talkNPC, new Vector2(1043, 275));
+
+		float borderThickness = 20f;
+		// 为地图边界添加碰撞盒 Up
+		Entity mapBorderUp = new Entity();
+		mapBorderUp.name = "mapBorderUp";
+		mapBorderUp.visible = false;
+		TileMap.addEntity("mapBorderUp", mapBorderUp);
+		CollisionBox.collisionBoxs.put("mapBorderUp", new CollisionBox(new Vector2(0, -2 - borderThickness),
+				new Vector2(resultMap.worldEndTileCenter.x, -1)));
+
+		// 为地图边界添加碰撞盒 Down
+		Entity mapBorderDown = new Entity();
+		mapBorderDown.name = "mapBorderDown";
+		mapBorderDown.visible = false;
+		TileMap.addEntity("mapBorderDown", mapBorderDown);
+		CollisionBox.collisionBoxs.put("mapBorderDown",
+				new CollisionBox(new Vector2(0, resultMap.worldEndTileCenter.y + 1 - 23), new Vector2(
+						resultMap.worldEndTileCenter.x, resultMap.worldEndTileCenter.y + 2 - 23 + borderThickness)));
+
+		// 为地图边界添加碰撞盒 Left
+		Entity mapBorderLeft = new Entity();
+		mapBorderLeft.name = "mapBorderLeft";
+		mapBorderLeft.visible = false;
+		TileMap.addEntity("mapBorderLeft", mapBorderLeft);
+		CollisionBox.collisionBoxs.put("mapBorderLeft", new CollisionBox(new Vector2(-2 - borderThickness, 0),
+				new Vector2(-1, resultMap.worldEndTileCenter.y)));
+
+		// 为地图边界添加碰撞盒 Right
+		Entity mapBorderRight = new Entity();
+		mapBorderRight.name = "mapBorderRight";
+		mapBorderRight.visible = false;
+		TileMap.addEntity("mapBorderRight", mapBorderRight);
+		CollisionBox.collisionBoxs.put("mapBorderRight", new CollisionBox(
+				new Vector2(resultMap.worldEndTileCenter.x + 1, 0),
+				new Vector2(resultMap.worldEndTileCenter.x + 2 + borderThickness, resultMap.worldEndTileCenter.y)));
 
 		CollisionBox.load(); // 从数据文件中加载碰撞盒数据
 
@@ -330,12 +382,25 @@ public class TileMap {
 		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
 		while (entitiesIterator.hasNext()) {
 			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
+			if (entry.getKey().contains("mapBorder")) {
+				continue;
+			}
 			TranslateEntityHelper translateEntityHelper = new TranslateEntityHelper(entry.getValue());
 			TranslateEntityHelper.translateEntities.put(entry.getKey(), translateEntityHelper);
 		}
 
 		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
 		return resultMap;
+	}
+
+	public void addNPC(Entity srcNPC, Vector2 pos) {
+		if (srcNPC != null) {
+			srcNPC.position = pos;
+			TileMap.addEntity(srcNPC.name, srcNPC);
+
+			CollisionBox.collisionBoxs.put(srcNPC.name, new CollisionBox(srcNPC.position.sub(Vector2.one().mul(50)),
+					srcNPC.position.add(Vector2.one().mul(50))));
+		}
 	}
 
 	/**
@@ -345,31 +410,18 @@ public class TileMap {
 	 * @param tileX
 	 * @param tileY
 	 */
-	public void addEntity(Entity srcEntity, Vector2 tile) {
+	public void addEntity(Entity srcEntity, Vector2 tilePos) {
 		if (srcEntity != null) {
-			if (srcEntity instanceof NPC) {
-				srcEntity.position = new Vector2(
-						GUtils.worldTileCenterToWorldPixel(tile, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
-								this.scale).x,
-						GUtils.worldTileCenterToWorldPixel(tile, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
-								this.scale).y);
+			// 从主实体中复制实体（深拷贝）
+			Entity entity = new Entity(srcEntity);
+			entity.position = new Vector2(
+					GUtils.worldTileCenterToWorldPixel(tilePos, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y, this.scale).x,
+					GUtils.worldTileCenterToWorldPixel(tilePos, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
+							this.scale).y);
 
-				TileMap.addEntity(srcEntity.name, srcEntity);
-				CollisionBox.collisionBoxs.put(srcEntity.name, new CollisionBox(srcEntity.position.sub(Vector2.one().mul(50)),
-						srcEntity.position.add(Vector2.one().mul(50))));
-			} else {
-				// 从主实体中复制实体（深拷贝）
-				Entity entity = new Entity(srcEntity);
-				entity.position = new Vector2(
-						GUtils.worldTileCenterToWorldPixel(tile, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
-								this.scale).x,
-						GUtils.worldTileCenterToWorldPixel(tile, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
-								this.scale).y);
-
-				TileMap.addEntity(entity.name, entity);
-				CollisionBox.collisionBoxs.put(entity.name, new CollisionBox(entity.position.sub(Vector2.one().mul(50)),
-						entity.position.add(Vector2.one().mul(50))));
-			}
+			TileMap.addEntity(entity.name, entity);
+			CollisionBox.collisionBoxs.put(entity.name, new CollisionBox(entity.position.sub(Vector2.one().mul(50)),
+					entity.position.add(Vector2.one().mul(50))));
 		}
 	}
 
@@ -378,11 +430,11 @@ public class TileMap {
 	 */
 	public void update() {
 		TileMap.player.update();
-		
+
 		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
 		while (entitiesIterator.hasNext()) {
 			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
-			if(entry.getKey().contains("player")) {
+			if (entry.getKey().contains("player")) {
 				continue;
 			}
 			entry.getValue().update();
@@ -397,18 +449,13 @@ public class TileMap {
 	public synchronized void draw(Graphics2D g) {
 		float screenleftUpPointX = player.position.x - GameCore.screen.width / 2.0f;
 
-		Vector2 worldEndTileCenter = GUtils.worldTileCenterToWorldPixel(new Vector2(this.getWidth(), this.getHeight()),
-				TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y, this.scale);
-
 		screenleftUpPointX = Math.max(screenleftUpPointX, 0);
-		screenleftUpPointX = Math.min(screenleftUpPointX,
-				worldEndTileCenter.x + TileMap.TILE_SIZE.x * this.scale.x - GameCore.screen.width);
+		screenleftUpPointX = Math.min(screenleftUpPointX, worldEndTileCenter.x - GameCore.screen.width);
 
 		float screenleftUpPointY = player.position.y - GameCore.screen.height / 2.0f;
 
 		screenleftUpPointY = Math.max(screenleftUpPointY, 0);
-		screenleftUpPointY = Math.min(screenleftUpPointY,
-				worldEndTileCenter.y + (TileMap.TILE_SIZE.y / 2 + 10) * this.scale.y - GameCore.screen.height);
+		screenleftUpPointY = Math.min(screenleftUpPointY, worldEndTileCenter.y - GameCore.screen.height);
 
 		GameCore.screen.setleftUpPoint(new Vector2(screenleftUpPointX, screenleftUpPointY));
 
@@ -446,6 +493,9 @@ public class TileMap {
 		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
 		while (entitiesIterator.hasNext()) {
 			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
+			if (entry.getValue().visible == false) {
+				continue;
+			}
 			renderEntities.add(entry.getValue());
 		}
 

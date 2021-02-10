@@ -185,9 +185,9 @@ public class TranslateEntityHelper {
 			position = (Vector2) objs.peek();
 			objs.remove(position);
 
-			if(name.equals("南极仙翁")) {
-				continue;
-			}
+//			if(name.equals("南极仙翁")) {
+//				continue;
+//			}
 			TranslateEntityHelper.translateEntities.get(name).entity.position = position;
 		}
 	}

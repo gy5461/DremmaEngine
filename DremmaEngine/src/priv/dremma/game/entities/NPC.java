@@ -39,8 +39,11 @@ public class NPC extends Entity {
 	Animation NPCRunRightAnimation = new Animation();
 	Animation NPCRunLeftAnimation = new Animation();
 
-	Vector2 startPos = Vector2.zero();
-	float standTimer = 0.0f; // 站立计时
+	public Vector2 startPos = Vector2.zero();
+	public Vector2 endPos = Vector2.zero();
+	public float distance = 300f;
+
+	public float standTimer = 0.0f; // 站立计时
 	float standTime = 1.0f; // 站立时间
 
 	public NPC(float speed) {
@@ -56,8 +59,6 @@ public class NPC extends Entity {
 	public synchronized void update() {
 		switch (GameCore.viewAngle) {
 		case ViewAngle2DOT5:
-			float modifier = TileMap.TILE_SIZE.y / TileMap.TILE_SIZE.x; // 2.5D视角时，需要进行速度修正才不会走歪
-
 			// 站立时，开始移动
 			if (FloatCompare.isEqual(this.speed, 0f)) {
 				return;
@@ -74,25 +75,25 @@ public class NPC extends Entity {
 				Random random = new Random();
 				switch (Entity.EntityDirection.values()[random.nextInt(4)]) {
 				case UP:
-					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(-1, -1))
+					this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier)).mul(new Vector2(-1, -1))
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.UP;
 					this.state = Entity.EntityState.MOVE;
 					break;
 				case DOWN:
-					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(1, 1))
+					this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier)).mul(new Vector2(1, 1))
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.DOWN;
 					this.state = Entity.EntityState.MOVE;
 					break;
 				case LEFT:
-					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(-1, 1))
+					this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier)).mul(new Vector2(-1, 1))
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.LEFT;
 					this.state = Entity.EntityState.MOVE;
 					break;
 				case RIGHT:
-					this.moveVector = (new Vector2(this.speed, this.speed * modifier)).mul(new Vector2(1, -1))
+					this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier)).mul(new Vector2(1, -1))
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.RIGHT;
 					this.state = Entity.EntityState.MOVE;
@@ -100,43 +101,38 @@ public class NPC extends Entity {
 				}
 
 				this.startPos = this.position;
+				this.endPos = this.startPos.add(this.moveVector.mul(distance));
 			}
-
-			float distance = 300f;
 
 			// 移动时，移动一段距离后站立
 			if (this.state == Entity.EntityState.MOVE) {
 				AudioManager.getInstance().playLoop("ghostFloatSound");
-
+				
 				this.position = this.position.add(this.moveVector);
 				CollisionBox.collisionBoxs.get(this.name).trans(this.moveVector);
 				switch (this.direction) {
 				case UP:
-					if (this.position.isLessOrEqual(this.startPos.add(this.moveVector.mul(distance)))) {
+					if (this.position.isLessOrEqual(endPos)) {
 						this.state = Entity.EntityState.STAND;
 						AudioManager.getInstance().stopPlay("ghostFloatSound");
 					}
 					break;
 				case DOWN:
-					if (this.position.isBiggerOrEqual(this.startPos.add(this.moveVector.mul(distance)))) {
+					if (this.position.isBiggerOrEqual(endPos)) {
 						this.state = Entity.EntityState.STAND;
 						AudioManager.getInstance().stopPlay("ghostFloatSound");
 					}
 					break;
 				case LEFT:
-					if (FloatCompare.isLessOrEqual(this.position.x,
-							(this.startPos.add(this.moveVector.mul(distance))).x)
-							&& FloatCompare.isBiggerOrEqual(this.position.y,
-									(this.startPos.add(this.moveVector.mul(distance))).y)) {
+					if (FloatCompare.isLessOrEqual(this.position.x, endPos.x)
+							&& FloatCompare.isBiggerOrEqual(this.position.y, endPos.y)) {
 						this.state = Entity.EntityState.STAND;
 						AudioManager.getInstance().stopPlay("ghostFloatSound");
 					}
 					break;
 				case RIGHT:
-					if (FloatCompare.isBiggerOrEqual(this.position.x,
-							(this.startPos.add(this.moveVector.mul(distance))).x)
-							&& FloatCompare.isLessOrEqual(this.position.y,
-									(this.startPos.add(this.moveVector.mul(distance))).y)) {
+					if (FloatCompare.isBiggerOrEqual(this.position.x, endPos.x)
+							&& FloatCompare.isLessOrEqual(this.position.y, endPos.y)) {
 						this.state = Entity.EntityState.STAND;
 						AudioManager.getInstance().stopPlay("ghostFloatSound");
 					}
@@ -150,6 +146,10 @@ public class NPC extends Entity {
 		}
 
 		super.update();
+
+		// 设置碰撞盒坐标
+		CollisionBox.collisionBoxs.get(this.name).leftUpPoint = this.position.sub(new Vector2(33, -17));
+		CollisionBox.collisionBoxs.get(this.name).rightDownPoint = this.position.add(new Vector2(25, 90));
 	}
 
 	/**
