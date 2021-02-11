@@ -52,8 +52,8 @@ public class Vector2 implements Serializable {
 	}
 
 	// 返回本向量点乘另一个向量的结果：a·b = |a||b|cosθ
-	public float dot(Vector2 another) {
-		return x * another.x + y * another.y;
+	public float dot(Vector2 other) {
+		return x * other.x + y * other.y;
 	}
 
 	// 将向量归一化
@@ -72,43 +72,43 @@ public class Vector2 implements Serializable {
 	}
 
 	// 向量相加
-	public Vector2 add(Vector2 another) {
-		return new Vector2(x + another.x, y + another.y);
+	public Vector2 add(Vector2 other) {
+		return new Vector2(x + other.x, y + other.y);
 	}
 
 	// 向量加数字
-	public Vector2 add(float another) {
-		return new Vector2(x + another, y + another);
+	public Vector2 add(float other) {
+		return new Vector2(x + other, y + other);
 	}
 
 	// 向量相减
-	public Vector2 sub(Vector2 another) {
-		return new Vector2(x - another.x, y - another.y);
+	public Vector2 sub(Vector2 other) {
+		return new Vector2(x - other.x, y - other.y);
 	}
 
 	// 向量减数字
-	public Vector2 sub(float another) {
-		return new Vector2(x - another, y - another);
+	public Vector2 sub(float other) {
+		return new Vector2(x - other, y - other);
 	}
 
 	// 向量相乘
-	public Vector2 mul(Vector2 another) {
-		return new Vector2(x * another.x, y * another.y);
+	public Vector2 mul(Vector2 other) {
+		return new Vector2(x * other.x, y * other.y);
 	}
 
 	// 向量乘数字
-	public Vector2 mul(float another) {
-		return new Vector2(x * another, y * another);
+	public Vector2 mul(float other) {
+		return new Vector2(x * other, y * other);
 	}
 
 	// 向量相除
-	public Vector2 div(Vector2 another) {
-		return new Vector2(x / another.x, y / another.y);
+	public Vector2 div(Vector2 other) {
+		return new Vector2(x / other.x, y / other.y);
 	}
 
 	// 向量除数字
-	public Vector2 div(float another) {
-		return new Vector2(x / another, y / another);
+	public Vector2 div(float other) {
+		return new Vector2(x / other, y / other);
 	}
 
 	// 向量绝对值
@@ -125,51 +125,51 @@ public class Vector2 implements Serializable {
 	/**
 	 * 向量是否相等
 	 * 
-	 * @param another
+	 * @param other
 	 * @return
 	 */
-	public boolean isEqual(Vector2 another) {
-		return FloatCompare.isEqual(this.x, another.x) && FloatCompare.isEqual(this.y, another.y);
+	public boolean isEqual(Vector2 other) {
+		return FloatCompare.isEqual(this.x, other.x) && FloatCompare.isEqual(this.y, other.y);
 	}
 
 	/**
-	 * 向量是否大于another
+	 * 向量是否大于other
 	 * 
-	 * @param another
+	 * @param other
 	 * @return
 	 */
-	public boolean isBigger(Vector2 another) {
-		return FloatCompare.isBigger(this.x, another.x) && FloatCompare.isBigger(this.y, another.y);
+	public boolean isBigger(Vector2 other) {
+		return FloatCompare.isBigger(this.x, other.x) && FloatCompare.isBigger(this.y, other.y);
 	}
 
 	/**
-	 * 向量是否大于等于another
+	 * 向量是否大于等于other
 	 * 
-	 * @param another
+	 * @param other
 	 * @return
 	 */
-	public boolean isBiggerOrEqual(Vector2 another) {
-		return this.isBigger(another) || this.isEqual(another);
+	public boolean isBiggerOrEqual(Vector2 other) {
+		return this.isBigger(other) || this.isEqual(other);
 	}
 
 	/**
-	 * 向量是否小于another
+	 * 向量是否小于other
 	 * 
-	 * @param another
+	 * @param other
 	 * @return
 	 */
-	public boolean isLess(Vector2 another) {
-		return FloatCompare.isLess(this.x, another.x) && FloatCompare.isLess(this.y, another.y);
+	public boolean isLess(Vector2 other) {
+		return FloatCompare.isLess(this.x, other.x) && FloatCompare.isLess(this.y, other.y);
 	}
 
 	/**
-	 * 向量是否小于等于another
+	 * 向量是否小于等于other
 	 * 
-	 * @param another
+	 * @param other
 	 * @return
 	 */
-	public boolean isLessOrEqual(Vector2 another) {
-		return this.isLess(another) || this.isEqual(another);
+	public boolean isLessOrEqual(Vector2 other) {
+		return this.isLess(other) || this.isEqual(other);
 	}
 
 	/**

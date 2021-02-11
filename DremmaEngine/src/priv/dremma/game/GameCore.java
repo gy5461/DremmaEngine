@@ -88,8 +88,8 @@ public class GameCore extends Canvas implements Runnable {
 		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
 		map.setPlayer(player);
 
-		// CollisionBox.shouldRender = false;
-		// TranslateEntityHelper.shouldRender = false;
+//		CollisionBox.shouldRender = false;	// 不渲染碰撞盒
+//		TranslateEntityHelper.shouldRender = false;	// 不渲染移动拖拽帮助
 	}
 
 	public void onUpdate() {
@@ -261,6 +261,10 @@ public class GameCore extends Canvas implements Runnable {
 					.next();
 			String name = entry.getKey();
 			TranslateEntityHelper translateEntity = entry.getValue();
+			
+			if(translateEntity.entity.visible == false) {
+				continue;
+			}
 
 			// 当拖拽x轴时
 			if (this.mouseInputHandler.mouse.isPressed()
@@ -329,6 +333,11 @@ public class GameCore extends Canvas implements Runnable {
 					.next();
 			String name = entry.getKey();
 			CollisionBox collisionBox = entry.getValue();
+			
+			if (TileMap.entities.containsKey(name)
+					&& TileMap.getEntity(name).detectCollision == false) {
+				continue;
+			}
 
 			// 调节左上点的位置
 			if (this.mouseInputHandler.mouse.isPressed()

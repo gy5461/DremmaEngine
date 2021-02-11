@@ -14,9 +14,6 @@ import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
 public class NPC extends Entity {
-
-	Vector2 lastMoveVector = Vector2.zero(); // 上一个moveVector
-
 	// NPC的站立动画
 	HashMap<Integer, Image> NPCStandUp = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> NPCStandDown = new HashMap<Integer, Image>();
@@ -28,28 +25,34 @@ public class NPC extends Entity {
 	Animation NPCStandRightAnimation = new Animation();
 	Animation NPCStandLeftAnimation = new Animation();
 
-	// NPC的跑步动画
-	HashMap<Integer, Image> NPCRunUp = new HashMap<Integer, Image>();
-	HashMap<Integer, Image> NPCRunDown = new HashMap<Integer, Image>();
-	HashMap<Integer, Image> NPCRunRight = new HashMap<Integer, Image>();
-	HashMap<Integer, Image> NPCRunLeft = new HashMap<Integer, Image>();
+	// NPC的移动动画
+	HashMap<Integer, Image> NPCMoveUp = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> NPCMoveDown = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> NPCMoveRight = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> NPCMoveLeft = new HashMap<Integer, Image>();
 
-	Animation NPCRunUpAnimation = new Animation();
-	Animation NPCRunDownAnimation = new Animation();
-	Animation NPCRunRightAnimation = new Animation();
-	Animation NPCRunLeftAnimation = new Animation();
+	Animation NPCMoveUpAnimation = new Animation();
+	Animation NPCMoveDownAnimation = new Animation();
+	Animation NPCMoveRightAnimation = new Animation();
+	Animation NPCMoveLeftAnimation = new Animation();
 
 	public Vector2 startPos = Vector2.zero();
 	public Vector2 endPos = Vector2.zero();
-	public float distance = 300f;
+	public float totalDistance = 300f;
+	public float curDistance = 0f;
+	
+	protected float nearDistance = 100f;
 
 	public float standTimer = 0.0f; // 站立计时
 	float standTime = 1.0f; // 站立时间
+
+	protected String moveSound;
 
 	public NPC(float speed) {
 		super();
 		this.name = "NPC";
 		this.speed = speed;
+		this.loadAnimation();
 	}
 
 	/**
@@ -59,10 +62,11 @@ public class NPC extends Entity {
 	public synchronized void update() {
 		switch (GameCore.viewAngle) {
 		case ViewAngle2DOT5:
-			// 站立时，开始移动
+			// 若NPC速度为0，不需要动
 			if (FloatCompare.isEqual(this.speed, 0f)) {
 				return;
 			}
+
 			if (this.state == Entity.EntityState.STAND) {
 				// 站立一会儿
 				if (this.standTimer < this.standTime) {
@@ -79,67 +83,63 @@ public class NPC extends Entity {
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.UP;
 					this.state = Entity.EntityState.MOVE;
+					this.animator.setState("npcMoveUp", false);
 					break;
 				case DOWN:
 					this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier)).mul(new Vector2(1, 1))
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.DOWN;
 					this.state = Entity.EntityState.MOVE;
+					this.animator.setState("npcMoveDown", false);
 					break;
 				case LEFT:
 					this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier)).mul(new Vector2(-1, 1))
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.LEFT;
 					this.state = Entity.EntityState.MOVE;
+					this.animator.setState("npcMoveLeft", false);
 					break;
 				case RIGHT:
 					this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier)).mul(new Vector2(1, -1))
 							.mul(Time.deltaTime);
 					this.direction = Entity.EntityDirection.RIGHT;
 					this.state = Entity.EntityState.MOVE;
+					this.animator.setState("npcMoveRight", false);
 					break;
 				}
 
 				this.startPos = this.position;
-				this.endPos = this.startPos.add(this.moveVector.mul(distance));
+				this.endPos = this.startPos.add(this.moveVector.mul(totalDistance));
 			}
 
 			// 移动时，移动一段距离后站立
 			if (this.state == Entity.EntityState.MOVE) {
-				AudioManager.getInstance().playLoop("ghostFloatSound");
-				
-				this.position = this.position.add(this.moveVector);
-				CollisionBox.collisionBoxs.get(this.name).trans(this.moveVector);
+				AudioManager.getInstance().playLoop(moveSound);
+
 				switch (this.direction) {
-				case UP:
-					if (this.position.isLessOrEqual(endPos)) {
-						this.state = Entity.EntityState.STAND;
-						AudioManager.getInstance().stopPlay("ghostFloatSound");
-					}
-					break;
 				case DOWN:
-					if (this.position.isBiggerOrEqual(endPos)) {
-						this.state = Entity.EntityState.STAND;
-						AudioManager.getInstance().stopPlay("ghostFloatSound");
-					}
+					this.animator.setState("npcMoveDown", false);
 					break;
 				case LEFT:
-					if (FloatCompare.isLessOrEqual(this.position.x, endPos.x)
-							&& FloatCompare.isBiggerOrEqual(this.position.y, endPos.y)) {
-						this.state = Entity.EntityState.STAND;
-						AudioManager.getInstance().stopPlay("ghostFloatSound");
-					}
+					this.animator.setState("npcMoveLeft", false);
 					break;
 				case RIGHT:
-					if (FloatCompare.isBiggerOrEqual(this.position.x, endPos.x)
-							&& FloatCompare.isLessOrEqual(this.position.y, endPos.y)) {
-						this.state = Entity.EntityState.STAND;
-						AudioManager.getInstance().stopPlay("ghostFloatSound");
-					}
+					this.animator.setState("npcMoveRight", false);
+					break;
+				case UP:
+					this.animator.setState("npcMoveUp", false);
 					break;
 				}
 
-				lastMoveVector = this.moveVector;
+				this.position = this.position.add(this.moveVector);
+				this.curDistance += this.moveVector.magnitude();
+
+				CollisionBox.collisionBoxs.get(this.name).trans(this.moveVector);
+				if (FloatCompare.isBiggerOrEqual(this.curDistance, this.totalDistance)) {
+					this.state = Entity.EntityState.STAND;
+					AudioManager.getInstance().stopPlay(moveSound);
+					this.curDistance = 0.0f;
+				}
 			}
 		case ViewAngle2:
 			break;
@@ -157,6 +157,19 @@ public class NPC extends Entity {
 	 */
 	public void loadAnimation() {
 
+	}
+
+	/**
+	 * 获取当前NPC是否距离玩家近
+	 * 
+	 * @return
+	 */
+	protected boolean nearPlayer() {
+		if (FloatCompare.isLessOrEqual(this.position.sub(TileMap.player.position).sqrMagnitude(),
+				this.nearDistance * this.nearDistance)) {
+			return true;
+		}
+		return false;
 	}
 
 }

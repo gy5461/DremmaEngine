@@ -145,6 +145,7 @@ public class Player extends Entity {
 						playerAttackUpEntity.position = new Vector2(this.position);
 						playerAttackUpEntity.setScale(this.getScale());
 						playerAttackUpEntity.visible = false;
+						playerAttackUpEntity.direction = this.direction;
 						TileMap.addEntity("playerAttackUp", playerAttackUpEntity);
 					}
 
@@ -189,6 +190,7 @@ public class Player extends Entity {
 						playerAttackDownEntity.position = new Vector2(this.position);
 						playerAttackDownEntity.setScale(this.getScale());
 						playerAttackDownEntity.visible = false;
+						playerAttackDownEntity.direction = this.direction;
 						TileMap.addEntity("playerAttackDown", playerAttackDownEntity);
 					}
 
@@ -226,6 +228,7 @@ public class Player extends Entity {
 						playerAttackLeftEntity.position = new Vector2(this.position);
 						playerAttackLeftEntity.setScale(this.getScale());
 						playerAttackLeftEntity.visible = false;
+						playerAttackLeftEntity.direction = this.direction;
 						TileMap.addEntity("playerAttackLeft", playerAttackLeftEntity);
 					}
 
@@ -269,6 +272,7 @@ public class Player extends Entity {
 						playerAttackRightEntity.position = new Vector2(this.position);
 						playerAttackRightEntity.setScale(this.getScale());
 						playerAttackRightEntity.visible = false;
+						playerAttackRightEntity.direction = this.direction;
 						TileMap.addEntity("playerAttackRight", playerAttackRightEntity);
 					}
 

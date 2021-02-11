@@ -20,6 +20,7 @@ public class Entity {
 	public String name;
 	
 	public boolean visible = true;	// 是否可见
+	public boolean detectCollision = true;	// 是否检测碰撞
 	
 	public static enum EntityState {
 		STAND, MOVE, ATTACK, DEAD;

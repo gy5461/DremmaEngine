@@ -10,7 +10,9 @@ import java.util.Map.Entry;
 import java.util.Queue;
 
 import priv.dremma.game.entities.Entity;
+import priv.dremma.game.entities.FightingNPC;
 import priv.dremma.game.entities.NPC;
+import priv.dremma.game.entities.Player;
 import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.FloatCompare;
@@ -42,6 +44,10 @@ public class CollisionBox {
 	public boolean isTrigger;
 	public boolean isChoosenLeftUp;
 	public boolean isChoosenRightDown;
+
+	public static float BEATBACK = 50f;
+
+	public String name = null; // 碰撞盒名称
 
 	static String path = Resources.path + "data/collisionBox.dat"; // 数据文件目录
 
@@ -75,6 +81,9 @@ public class CollisionBox {
 	 * @param g
 	 */
 	public void draw(Graphics2D g) {
+		if (this.name != null && TileMap.getEntity(this.name).detectCollision == false) {
+			return;
+		}
 		if (!CollisionBox.shouldRender) {
 			return;
 		}
@@ -133,7 +142,7 @@ public class CollisionBox {
 	/**
 	 * 碰撞检测：对移动的物体进行碰撞检测
 	 */
-	public static void collisionDetection() {
+	public static synchronized void collisionDetection() {
 		Iterator<Entry<String, CollisionBox>> collisionBoxsIterator = CollisionBox.getCollisionBoxsIterator();
 		while (collisionBoxsIterator.hasNext()) {
 			HashMap.Entry<String, CollisionBox> entry = (HashMap.Entry<String, CollisionBox>) collisionBoxsIterator
@@ -141,54 +150,75 @@ public class CollisionBox {
 			String name = entry.getKey();
 			CollisionBox collisionBox = entry.getValue();
 			Entity entity = TileMap.getEntity(name);
-
+			if (entity.detectCollision == false) {
+				continue;
+			}
 			if (!entity.moveVector.isEqual(Vector2.zero())) {
-				Iterator<Entry<String, CollisionBox>> anotherIterator = CollisionBox.getCollisionBoxsIterator();
-				while (anotherIterator.hasNext()) {
-					HashMap.Entry<String, CollisionBox> anotherEntry = (HashMap.Entry<String, CollisionBox>) anotherIterator
+				Iterator<Entry<String, CollisionBox>> otherIterator = CollisionBox.getCollisionBoxsIterator();
+				while (otherIterator.hasNext()) {
+					HashMap.Entry<String, CollisionBox> otherEntry = (HashMap.Entry<String, CollisionBox>) otherIterator
 							.next();
-					String anotherName = anotherEntry.getKey();
-					if (!anotherName.equals(name)) {
-						CollisionBox anotherCollisionBox = anotherEntry.getValue();
-						if (anotherCollisionBox.isTrigger) {
+					String otherName = otherEntry.getKey();
+					if (TileMap.getEntity(otherName).detectCollision == false) {
+						continue;
+					}
+					if (!otherName.equals(name)) {
+						CollisionBox otherCollisionBox = otherEntry.getValue();
+						if (otherCollisionBox.isTrigger) {
 							// 进行触发检测
-							if (collisionBox.isIntersected(anotherCollisionBox) == true) {
+							if (collisionBox.isIntersected(otherCollisionBox) == true) {
 								// 发生了触发
-								collisionBox.onTriggerEnter(name, anotherName);
+								collisionBox.onTriggerEnter(name, otherName);
 							}
 						} else {
 							// 进行碰撞检测
-							Entity anotherEntity = TileMap.getEntity(anotherName);
-							if (anotherEntity.moveVector.isEqual(Vector2.zero())) {
-								// 如果另一个实体静止
+							Entity otherEntity = TileMap.getEntity(otherName);
+							// 如果otherEntity的碰撞盒是攻击碰撞盒
+							if (otherName.contains("Attack")) {
+								// 什么都不做
+							}
+							// 如果entity的碰撞盒是攻击碰撞盒
+							else if (name.contains("Attack")) {
+								if(!((otherEntity instanceof Player) || (otherEntity instanceof FightingNPC))) {
+									continue;
+								}
 								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector);
+								// 攻击时，应检测下一entity碰撞盒是否与otherEntity的下一图片相交
+								CollisionBox otherImageCollisionBox = new CollisionBox(
+										new Vector2(
+												otherEntity.position
+														.sub(new Vector2(
+																otherEntity.getWidth() * otherEntity.getScale().x / 2f,
+																otherEntity.getHeight() * otherEntity.getScale().y
+																		/ 2f))),
+										new Vector2(otherEntity.position
+												.add(new Vector2(otherEntity.getWidth() * otherEntity.getScale().x / 2f,
+														otherEntity.getHeight() * otherEntity.getScale().y / 2f))));
 								
-								if (collisionBox.isIntersected(anotherCollisionBox) == false
-										&& nextCollisionBox.isIntersected(anotherCollisionBox) == true) {
+								CollisionBox nextOtherImageCollisionBox = otherImageCollisionBox.translate(otherEntity.moveVector);
+								
+								if (nextCollisionBox.isIntersected(nextOtherImageCollisionBox) == true) {
+									collisionBox.onCollision(name, otherName);
+								}
+							} else if (otherEntity.moveVector.isEqual(Vector2.zero())) {
+								// 如果另一个实体静止并且本碰撞盒与另一碰撞盒都不是攻击碰撞盒
+								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector);
+
+								if (collisionBox.isIntersected(otherCollisionBox) == false
+										&& nextCollisionBox.isIntersected(otherCollisionBox) == true) {
 									// 发生了碰撞
 									entity.position = entity.position.sub(entity.moveVector);
+									collisionBox.trans(entity.moveVector.mul(-1f));
 
-									collisionBox.onCollision(name, anotherName);
-								} else if(collisionBox.isIntersected(anotherCollisionBox) == true
-										&& nextCollisionBox.isIntersected(anotherCollisionBox) == true) {
+									collisionBox.onCollision(name, otherName);
+								} else if (collisionBox.isIntersected(otherCollisionBox) == true
+										&& nextCollisionBox.isIntersected(otherCollisionBox) == true) {
 									// 修复穿模
 									entity.position = entity.position.sub(entity.moveVector.mul(2));
-								}
-							} else {
-								// 如果另一个实体也是运动状态
-								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector);
-								CollisionBox nextAnotherCollisionBox = anotherCollisionBox.translate(anotherEntity.moveVector);
-								if (collisionBox.isIntersected(anotherCollisionBox) == false
-										&& nextCollisionBox.isIntersected(nextAnotherCollisionBox) == true) {
-									// 发生了碰撞
-									anotherEntity.position = anotherEntity.position.sub(anotherEntity.moveVector);
-									
-									collisionBox.onCollision(name, anotherName);
-								} else if(collisionBox.isIntersected(anotherCollisionBox) == true
-										&& nextCollisionBox.isIntersected(nextAnotherCollisionBox) == true) {
-									anotherEntity.position = anotherEntity.position.sub(anotherEntity.moveVector.mul(2));
+									collisionBox.trans(entity.moveVector.mul(-2f));
 								}
 							}
+
 						}
 					}
 				}
@@ -199,77 +229,135 @@ public class CollisionBox {
 	/**
 	 * 碰撞盒撞到别的碰撞盒时调用
 	 * 
-	 * @param name        本碰撞盒的名称
-	 * @param anotherName 被撞到的碰撞盒的名称
+	 * @param name      本碰撞盒的名称
+	 * @param otherName 被撞到的碰撞盒的名称
 	 */
-	public void onCollision(String name, String anotherName) {
-		Debug.log(Debug.DebugLevel.INFO, name + " 撞上了:" + anotherName);
+	public void onCollision(String name, String otherName) {
+		Debug.log(Debug.DebugLevel.INFO, name + " 撞上了:" + otherName);
 
 		Entity entity = TileMap.getEntity(name);
-		if (entity instanceof NPC) {
-			// 碰撞后顺时针转向
-			switch (entity.direction) {
-			case UP:
-				entity.direction = Entity.EntityDirection.RIGHT;
-				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier)).mul(new Vector2(1, -1))
-						.mul(Time.deltaTime);
-				break;
-			case DOWN:
-				entity.direction = Entity.EntityDirection.LEFT;
-				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier)).mul(new Vector2(-1, 1))
-						.mul(Time.deltaTime);
-				break;
-			case LEFT:
-				entity.direction = Entity.EntityDirection.UP;
-				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier))
-						.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
-				break;
-			case RIGHT:
-				entity.direction = Entity.EntityDirection.DOWN;
-				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier)).mul(new Vector2(1, 1))
-						.mul(Time.deltaTime);
-				break;
-			}
+		Entity otherEntity = TileMap.getEntity(otherName);
 
-			((NPC) entity).startPos = entity.position;
-			((NPC) entity).endPos = ((NPC) entity).startPos.add(entity.moveVector.mul(((NPC) entity).distance));
+		if (name.contains("playerAttack")) {
+			if (otherEntity instanceof FightingNPC) {
+				// 被打的实体是战斗型NPC，则该NPC受伤，被击退
+				Vector2 beatBack = Vector2.zero();
+				switch (entity.direction) {
+				case DOWN:
+					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
+							.mul(new Vector2(1, 1)).mul(Time.deltaTime);
+					break;
+				case LEFT:
+					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
+							.mul(new Vector2(-1, 1)).mul(Time.deltaTime);
+					break;
+				case RIGHT:
+					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
+							.mul(new Vector2(1, -1)).mul(Time.deltaTime);
+					break;
+				case UP:
+					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
+							.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
+					break;
+				}
+				// beatBack = beatBack.mul(5);
+				otherEntity.position = otherEntity.position.add(beatBack);
+				CollisionBox.collisionBoxs.get(otherName).trans(beatBack);
+			}
+		} else if (name.contains("npcAttack")) {
+			if (otherEntity instanceof Player) {
+				// npc打中了玩家
+				// 玩家被击退
+				Vector2 beatBack = Vector2.zero();
+				switch (entity.direction) {
+				case DOWN:
+					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
+							.mul(new Vector2(1, 1)).mul(Time.deltaTime);
+					break;
+				case LEFT:
+					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
+							.mul(new Vector2(-1, 1)).mul(Time.deltaTime);
+					break;
+				case RIGHT:
+					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
+							.mul(new Vector2(1, -1)).mul(Time.deltaTime);
+					break;
+				case UP:
+					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
+							.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
+					break;
+				}
+				// beatBack = beatBack.mul(5);
+				otherEntity.position = otherEntity.position.add(beatBack);
+				CollisionBox.collisionBoxs.get(otherName).trans(beatBack);
+			}
+		} else {
+			if (entity instanceof NPC) {
+				// 碰撞后逆时针转向
+				switch (entity.direction) {
+				case UP:
+					entity.direction = Entity.EntityDirection.LEFT;
+					entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier))
+							.mul(new Vector2(-1, 1)).mul(Time.deltaTime);
+					break;
+				case DOWN:
+					entity.direction = Entity.EntityDirection.RIGHT;
+					entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier))
+							.mul(new Vector2(1, -1)).mul(Time.deltaTime);
+					break;
+				case LEFT:
+					entity.direction = Entity.EntityDirection.DOWN;
+					entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier))
+							.mul(new Vector2(1, 1)).mul(Time.deltaTime);
+					break;
+				case RIGHT:
+					entity.direction = Entity.EntityDirection.UP;
+					entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier))
+							.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
+					break;
+				}
+
+				((NPC) entity).startPos = entity.position;
+				((NPC) entity).endPos = ((NPC) entity).startPos
+						.add(entity.moveVector.mul(((NPC) entity).totalDistance));
+			}
 		}
 	}
 
 	/**
 	 * 碰撞盒触发别的触发器碰撞盒时调用
 	 * 
-	 * @param name        本碰撞盒的名称
-	 * @param anotherName 被撞到的碰撞盒的名称
+	 * @param name      本碰撞盒的名称
+	 * @param otherName 被撞到的碰撞盒的名称
 	 */
-	public void onTriggerEnter(String name, String anotherName) {
-		Debug.log(Debug.DebugLevel.INFO, name + " 触发了:" + anotherName);
+	public void onTriggerEnter(String name, String otherName) {
+		Debug.log(Debug.DebugLevel.INFO, name + " 触发了:" + otherName);
 	}
 
 	/**
 	 * 判断两个碰撞盒是否相交
 	 * 
-	 * @param anotherCollisionBox
+	 * @param otherCollisionBox
 	 * @return
 	 */
-	private boolean isIntersected(CollisionBox anotherCollisionBox) {
+	private boolean isIntersected(CollisionBox otherCollisionBox) {
 		float thisXMin = this.leftUpPoint.x;
 		float thisXMax = this.rightDownPoint.x;
 		float thisYMin = this.leftUpPoint.y;
 		float thisYMax = this.rightDownPoint.y;
 
-		float anotherXMin = anotherCollisionBox.leftUpPoint.x;
-		float anotherXMax = anotherCollisionBox.rightDownPoint.x;
-		float anotherYMin = anotherCollisionBox.leftUpPoint.y;
-		float anotherYMax = anotherCollisionBox.rightDownPoint.y;
+		float otherXMin = otherCollisionBox.leftUpPoint.x;
+		float otherXMax = otherCollisionBox.rightDownPoint.x;
+		float otherYMin = otherCollisionBox.leftUpPoint.y;
+		float otherYMax = otherCollisionBox.rightDownPoint.y;
 
-		float xMin = Math.min(thisXMin, anotherXMin);
-		float xMax = Math.max(thisXMax, anotherXMax);
-		float yMin = Math.min(thisYMin, anotherYMin);
-		float yMax = Math.max(thisYMax, anotherYMax);
+		float xMin = Math.min(thisXMin, otherXMin);
+		float xMax = Math.max(thisXMax, otherXMax);
+		float yMin = Math.min(thisYMin, otherYMin);
+		float yMax = Math.max(thisYMax, otherYMax);
 
-		if (FloatCompare.isLessOrEqual(xMax - xMin, thisXMax - thisXMin + anotherXMax - anotherXMin)
-				&& FloatCompare.isLessOrEqual(yMax - yMin, thisYMax - thisYMin + anotherYMax - anotherYMin)) {
+		if (FloatCompare.isLessOrEqual(xMax - xMin, thisXMax - thisXMin + otherXMax - otherXMin)
+				&& FloatCompare.isLessOrEqual(yMax - yMin, thisYMax - thisYMin + otherYMax - otherYMin)) {
 			return true;
 		}
 		return false;
@@ -312,9 +400,9 @@ public class CollisionBox {
 			objs.remove(leftUpPoint);
 			rightDownPoint = (Vector2) objs.peek();
 			objs.remove(rightDownPoint);
-//			if (name.contains("南极仙翁")) {
-//				continue;
-//			}
+			if (name.contains("野鬼")) {
+				continue;
+			}
 			CollisionBox.collisionBoxs.get(name).setPos(leftUpPoint, rightDownPoint);
 		}
 	}

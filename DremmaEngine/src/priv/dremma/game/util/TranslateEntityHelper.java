@@ -44,12 +44,15 @@ public class TranslateEntityHelper {
 	}
 
 	public void draw(Graphics2D g) {
+		if (this.entity.visible == false) {
+			return;
+		}
 		if (!TranslateEntityHelper.shouldRender) {
 			return;
 		}
 		// 绘制箭头
 		float length = 50f;
-		float xyScale = 15f;	// xy的方块大小
+		float xyScale = 15f; // xy的方块大小
 
 		// x
 		if (this.choosenX == false) {
@@ -60,10 +63,9 @@ public class TranslateEntityHelper {
 			g.drawImage(Resources.loadImage(Resources.path + "images/xArrow.png"), xArrowTransform, null);
 
 			Image xArrowHead = Resources.loadImage(Resources.path + "images/xArrowHead.png");
-			Vector2 xArrowHeadScreenPos = GUtils
-					.worldPixelToViewPort(
-							new Vector2(this.entity.position.x + length + xArrowHead.getHeight(null) * 0.25f,
-									this.entity.position.y - xArrowHead.getWidth(null) * 0.25f / 2 + 1));
+			Vector2 xArrowHeadScreenPos = GUtils.worldPixelToViewPort(
+					new Vector2(this.entity.position.x + length + xArrowHead.getHeight(null) * 0.25f,
+							this.entity.position.y - xArrowHead.getWidth(null) * 0.25f / 2 + 1));
 			AffineTransform xArrowHeadTransform = new AffineTransform();
 			xArrowHeadTransform.translate(xArrowHeadScreenPos.x, xArrowHeadScreenPos.y);
 			xArrowHeadTransform.rotate(Math.toRadians(90));
@@ -83,10 +85,9 @@ public class TranslateEntityHelper {
 			g.drawImage(Resources.loadImage(Resources.path + "images/choosen.png"), xArrowTransform, null);
 
 			Image xArrowHead = Resources.loadImage(Resources.path + "images/choosenArrowHead.png");
-			Vector2 xArrowHeadScreenPos = GUtils
-					.worldPixelToViewPort(
-							new Vector2(this.entity.position.x + length + xArrowHead.getHeight(null) * 0.25f,
-									this.entity.position.y - xArrowHead.getWidth(null) * 0.25f / 2 + 1));
+			Vector2 xArrowHeadScreenPos = GUtils.worldPixelToViewPort(
+					new Vector2(this.entity.position.x + length + xArrowHead.getHeight(null) * 0.25f,
+							this.entity.position.y - xArrowHead.getWidth(null) * 0.25f / 2 + 1));
 			AffineTransform xArrowHeadTransform = new AffineTransform();
 			xArrowHeadTransform.translate(xArrowHeadScreenPos.x, xArrowHeadScreenPos.y);
 			xArrowHeadTransform.rotate(Math.toRadians(90));
@@ -109,16 +110,15 @@ public class TranslateEntityHelper {
 			g.drawImage(Resources.loadImage(Resources.path + "images/yArrow.png"), yArrowTransform, null);
 
 			Image yArrowHead = Resources.loadImage(Resources.path + "images/yArrowHead.png");
-			Vector2 yArrowHeadScreenPos = GUtils
-					.worldPixelToViewPort(
-							new Vector2(this.entity.position.x + yArrowHead.getWidth(null) * 0.25f / 2 + 0.5f,
-									this.entity.position.y + length + yArrowHead.getHeight(null) * 0.25f));
+			Vector2 yArrowHeadScreenPos = GUtils.worldPixelToViewPort(
+					new Vector2(this.entity.position.x + yArrowHead.getWidth(null) * 0.25f / 2 + 0.5f,
+							this.entity.position.y + length + yArrowHead.getHeight(null) * 0.25f));
 			AffineTransform yArrowHeadTransform = new AffineTransform();
 			yArrowHeadTransform.translate(yArrowHeadScreenPos.x, yArrowHeadScreenPos.y);
 			yArrowHeadTransform.rotate(Math.toRadians(180));
 			yArrowHeadTransform.scale(0.25, 0.25);
 			g.drawImage(yArrowHead, yArrowHeadTransform, null);
-			
+
 			this.yAxis = new Rect(
 					new Vector2(this.entity.position.x - yArrowHead.getWidth(null) * 0.25f / 2,
 							this.entity.position.y + 1 + xyScale),
@@ -132,16 +132,15 @@ public class TranslateEntityHelper {
 			g.drawImage(Resources.loadImage(Resources.path + "images/choosen.png"), yArrowTransform, null);
 
 			Image yArrowHead = Resources.loadImage(Resources.path + "images/choosenArrowHead.png");
-			Vector2 yArrowHeadScreenPos = GUtils
-					.worldPixelToViewPort(
-							new Vector2(this.entity.position.x + yArrowHead.getWidth(null) * 0.25f / 2 + 0.5f,
-									this.entity.position.y + length + yArrowHead.getHeight(null) * 0.25f));
+			Vector2 yArrowHeadScreenPos = GUtils.worldPixelToViewPort(
+					new Vector2(this.entity.position.x + yArrowHead.getWidth(null) * 0.25f / 2 + 0.5f,
+							this.entity.position.y + length + yArrowHead.getHeight(null) * 0.25f));
 			AffineTransform yArrowHeadTransform = new AffineTransform();
 			yArrowHeadTransform.translate(yArrowHeadScreenPos.x, yArrowHeadScreenPos.y);
 			yArrowHeadTransform.rotate(Math.toRadians(180));
 			yArrowHeadTransform.scale(0.25, 0.25);
 			g.drawImage(yArrowHead, yArrowHeadTransform, null);
-			
+
 			this.yAxis = new Rect(
 					new Vector2(this.entity.position.x - yArrowHead.getWidth(null) * 0.25f / 2,
 							this.entity.position.y + 1 + xyScale),
@@ -151,21 +150,23 @@ public class TranslateEntityHelper {
 
 		// xy
 		if (this.choosenXY == false) {
-			Vector2 xyScreenPos = GUtils.worldPixelToViewPort(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1));
+			Vector2 xyScreenPos = GUtils
+					.worldPixelToViewPort(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1));
 			AffineTransform choosen = new AffineTransform();
 			choosen.translate(xyScreenPos.x, xyScreenPos.y);
 			choosen.scale(xyScale, xyScale);
 			g.drawImage(Resources.loadImage(Resources.path + "images/collisionBox.png"), choosen, null);
-			
+
 			this.xyAxis = new Rect(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1),
 					new Vector2(this.entity.position.x + 1 + xyScale, this.entity.position.y + 1 + xyScale));
 		} else {
-			Vector2 xyScreenPos = GUtils.worldPixelToViewPort(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1));
+			Vector2 xyScreenPos = GUtils
+					.worldPixelToViewPort(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1));
 			AffineTransform choosen = new AffineTransform();
 			choosen.translate(xyScreenPos.x, xyScreenPos.y);
 			choosen.scale(xyScale, xyScale);
 			g.drawImage(Resources.loadImage(Resources.path + "images/choosen.png"), choosen, null);
-			
+
 			this.xyAxis = new Rect(new Vector2(this.entity.position.x + 1, this.entity.position.y + 1),
 					new Vector2(this.entity.position.x + 1 + xyScale, this.entity.position.y + 1 + xyScale));
 		}
@@ -185,9 +186,9 @@ public class TranslateEntityHelper {
 			position = (Vector2) objs.peek();
 			objs.remove(position);
 
-//			if(name.equals("南极仙翁")) {
-//				continue;
-//			}
+			if (name.contains("野鬼")) {
+				continue;
+			}
 			TranslateEntityHelper.translateEntities.get(name).entity.position = position;
 		}
 	}

@@ -20,6 +20,7 @@ import priv.dremma.game.anim.Animator;
 import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.entities.ConversationalNPC;
 import priv.dremma.game.entities.Entity;
+import priv.dremma.game.entities.FightingNPC;
 import priv.dremma.game.entities.Player;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
@@ -340,6 +341,12 @@ public class TileMap {
 		talkNPC.name = "南极仙翁";
 		talkNPC.setScale(new Vector2(2f, 2f));
 		resultMap.addNPC(talkNPC, new Vector2(1043, 275));
+		
+		// 野鬼（打斗NPC）
+		FightingNPC fightingNPC = new FightingNPC(30);
+		fightingNPC.name = "野鬼";
+		fightingNPC.setScale(new Vector2(2f, 2f));
+		resultMap.addNPC(fightingNPC, new Vector2(800, 600));
 
 		float borderThickness = 20f;
 		// 为地图边界添加碰撞盒 Up
