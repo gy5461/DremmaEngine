@@ -88,8 +88,8 @@ public class GameCore extends Canvas implements Runnable {
 		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
 		map.setPlayer(player);
 
-//		CollisionBox.shouldRender = false;	// ²»äÖÈ¾Åö×²ºĞ
-//		TranslateEntityHelper.shouldRender = false;	// ²»äÖÈ¾ÒÆ¶¯ÍÏ×§°ïÖú
+		CollisionBox.shouldRender = false;	// ²»äÖÈ¾Åö×²ºĞ
+		TranslateEntityHelper.shouldRender = false;	// ²»äÖÈ¾ÒÆ¶¯ÍÏ×§°ïÖú
 	}
 
 	public void onUpdate() {
