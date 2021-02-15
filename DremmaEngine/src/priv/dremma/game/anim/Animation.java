@@ -11,7 +11,6 @@ import priv.dremma.game.util.Time;
  * @author guoyi
  *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Animation {
 
 	private ArrayList<AnimFrame> frames; // 动画关键帧数组
@@ -20,7 +19,9 @@ public class Animation {
 
 	public float totalDuration; // 动画总时长
 	
-	public boolean hasExitTime = false;
+	public boolean hasExitTime;
+	public boolean isStatic;
+	private Image staticImage;
 
 	/**
 	 * 构造新的Animation
@@ -28,20 +29,8 @@ public class Animation {
 	public Animation() {
 		frames = new ArrayList<AnimFrame>();
 		totalDuration = 0f;
-		start();
-	}
-	
-	/**
-	 * 拷贝构造新的Animation
-	 */
-	public Animation(Animation animation) {
-		frames = new ArrayList();
-		for(AnimFrame a : animation.frames) {
-			this.addFrame(a.image, a.endTime);
-		}
-		this.curFrameIndex = animation.curFrameIndex;
-		this.curAnimTime = animation.curAnimTime;
-		this.totalDuration = animation.totalDuration;
+		this.hasExitTime = false;
+		this.isStatic = false;
 		start();
 	}
 
@@ -54,6 +43,11 @@ public class Animation {
 	public synchronized void addFrame(Image image, float duration) {
 		totalDuration += duration;
 		frames.add(new AnimFrame(image, totalDuration));
+	}
+	
+	public void setStaticImage(Image image) {
+		this.staticImage = image;
+		this.isStatic = true;
 	}
 
 	/**
@@ -70,6 +64,10 @@ public class Animation {
 	 * @param elapsedTime
 	 */
 	public synchronized void update() {
+		if(this.isStatic) {
+			return;
+		}
+		
 		if (frames.size() > 1) {
 			curAnimTime += Time.deltaTime;
 
@@ -92,6 +90,10 @@ public class Animation {
 	 * @return
 	 */
 	public synchronized Image getImage() {
+		if(this.isStatic) {
+			return staticImage;
+		}
+		
 		if (frames.size() == 0) {
 			return null;
 		} else {

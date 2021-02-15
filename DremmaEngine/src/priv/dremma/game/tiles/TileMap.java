@@ -15,12 +15,8 @@ import java.util.PriorityQueue;
 import java.util.Map.Entry;
 
 import priv.dremma.game.GameCore;
-import priv.dremma.game.anim.Animation;
-import priv.dremma.game.anim.Animator;
 import priv.dremma.game.collision.CollisionBox;
-import priv.dremma.game.entities.ConversationalNPC;
 import priv.dremma.game.entities.Entity;
-import priv.dremma.game.entities.FightingNPC;
 import priv.dremma.game.entities.Player;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
@@ -46,7 +42,7 @@ public class TileMap {
 	public static Player player; // 主角
 	PriorityQueue<Entity> renderEntities; // 渲染优先队列
 
-	Vector2 worldEndTileCenter = Vector2.zero();
+	public Vector2 worldEndTileCenter = Vector2.zero();
 
 	/**
 	 * 生成指定宽度与高度的TileMap
@@ -141,7 +137,18 @@ public class TileMap {
 	 * @param entity
 	 */
 	public static void addEntity(String name, Entity entity) {
+		if (TileMap.entities.containsKey(name)) {
+			return;
+		}
 		entities.put(name, entity);
+		if (name.contains("mapBorder")) {
+			return;
+		}
+		if (TranslateEntityHelper.translateEntities.containsKey(name)) {
+			return;
+		}
+		TranslateEntityHelper translateEntityHelper = new TranslateEntityHelper(entity);
+		TranslateEntityHelper.translateEntities.put(name, translateEntityHelper);
 	}
 
 	public static Entity getEntity(String name) {
@@ -230,173 +237,6 @@ public class TileMap {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
-		// tree1
-		Animator tree1Animator = new Animator();
-		Animation tree1Animation = new Animation();
-		tree1Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/tree1.png"), 100);
-		tree1Animator.addAnimation("static", tree1Animation);
-		tree1Animator.setState("static", false);
-		Entity tree1Entity = new Entity(tree1Animator);
-
-		tree1Entity.setScale(new Vector2(3f, 3f));
-		tree1Entity.name = "tree1_1";
-		resultMap.addEntity(tree1Entity, new Vector2(2, 5));
-
-		tree1Entity.name = "tree1_2";
-		tree1Entity.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(tree1Entity, new Vector2(4, 5));
-
-		tree1Entity.name = "tree1_3";
-		tree1Entity.setScale(new Vector2(1f, 1f));
-		resultMap.addEntity(tree1Entity, new Vector2(3, 11));
-
-		// tree2
-		Animator tree2Animator = new Animator();
-		Animation tree2Animation = new Animation();
-		tree2Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/tree2.png"), 100);
-		tree2Animator.addAnimation("static", tree2Animation);
-		tree2Animator.setState("static", false);
-		Entity tree2Entity = new Entity(tree2Animator);
-
-		tree2Entity.name = "tree2";
-		tree2Entity.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(tree2Entity, new Vector2(4, 8));
-
-		// archiving
-		Animator archivingAnimator = new Animator();
-		Animation archivingAnimation = new Animation();
-		archivingAnimation.addFrame(Resources.loadImage(Resources.path + "images/entities/archiving.png"), 100);
-		archivingAnimator.addAnimation("static", archivingAnimation);
-		archivingAnimator.setState("static", false);
-		Entity archivingEntity = new Entity(archivingAnimator);
-
-		archivingEntity.name = "archiving";
-		archivingEntity.setScale(new Vector2(0.2f, 0.2f));
-		resultMap.addEntity(archivingEntity, new Vector2(3, 6));
-		CollisionBox.collisionBoxs.get("archiving").isTrigger = true; // 触发盒子
-
-		// chair1
-		Animator chair1Animator = new Animator();
-		Animation chair1Animation = new Animation();
-		chair1Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair1.png"), 100);
-		chair1Animator.addAnimation("static", chair1Animation);
-		chair1Animator.setState("static", false);
-		Entity chair1Entity = new Entity(chair1Animator);
-
-		chair1Entity.name = "chair1";
-		chair1Entity.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(chair1Entity, new Vector2(4, 8));
-
-		// chair2
-		Animator chair2Animator = new Animator();
-		Animation chair2Animation = new Animation();
-		chair2Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair2.png"), 100);
-		chair2Animator.addAnimation("static", chair2Animation);
-		chair2Animator.setState("static", false);
-		Entity chair2Entity = new Entity(chair2Animator);
-
-		chair2Entity.name = "chair2";
-		chair2Entity.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(chair2Entity, new Vector2(4, 5));
-
-		// chair3
-		Animator chair3Animator = new Animator();
-		Animation chair3Animation = new Animation();
-		chair3Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair3.png"), 100);
-		chair3Animator.addAnimation("static", chair3Animation);
-		chair3Animator.setState("static", false);
-		Entity chair3Entity = new Entity(chair3Animator);
-
-		chair3Entity.name = "chair3";
-		chair3Entity.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(chair3Entity, new Vector2(4, 11));
-
-		// chair4
-		Animator chair4Animator = new Animator();
-		Animation chair4Animation = new Animation();
-		chair4Animation.addFrame(Resources.loadImage(Resources.path + "images/entities/chair4.png"), 100);
-		chair4Animator.addAnimation("static", chair4Animation);
-		chair4Animator.setState("static", false);
-		Entity chair4Entity = new Entity(chair4Animator);
-
-		chair4Entity.name = "chair4";
-		chair4Entity.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(chair4Entity, new Vector2(5, 5));
-
-		// chair4
-		Animator deskAnimator = new Animator();
-		Animation deskAnimation = new Animation();
-		deskAnimation.addFrame(Resources.loadImage(Resources.path + "images/entities/desk.png"), 100);
-		deskAnimator.addAnimation("static", deskAnimation);
-		deskAnimator.setState("static", false);
-		Entity deskEntity = new Entity(deskAnimator);
-
-		deskEntity.name = "desk";
-		deskEntity.setScale(new Vector2(2f, 2f));
-		resultMap.addEntity(deskEntity, new Vector2(5, 8));
-
-		// 南极仙翁（对话NPC）
-		ConversationalNPC talkNPC = new ConversationalNPC(0);
-		talkNPC.name = "南极仙翁";
-		talkNPC.setScale(new Vector2(2f, 2f));
-		resultMap.addNPC(talkNPC, new Vector2(1043, 275));
-		
-		// 野鬼（打斗NPC）
-		FightingNPC fightingNPC = new FightingNPC(30);
-		fightingNPC.name = "野鬼";
-		fightingNPC.setScale(new Vector2(2f, 2f));
-		resultMap.addNPC(fightingNPC, new Vector2(800, 600));
-
-		float borderThickness = 20f;
-		// 为地图边界添加碰撞盒 Up
-		Entity mapBorderUp = new Entity();
-		mapBorderUp.name = "mapBorderUp";
-		mapBorderUp.visible = false;
-		TileMap.addEntity("mapBorderUp", mapBorderUp);
-		CollisionBox.collisionBoxs.put("mapBorderUp", new CollisionBox(new Vector2(0, -2 - borderThickness),
-				new Vector2(resultMap.worldEndTileCenter.x, -1)));
-
-		// 为地图边界添加碰撞盒 Down
-		Entity mapBorderDown = new Entity();
-		mapBorderDown.name = "mapBorderDown";
-		mapBorderDown.visible = false;
-		TileMap.addEntity("mapBorderDown", mapBorderDown);
-		CollisionBox.collisionBoxs.put("mapBorderDown",
-				new CollisionBox(new Vector2(0, resultMap.worldEndTileCenter.y + 1 - 23), new Vector2(
-						resultMap.worldEndTileCenter.x, resultMap.worldEndTileCenter.y + 2 - 23 + borderThickness)));
-
-		// 为地图边界添加碰撞盒 Left
-		Entity mapBorderLeft = new Entity();
-		mapBorderLeft.name = "mapBorderLeft";
-		mapBorderLeft.visible = false;
-		TileMap.addEntity("mapBorderLeft", mapBorderLeft);
-		CollisionBox.collisionBoxs.put("mapBorderLeft", new CollisionBox(new Vector2(-2 - borderThickness, 0),
-				new Vector2(-1, resultMap.worldEndTileCenter.y)));
-
-		// 为地图边界添加碰撞盒 Right
-		Entity mapBorderRight = new Entity();
-		mapBorderRight.name = "mapBorderRight";
-		mapBorderRight.visible = false;
-		TileMap.addEntity("mapBorderRight", mapBorderRight);
-		CollisionBox.collisionBoxs.put("mapBorderRight", new CollisionBox(
-				new Vector2(resultMap.worldEndTileCenter.x + 1, 0),
-				new Vector2(resultMap.worldEndTileCenter.x + 2 + borderThickness, resultMap.worldEndTileCenter.y)));
-
-		CollisionBox.load(); // 从数据文件中加载碰撞盒数据
-
-		// 给所有的entity添加移动帮助
-		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
-		while (entitiesIterator.hasNext()) {
-			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
-			if (entry.getKey().contains("mapBorder")) {
-				continue;
-			}
-			TranslateEntityHelper translateEntityHelper = new TranslateEntityHelper(entry.getValue());
-			TranslateEntityHelper.translateEntities.put(entry.getKey(), translateEntityHelper);
-		}
-
-		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
 		return resultMap;
 	}
 

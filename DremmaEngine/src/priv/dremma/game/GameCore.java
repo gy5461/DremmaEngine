@@ -7,13 +7,21 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map.Entry;
+import java.util.Queue;
 
 import javax.swing.JFrame;
 
+import priv.dremma.game.anim.Animation;
+import priv.dremma.game.anim.Animator;
 import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.collision.CollisionBox;
+import priv.dremma.game.entities.ConversationalNPC;
+import priv.dremma.game.entities.Entity;
+import priv.dremma.game.entities.FightingNPC;
 import priv.dremma.game.entities.Player;
+import priv.dremma.game.entities.UIEntity;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
@@ -68,6 +76,9 @@ public class GameCore extends Canvas implements Runnable {
 
 	public static boolean willSave = true;
 
+	public static HashMap<String, UIEntity> uiEntities;
+	private Queue<UIEntity> renderUIEntities;
+
 	public void onStart() {
 		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // 设置2D游戏视角
 		player = new Player(this.keyInputHandler, 60f);
@@ -84,12 +95,196 @@ public class GameCore extends Canvas implements Runnable {
 		Resources.load(Resources.ResourceType.Music, "attackSound", Resources.path + "music/attack.wav");
 		Resources.load(Resources.ResourceType.Music, "ghostFloatSound", Resources.path + "music/鬼漂浮声.wav");
 
+		Resources.load(Resources.ResourceType.Music, "ghostWoundedSound", Resources.path + "music/鬼受伤.wav");
+		AudioManager.getInstance().setVolumn("ghostWoundedSound", 100);
+		Resources.load(Resources.ResourceType.Music, "playerWoundedSound", Resources.path + "music/主角受伤.wav");
+		AudioManager.getInstance().setVolumn("playerWoundedSound", 100);
+
 		// 从文件中加载地图
 		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
 		map.setPlayer(player);
 
-		CollisionBox.shouldRender = false;	// 不渲染碰撞盒
-		TranslateEntityHelper.shouldRender = false;	// 不渲染移动拖拽帮助
+		// --------------场景中的物体----------------
+
+		// tree1
+		Animator tree1Animator = new Animator();
+		Animation tree1Animation = new Animation();
+		tree1Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/tree1.png"));
+		tree1Animator.addAnimation("static", tree1Animation);
+		tree1Animator.setState("static", false);
+		Entity tree1Entity = new Entity(tree1Animator);
+
+		tree1Entity.setScale(new Vector2(3f, 3f));
+		tree1Entity.name = "tree1_1";
+		map.addEntity(tree1Entity, new Vector2(2, 5));
+
+		tree1Entity.name = "tree1_2";
+		tree1Entity.setScale(new Vector2(2f, 2f));
+		map.addEntity(tree1Entity, new Vector2(4, 5));
+
+		tree1Entity.name = "tree1_3";
+		tree1Entity.setScale(new Vector2(1f, 1f));
+		map.addEntity(tree1Entity, new Vector2(3, 11));
+
+		// tree2
+		Animator tree2Animator = new Animator();
+		Animation tree2Animation = new Animation();
+		tree2Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/tree2.png"));
+		tree2Animator.addAnimation("static", tree2Animation);
+		tree2Animator.setState("static", false);
+		Entity tree2Entity = new Entity(tree2Animator);
+
+		tree2Entity.name = "tree2";
+		tree2Entity.setScale(new Vector2(2f, 2f));
+		map.addEntity(tree2Entity, new Vector2(4, 8));
+		Debug.log(Debug.DebugLevel.INFO, "" + tree2Entity.getBottom());
+
+		// archiving
+		Animator archivingAnimator = new Animator();
+		Animation archivingAnimation = new Animation();
+		archivingAnimation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/archiving.png"));
+		archivingAnimator.addAnimation("static", archivingAnimation);
+		archivingAnimator.setState("static", false);
+		Entity archivingEntity = new Entity(archivingAnimator);
+
+		archivingEntity.name = "archiving";
+		archivingEntity.setScale(new Vector2(0.2f, 0.2f));
+		map.addEntity(archivingEntity, new Vector2(3, 6));
+		CollisionBox.collisionBoxs.get("archiving").isTrigger = true; // 触发盒子
+
+		// chair1
+		Animator chair1Animator = new Animator();
+		Animation chair1Animation = new Animation();
+		chair1Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair1.png"));
+		chair1Animator.addAnimation("static", chair1Animation);
+		chair1Animator.setState("static", false);
+		Entity chair1Entity = new Entity(chair1Animator);
+
+		chair1Entity.name = "chair1";
+		chair1Entity.setScale(new Vector2(2f, 2f));
+		map.addEntity(chair1Entity, new Vector2(4, 8));
+
+		// chair2
+		Animator chair2Animator = new Animator();
+		Animation chair2Animation = new Animation();
+		chair2Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair2.png"));
+		chair2Animator.addAnimation("static", chair2Animation);
+		chair2Animator.setState("static", false);
+		Entity chair2Entity = new Entity(chair2Animator);
+
+		chair2Entity.name = "chair2";
+		chair2Entity.setScale(new Vector2(2f, 2f));
+		map.addEntity(chair2Entity, new Vector2(4, 5));
+
+		// chair3
+		Animator chair3Animator = new Animator();
+		Animation chair3Animation = new Animation();
+		chair3Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair3.png"));
+		chair3Animator.addAnimation("static", chair3Animation);
+		chair3Animator.setState("static", false);
+		Entity chair3Entity = new Entity(chair3Animator);
+
+		chair3Entity.name = "chair3";
+		chair3Entity.setScale(new Vector2(2f, 2f));
+		map.addEntity(chair3Entity, new Vector2(4, 11));
+
+		// chair4
+		Animator chair4Animator = new Animator();
+		Animation chair4Animation = new Animation();
+		chair4Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair4.png"));
+		chair4Animator.addAnimation("static", chair4Animation);
+		chair4Animator.setState("static", false);
+		Entity chair4Entity = new Entity(chair4Animator);
+
+		chair4Entity.name = "chair4";
+		chair4Entity.setScale(new Vector2(2f, 2f));
+		map.addEntity(chair4Entity, new Vector2(5, 5));
+
+		// chair4
+		Animator deskAnimator = new Animator();
+		Animation deskAnimation = new Animation();
+		deskAnimation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/desk.png"));
+		deskAnimator.addAnimation("static", deskAnimation);
+		deskAnimator.setState("static", false);
+		Entity deskEntity = new Entity(deskAnimator);
+
+		deskEntity.name = "desk";
+		deskEntity.setScale(new Vector2(2f, 2f));
+		map.addEntity(deskEntity, new Vector2(5, 8));
+
+		// --------------场景中的NPC----------------
+
+		// 南极仙翁（对话NPC）
+		ConversationalNPC talkNPC = new ConversationalNPC(this.keyInputHandler, 0);
+		talkNPC.name = "南极仙翁";
+		talkNPC.setScale(new Vector2(2f, 2f));
+		map.addNPC(talkNPC, new Vector2(1043, 275));
+
+		// 野鬼（打斗NPC）
+		FightingNPC fightingNPC = new FightingNPC(30);
+		fightingNPC.name = "野鬼";
+		fightingNPC.setScale(new Vector2(2f, 2f));
+		map.addNPC(fightingNPC, new Vector2(800, 600));
+
+		// --------------场景中的边界----------------
+
+		float borderThickness = 100f;
+		// 为地图边界添加碰撞盒 Up
+		Entity mapBorderUp = new Entity();
+		mapBorderUp.name = "mapBorderUp";
+		mapBorderUp.visible = false;
+		TileMap.addEntity("mapBorderUp", mapBorderUp);
+		CollisionBox.collisionBoxs.put("mapBorderUp",
+				new CollisionBox(new Vector2(0, -2 - borderThickness), new Vector2(map.worldEndTileCenter.x, -1)));
+
+		// 为地图边界添加碰撞盒 Down
+		Entity mapBorderDown = new Entity();
+		mapBorderDown.name = "mapBorderDown";
+		mapBorderDown.visible = false;
+		TileMap.addEntity("mapBorderDown", mapBorderDown);
+		CollisionBox.collisionBoxs.put("mapBorderDown",
+				new CollisionBox(new Vector2(0, map.worldEndTileCenter.y + 1 - 23),
+						new Vector2(map.worldEndTileCenter.x, map.worldEndTileCenter.y + 2 - 23 + borderThickness)));
+
+		// 为地图边界添加碰撞盒 Left
+		Entity mapBorderLeft = new Entity();
+		mapBorderLeft.name = "mapBorderLeft";
+		mapBorderLeft.visible = false;
+		TileMap.addEntity("mapBorderLeft", mapBorderLeft);
+		CollisionBox.collisionBoxs.put("mapBorderLeft",
+				new CollisionBox(new Vector2(-2 - borderThickness, 0), new Vector2(-1, map.worldEndTileCenter.y)));
+
+		// 为地图边界添加碰撞盒 Right
+		Entity mapBorderRight = new Entity();
+		mapBorderRight.name = "mapBorderRight";
+		mapBorderRight.visible = false;
+		TileMap.addEntity("mapBorderRight", mapBorderRight);
+		CollisionBox.collisionBoxs.put("mapBorderRight", new CollisionBox(new Vector2(map.worldEndTileCenter.x + 1, 0),
+				new Vector2(map.worldEndTileCenter.x + 2 + borderThickness, map.worldEndTileCenter.y)));
+
+		// --------------UI----------------
+		Animator talkBoxAnimator = new Animator();
+		Animation talkBoxAnimation = new Animation();
+		talkBoxAnimation.setStaticImage(Resources.loadImage(Resources.path + "images/对话框.png"));
+		talkBoxAnimator.addAnimation("static", talkBoxAnimation);
+		talkBoxAnimator.setState("static", false);
+		UIEntity talkBox = new UIEntity(talkBoxAnimator);
+		talkBox.name = "talkBox";
+		talkBox.visible = false;
+		talkBox.setScale(new Vector2(2f, 1.5f));
+		talkBox.position = new Vector2(GameCore.screen.width / 2f,
+				GameCore.screen.height - talkBox.getHeight() * talkBox.getScale().y / 2 - 25);
+
+		GameCore.addUI(talkBox);
+
+		// --------------加载数据----------------
+
+		CollisionBox.load(); // 从数据文件中加载碰撞盒数据
+
+		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
+
+		// CollisionBox.shouldRender = false; // 不渲染碰撞盒
+		// TranslateEntityHelper.shouldRender = false; // 不渲染移动拖拽帮助
 	}
 
 	public void onUpdate() {
@@ -111,6 +306,8 @@ public class GameCore extends Canvas implements Runnable {
 		mouseInputHandler = new MouseInputHandler(this);
 
 		screen = new Screen(GameCore.width * GameCore.scale, GameCore.height * GameCore.scale);
+		this.renderUIEntities = new LinkedList<UIEntity>();
+		GameCore.uiEntities = new HashMap<String, UIEntity>();
 
 		onStart();
 	}
@@ -182,6 +379,22 @@ public class GameCore extends Canvas implements Runnable {
 		// 绘制地图
 		map.draw(g);
 
+		// 绘制UI
+		Iterator<Entry<String, UIEntity>> uiEntitiesIterator = GameCore.getUIEntitiesIterator();
+		while (uiEntitiesIterator.hasNext()) {
+			HashMap.Entry<String, UIEntity> entry = (HashMap.Entry<String, UIEntity>) uiEntitiesIterator.next();
+			if (entry.getValue().visible == false) {
+				continue;
+			}
+			renderUIEntities.add(entry.getValue());
+		}
+
+		// 渲染UI队列
+		while (!renderUIEntities.isEmpty()) {
+			renderUIEntities.peek().draw(g);
+			renderUIEntities.poll();
+		}
+
 		// 绘制碰撞盒
 		Iterator<Entry<String, CollisionBox>> collisionBoxsIterator = CollisionBox.getCollisionBoxsIterator();
 		while (collisionBoxsIterator.hasNext()) {
@@ -199,8 +412,10 @@ public class GameCore extends Canvas implements Runnable {
 					.next();
 			TranslateEntityHelper translateEntity = entry.getValue();
 			translateEntity.draw(g);
-//			translateEntity.xAxis.draw(g);
-//			translateEntity.yAxis.draw(g);
+//			if (translateEntity.entity.visible) {
+//				translateEntity.xAxis.draw(g);
+//				translateEntity.yAxis.draw(g);
+//			}
 		}
 	}
 
@@ -261,60 +476,120 @@ public class GameCore extends Canvas implements Runnable {
 					.next();
 			String name = entry.getKey();
 			TranslateEntityHelper translateEntity = entry.getValue();
-			
-			if(translateEntity.entity.visible == false) {
+
+			if (translateEntity.entity.visible == false) {
 				continue;
 			}
 
-			// 当拖拽x轴时
-			if (this.mouseInputHandler.mouse.isPressed()
-					&& (this.mouseInputHandler.transCurPosIsInRect(translateEntity.xAxis))) {
-				Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
-				Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
-				float deltaX = curPos.x - lastPos.x;
-				TileMap.entities.get(name).position.x += deltaX;
-				CollisionBox.collisionBoxs.get(name).trans(new Vector2(deltaX, 0));
-			}
+			if (translateEntity.shouldTransScreenPos) {
 
-			if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
-					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.xAxis)) {
-				translateEntity.choosenX = true;
+				// 当拖拽x轴时
+				if (this.mouseInputHandler.mouse.isPressed()
+						&& (this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xAxis))) {
+					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+					float deltaX = curPos.x - lastPos.x;
+
+					TileMap.entities.get(name).position.x += deltaX;
+					CollisionBox.collisionBoxs.get(name).trans(new Vector2(deltaX, 0));
+				}
+
+				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+						&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xAxis)) {
+					translateEntity.choosenX = true;
+				} else {
+					translateEntity.choosenX = false;
+				}
+
+				// 当拖拽y轴时
+				if (this.mouseInputHandler.mouse.isPressed()
+						&& (this.mouseInputHandler.worldCurPosIsInRect(translateEntity.yAxis))) {
+					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+					float deltaY = curPos.y - lastPos.y;
+
+					TileMap.entities.get(name).position.y += deltaY;
+					CollisionBox.collisionBoxs.get(name).trans(new Vector2(0, deltaY));
+
+				}
+
+				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+						&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.yAxis)) {
+					translateEntity.choosenY = true;
+				} else {
+					translateEntity.choosenY = false;
+				}
+
+				// 当拖拽黄色部分时，在两个方向上移动
+				if (this.mouseInputHandler.mouse.isPressed()
+						&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xyAxis)) {
+					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+
+					TileMap.entities.get(name).position = TileMap.entities.get(name).position.add(curPos.sub(lastPos));
+					CollisionBox.collisionBoxs.get(name).trans(curPos.sub(lastPos));
+
+				}
+
+				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+						&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xyAxis)) {
+					translateEntity.choosenXY = true;
+				} else {
+					translateEntity.choosenXY = false;
+				}
 			} else {
-				translateEntity.choosenX = false;
+				// 当拖拽x轴时
+				if (this.mouseInputHandler.mouse.isPressed()
+						&& (this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xAxis))) {
+					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+					float deltaX = curPos.x - lastPos.x;
+
+					GameCore.getUIEntity(name).position.x += deltaX;
+				}
+
+				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+						&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xAxis)) {
+					translateEntity.choosenX = true;
+				} else {
+					translateEntity.choosenX = false;
+				}
+
+				// 当拖拽y轴时
+				if (this.mouseInputHandler.mouse.isPressed()
+						&& (this.mouseInputHandler.screenCurPosIsInRect(translateEntity.yAxis))) {
+					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+					float deltaY = curPos.y - lastPos.y;
+
+					GameCore.getUIEntity(name).position.y += deltaY;
+
+				}
+
+				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+						&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.yAxis)) {
+					translateEntity.choosenY = true;
+				} else {
+					translateEntity.choosenY = false;
+				}
+
+				// 当拖拽黄色部分时，在两个方向上移动
+				if (this.mouseInputHandler.mouse.isPressed()
+						&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xyAxis)) {
+					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+
+					GameCore.getUIEntity(name).position = GameCore.getUIEntity(name).position.add(curPos.sub(lastPos));
+				}
+
+				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+						&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xyAxis)) {
+					translateEntity.choosenXY = true;
+				} else {
+					translateEntity.choosenXY = false;
+				}
 			}
 
-			// 当拖拽y轴时
-			if (this.mouseInputHandler.mouse.isPressed()
-					&& (this.mouseInputHandler.transCurPosIsInRect(translateEntity.yAxis))) {
-				Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
-				Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
-				float deltaY = curPos.y - lastPos.y;
-				TileMap.entities.get(name).position.y += deltaY;
-				CollisionBox.collisionBoxs.get(name).trans(new Vector2(0, deltaY));
-			}
-
-			if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
-					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.yAxis)) {
-				translateEntity.choosenY = true;
-			} else {
-				translateEntity.choosenY = false;
-			}
-
-			// 当拖拽黄色部分时，在两个方向上移动
-			if (this.mouseInputHandler.mouse.isPressed()
-					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.xyAxis)) {
-				Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
-				Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
-				TileMap.entities.get(name).position = TileMap.entities.get(name).position.add(curPos.sub(lastPos));
-				CollisionBox.collisionBoxs.get(name).trans(curPos.sub(lastPos));
-			}
-
-			if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
-					&& this.mouseInputHandler.transCurPosIsInRect(translateEntity.xyAxis)) {
-				translateEntity.choosenXY = true;
-			} else {
-				translateEntity.choosenXY = false;
-			}
 		}
 	}
 
@@ -333,9 +608,8 @@ public class GameCore extends Canvas implements Runnable {
 					.next();
 			String name = entry.getKey();
 			CollisionBox collisionBox = entry.getValue();
-			
-			if (TileMap.entities.containsKey(name)
-					&& TileMap.getEntity(name).detectCollision == false) {
+
+			if (TileMap.entities.containsKey(name) && TileMap.getEntity(name).detectCollision == false) {
 				continue;
 			}
 
@@ -389,5 +663,36 @@ public class GameCore extends Canvas implements Runnable {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 向游戏中添加UI
+	 * 
+	 * @param UIEntity
+	 */
+	public static void addUI(UIEntity UIEntity) {
+		if (!GameCore.uiEntities.containsKey(UIEntity.name)) {
+			GameCore.uiEntities.put(UIEntity.name, UIEntity);
+			if (!TranslateEntityHelper.translateEntities.containsKey(UIEntity.name)) {
+				TranslateEntityHelper translateEntityHelper = new TranslateEntityHelper(UIEntity);
+				TranslateEntityHelper.translateEntities.put(UIEntity.name, translateEntityHelper);
+			}
+		}
+	}
+
+	public static UIEntity getUIEntity(String name) {
+		if (GameCore.uiEntities.containsKey(name)) {
+			return GameCore.uiEntities.get(name);
+		}
+		return null;
+	}
+
+	/**
+	 * 获取游戏UI迭代器
+	 * 
+	 * @return
+	 */
+	public static Iterator<Entry<String, UIEntity>> getUIEntitiesIterator() {
+		return GameCore.uiEntities.entrySet().iterator();
 	}
 }

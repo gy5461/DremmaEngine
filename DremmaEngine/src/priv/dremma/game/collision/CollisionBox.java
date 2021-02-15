@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Queue;
 
+import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.entities.FightingNPC;
 import priv.dremma.game.entities.NPC;
@@ -84,6 +85,7 @@ public class CollisionBox {
 		if (this.name != null && TileMap.getEntity(this.name).detectCollision == false) {
 			return;
 		}
+		
 		if (!CollisionBox.shouldRender) {
 			return;
 		}
@@ -233,7 +235,7 @@ public class CollisionBox {
 	 * @param otherName 被撞到的碰撞盒的名称
 	 */
 	public void onCollision(String name, String otherName) {
-		Debug.log(Debug.DebugLevel.INFO, name + " 撞上了:" + otherName);
+		//Debug.log(Debug.DebugLevel.INFO, name + " 撞上了:" + otherName);
 
 		Entity entity = TileMap.getEntity(name);
 		Entity otherEntity = TileMap.getEntity(otherName);
@@ -260,9 +262,9 @@ public class CollisionBox {
 							.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
 					break;
 				}
-				// beatBack = beatBack.mul(5);
 				otherEntity.position = otherEntity.position.add(beatBack);
 				CollisionBox.collisionBoxs.get(otherName).trans(beatBack);
+				AudioManager.getInstance().playOnce("ghostWoundedSound");
 			}
 		} else if (name.contains("npcAttack")) {
 			if (otherEntity instanceof Player) {
@@ -287,9 +289,9 @@ public class CollisionBox {
 							.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
 					break;
 				}
-				// beatBack = beatBack.mul(5);
 				otherEntity.position = otherEntity.position.add(beatBack);
 				CollisionBox.collisionBoxs.get(otherName).trans(beatBack);
+				AudioManager.getInstance().playOnce("playerWoundedSound");
 			}
 		} else {
 			if (entity instanceof NPC) {
@@ -331,7 +333,7 @@ public class CollisionBox {
 	 * @param otherName 被撞到的碰撞盒的名称
 	 */
 	public void onTriggerEnter(String name, String otherName) {
-		Debug.log(Debug.DebugLevel.INFO, name + " 触发了:" + otherName);
+		//Debug.log(Debug.DebugLevel.INFO, name + " 触发了:" + otherName);
 	}
 
 	/**

@@ -2,7 +2,6 @@ package priv.dremma.game.entities;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
 import priv.dremma.game.GameCore;
@@ -124,7 +123,7 @@ public class Player extends Entity {
 			}
 
 			// 处理攻击
-			if (this.keyInputHandler.key.keyCode == KeyEvent.VK_J && this.keyInputHandler.key.isPressed()) {
+			if (this.keyInputHandler.attack.isPressed()) {
 				AudioManager.getInstance().stopPlay("runSound");
 				AudioManager.getInstance().playLoop("attackSound");
 
@@ -312,6 +311,7 @@ public class Player extends Entity {
 
 			// 处理移动
 			if (this.state == Entity.EntityState.STAND) {
+				AudioManager.getInstance().stopPlay("ghostWoundedSound");
 				if (this.keyInputHandler.up.isPressed()) {
 					this.animator.setState("playerRunUp", false);
 					this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier)).mul(new Vector2(-1, -1))

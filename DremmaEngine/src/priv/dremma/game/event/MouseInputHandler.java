@@ -21,7 +21,7 @@ import priv.dremma.game.util.Vector2;
 public class MouseInputHandler implements MouseListener {
 	GameCore game;
 	public Vector2 curPos = Vector2.zero(); // 鼠标当前位置
-	private Vector2 lastPos = Vector2.zero(); // 鼠标上一位置
+	private Vector2 lastFramePos = Vector2.zero(); // 鼠标上一位置
 
 	public MouseInputHandler(GameCore game) {
 		game.addMouseListener(this); // 给游戏窗体添加鼠标监听器
@@ -31,11 +31,11 @@ public class MouseInputHandler implements MouseListener {
 	public void update() {
 		curPos = this.getCurPos();
 
-		lastPos = curPos;
+		lastFramePos = curPos;
 	}
 
 	public Vector2 getLastPos() {
-		return this.lastPos;
+		return this.lastFramePos;
 	}
 
 	public Vector2 getCurPos() {
@@ -45,8 +45,12 @@ public class MouseInputHandler implements MouseListener {
 		return curPos;
 	}
 
-	public boolean transCurPosIsInRect(Rect rect) {
+	public boolean worldCurPosIsInRect(Rect rect) {
 		return GUtils.viewPortToWorldPixel(curPos).isInRect(rect.leftUpPoint, rect.rightDownPoint);
+	}
+	
+	public boolean screenCurPosIsInRect(Rect rect) {
+		return curPos.isInRect(rect.leftUpPoint, rect.rightDownPoint);
 	}
 
 	/**

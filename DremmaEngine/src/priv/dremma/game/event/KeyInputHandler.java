@@ -59,6 +59,8 @@ public class KeyInputHandler implements KeyListener {
 	public Key down = new Key();
 	public Key left = new Key();
 	public Key right = new Key();
+	public Key attack = new Key();
+	public Key talk = new Key();
 	public Key key = new Key();
 
 	@Override
@@ -95,6 +97,14 @@ public class KeyInputHandler implements KeyListener {
 		if (keyCode == KeyEvent.VK_D || keyCode == KeyEvent.VK_RIGHT) {
 			flag = true;
 			right.toggle(keyCode, isPressed);
+		}
+		if (keyCode == KeyEvent.VK_J) {
+			flag = true;
+			attack.toggle(keyCode, isPressed);
+		}
+		if (keyCode == KeyEvent.VK_T) {
+			flag = true;
+			talk.toggle(keyCode, isPressed);
 		}
 		if (!flag) {
 			key.toggle(keyCode, isPressed);

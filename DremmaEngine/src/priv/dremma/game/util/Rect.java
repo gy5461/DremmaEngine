@@ -9,12 +9,15 @@ public class Rect {
 	public Vector2 leftUpPoint;
 	public Vector2 rightDownPoint;
 
+	public boolean shouldTransScreenPos;
+
 	static Image collisionBox = Resources.loadImage(Resources.path + "images/collisionBox.png");
 	static Image border = Resources.loadImage(Resources.path + "images/border.png");
 
 	public Rect(Vector2 leftUpPoint, Vector2 rightDownPoint) {
 		this.leftUpPoint = leftUpPoint;
 		this.rightDownPoint = rightDownPoint;
+		this.shouldTransScreenPos = true;
 	}
 
 	public float getWidth() {
@@ -32,7 +35,10 @@ public class Rect {
 
 	public void draw(Graphics2D g) {
 		// ‰÷»æ∞ÎÕ∏√˜≤ø∑÷
-		Vector2 collisionBoxScreenPos = GUtils.worldPixelToViewPort(this.leftUpPoint);
+		Vector2 collisionBoxScreenPos = this.leftUpPoint;
+		if (this.shouldTransScreenPos) {
+			collisionBoxScreenPos = GUtils.worldPixelToViewPort(collisionBoxScreenPos);
+		}
 		AffineTransform collisionBoxTransform = new AffineTransform();
 		collisionBoxTransform.translate(collisionBoxScreenPos.x, collisionBoxScreenPos.y);
 		collisionBoxTransform.scale(this.getWidth(), this.getHeight());
@@ -40,46 +46,40 @@ public class Rect {
 
 		// ‰÷»æ±ﬂøÚ
 		int borderWidth = 1;
-		Vector2 borderLeftScreenPos = GUtils.worldPixelToViewPort(this.leftUpPoint);
+		Vector2 borderLeftScreenPos = this.leftUpPoint;
+		if (this.shouldTransScreenPos) {
+			borderLeftScreenPos = GUtils.worldPixelToViewPort(borderLeftScreenPos);
+		}
 		AffineTransform borderLeftTransform = new AffineTransform();
 		borderLeftTransform.translate(borderLeftScreenPos.x, borderLeftScreenPos.y);
 		borderLeftTransform.scale(borderWidth, this.getHeight());
 		g.drawImage(border, borderLeftTransform, null);
 
-		Vector2 borderRightScreenPos = GUtils
-				.worldPixelToViewPort(new Vector2(this.leftUpPoint.x + this.getWidth(), this.leftUpPoint.y));
+		Vector2 borderRightScreenPos = new Vector2(this.leftUpPoint.x + this.getWidth(), this.leftUpPoint.y);
+		if (this.shouldTransScreenPos) {
+			borderRightScreenPos = GUtils.worldPixelToViewPort(borderRightScreenPos);
+		}
 		AffineTransform borderRightTransform = new AffineTransform();
 		borderRightTransform.translate(borderRightScreenPos.x, borderRightScreenPos.y);
 		borderRightTransform.scale(borderWidth, this.getHeight());
 		g.drawImage(border, borderRightTransform, null);
 
-		Vector2 borderUpScreenPos = GUtils.worldPixelToViewPort(this.leftUpPoint);
+		Vector2 borderUpScreenPos = this.leftUpPoint;
+		if(this.shouldTransScreenPos) {
+			borderUpScreenPos=GUtils.worldPixelToViewPort(borderUpScreenPos);
+		}
 		AffineTransform borderUpTransform = new AffineTransform();
 		borderUpTransform.translate(borderUpScreenPos.x, borderUpScreenPos.y);
 		borderUpTransform.scale(this.getWidth(), borderWidth);
 		g.drawImage(border, borderUpTransform, null);
 
-		Vector2 borderDownScreenPos = GUtils
-				.worldPixelToViewPort(new Vector2(this.leftUpPoint.x, this.leftUpPoint.y + this.getHeight()));
+		Vector2 borderDownScreenPos = new Vector2(this.leftUpPoint.x, this.leftUpPoint.y + this.getHeight());
+		if(this.shouldTransScreenPos) {
+			borderDownScreenPos = GUtils.worldPixelToViewPort(borderDownScreenPos);
+		}
 		AffineTransform borderDownTransform = new AffineTransform();
 		borderDownTransform.translate(borderDownScreenPos.x, borderDownScreenPos.y);
 		borderDownTransform.scale(this.getWidth(), borderWidth);
 		g.drawImage(border, borderDownTransform, null);
-
-		// ‰÷»æ¡ΩΩ«µƒµ„
-//		int pointWidth = 5;
-//		Vector2 leftUpPointScreenPos = GUtils
-//				.worldPixelToViewPort(new Vector2(this.leftUpPoint.x - pointWidth, this.leftUpPoint.y - pointWidth));
-//		AffineTransform leftUpPointTransform = new AffineTransform();
-//		leftUpPointTransform.translate(leftUpPointScreenPos.x, leftUpPointScreenPos.y);
-//		leftUpPointTransform.scale(pointWidth * 2, pointWidth * 2);
-//		g.drawImage(border, leftUpPointTransform, null);
-//
-//		Vector2 rightDownPointScreenPos = GUtils.worldPixelToViewPort(
-//				new Vector2(this.rightDownPoint.x - pointWidth, this.rightDownPoint.y - pointWidth));
-//		AffineTransform rightDownPointTransform = new AffineTransform();
-//		rightDownPointTransform.translate(rightDownPointScreenPos.x, rightDownPointScreenPos.y);
-//		rightDownPointTransform.scale(pointWidth * 2, pointWidth * 2);
-//		g.drawImage(border, rightDownPointTransform, null);
 	}
 }

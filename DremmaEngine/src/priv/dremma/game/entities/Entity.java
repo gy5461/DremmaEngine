@@ -44,15 +44,18 @@ public class Entity {
 	}
 	
 	public Entity(Entity e) {
-		this.animator = new Animator(e.animator);
+		this.animator = e.animator;
 		this.position = new Vector2(e.position);
 		this.speed = e.speed;
 		this.moveVector = new Vector2(e.moveVector);
 		this.scale = new Vector2(e.scale);
 		this.name = new String(e.name);
 		
-		this.state = Entity.EntityState.STAND;
-		this.direction = Entity.EntityDirection.DOWN;
+		this.state = e.state;
+		this.direction = e.direction;
+		
+		this.visible = e.visible;
+		this.detectCollision = e.detectCollision;
 	}
 
 	/**

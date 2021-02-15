@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import priv.dremma.game.anim.Animation;
 import priv.dremma.game.anim.Animator;
+import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.util.FloatCompare;
@@ -59,8 +60,8 @@ public class FightingNPC extends NPC {
 				this.curAttackDistance = 0f;
 				this.attackEntity.visible = false;
 				this.attackEntity.detectCollision = false;
+				AudioManager.getInstance().stopPlay("playerWoundedSound");
 			}
-			
 		}
 		
 		super.update();

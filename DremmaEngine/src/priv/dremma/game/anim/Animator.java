@@ -3,7 +3,6 @@ package priv.dremma.game.anim;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Map.Entry;
 
 import priv.dremma.game.util.Debug;
 
@@ -13,19 +12,6 @@ public class Animator {
 
 	public Animator() {
 
-	}
-
-	/**
-	 * ¿½±´¹¹Ôìº¯Êý
-	 * 
-	 * @param anim
-	 */
-	public Animator(Animator anim) {
-		this.animations = new HashMap<String, Animation>();
-		for (Entry<String, Animation> entry : anim.animations.entrySet()) {
-			this.animations.put(entry.getKey(), new Animation(entry.getValue()));
-		}
-		this.state = new String(anim.state);
 	}
 
 	public void addAnimation(String state, Animation animation) {
