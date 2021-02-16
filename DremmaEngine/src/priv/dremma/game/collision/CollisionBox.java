@@ -15,7 +15,6 @@ import priv.dremma.game.entities.FightingNPC;
 import priv.dremma.game.entities.NPC;
 import priv.dremma.game.entities.Player;
 import priv.dremma.game.tiles.TileMap;
-import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.IOHelper;
@@ -204,6 +203,9 @@ public class CollisionBox {
 								}
 							} else if (otherEntity.moveVector.isEqual(Vector2.zero())) {
 								// 如果另一个实体静止并且本碰撞盒与另一碰撞盒都不是攻击碰撞盒
+								if(otherName.equals("Player") || otherName.contains("NPC")) {
+									continue;
+								}
 								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector);
 
 								if (collisionBox.isIntersected(otherCollisionBox) == false
@@ -403,6 +405,9 @@ public class CollisionBox {
 			rightDownPoint = (Vector2) objs.peek();
 			objs.remove(rightDownPoint);
 			if (name.contains("野鬼")) {
+				continue;
+			}
+			if(name.contains("mapBorder")) {
 				continue;
 			}
 			CollisionBox.collisionBoxs.get(name).setPos(leftUpPoint, rightDownPoint);

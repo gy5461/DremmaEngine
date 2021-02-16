@@ -142,9 +142,8 @@ public final class GUtils {
 
 		if (tile.y % 2 == 1) {
 			pixel = new Vector2(tile.x * tileWidth - tileWidth / 2, tile.y * tileHeight/2 - tileHeight/2).mul(scale);
-			//Debug.log(Debug.DebugLevel.INFO, "pixel:" + pixel);
 		} else {
-			pixel = new Vector2(tile.x * tileWidth,           tile.y * tileHeight/2 - tileHeight/2).mul(scale);
+			pixel = new Vector2(tile.x * tileWidth - tileWidth / 2, tile.y * tileHeight/2 - tileHeight/2).mul(scale);
 		}
 		return pixel;
 	}

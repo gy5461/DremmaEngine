@@ -35,6 +35,17 @@ public class FightingNPC extends NPC {
 
 	@Override
 	public synchronized void update() {
+		//Debug.log(Debug.DebugLevel.INFO, ""+AudioManager.getInstance().getVolumn("ghostFloatSound"));
+		if(this.state == Entity.EntityState.MOVE) {
+			if(this.nearPlayer()) {
+				int volumnPercent = (int)(((this.nearDistance-this.getDistance2Player())/this.nearDistance)*300);
+				volumnPercent = Math.min(93, volumnPercent);
+				AudioManager.getInstance().setVolumn("ghostFloatSound", volumnPercent);
+			} else {
+				AudioManager.getInstance().setVolumn("ghostFloatSound", 0);
+			}
+		}
+		
 		if (this.nearPlayer()) {	// 临近玩家时
 			// Debug.log(Debug.DebugLevel.INFO,this.name + " near player!!");
 			// 发动攻击，发射鬼火

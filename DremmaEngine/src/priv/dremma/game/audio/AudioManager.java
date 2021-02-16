@@ -12,7 +12,6 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import priv.dremma.game.GameCore;
-import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 
 /**
@@ -122,7 +121,7 @@ public class AudioManager {
 	 * @param name
 	 * @param volumn 0～100，表示音量百分数
 	 */
-	public void setVolumn(String name, int volumn) {
+	public synchronized void setVolumn(String name, int volumn) {
 		thread = new Thread(new Thread() {
 			public void run() {
 				FloatControl gainControl = (FloatControl) clips.get(name).getControl(FloatControl.Type.MASTER_GAIN);
@@ -131,5 +130,10 @@ public class AudioManager {
 			}
 		}, GameCore.name + "_setVolumn");
 		thread.start();
+	}
+
+	public int getVolumn(String name) {
+		FloatControl gainControl = (FloatControl) clips.get(name).getControl(FloatControl.Type.MASTER_GAIN);
+		return (int)((gainControl.getValue()-gainControl.getMinimum())/(gainControl.getMaximum()-gainControl.getMinimum())*100);
 	}
 }

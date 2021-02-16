@@ -101,7 +101,7 @@ public class GameCore extends Canvas implements Runnable {
 		AudioManager.getInstance().setVolumn("playerWoundedSound", 100);
 
 		// 从文件中加载地图
-		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
+		map = TileMap.loadTileMap(Resources.path + "maps/map3.txt");
 		map.setPlayer(player);
 
 		// --------------场景中的物体----------------
@@ -283,8 +283,9 @@ public class GameCore extends Canvas implements Runnable {
 
 		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
 
-		// CollisionBox.shouldRender = false; // 不渲染碰撞盒
-		// TranslateEntityHelper.shouldRender = false; // 不渲染移动拖拽帮助
+		//---------------------配置-----------------------
+		//CollisionBox.shouldRender = false; // 不渲染碰撞盒
+		TranslateEntityHelper.shouldRender = false; // 不渲染移动拖拽帮助
 	}
 
 	public void onUpdate() {

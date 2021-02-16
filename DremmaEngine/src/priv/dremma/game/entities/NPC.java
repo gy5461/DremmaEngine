@@ -171,5 +171,9 @@ public class NPC extends Entity {
 		}
 		return false;
 	}
+	
+	protected float getDistance2Player() {
+		return this.position.sub(TileMap.player.position).magnitude();
+	}
 
 }
