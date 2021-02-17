@@ -20,7 +20,7 @@ public class FightingNPC extends NPC {
 	Animation NPCAttackAnimation;
 
 	// FightingNPCµÄ¹¥»÷ÊµÌå£¨Ô¶¹¥£©
-	public Entity attackEntity;
+	public AttackEntity attackEntity;
 
 	Vector2 attackEndPos = Vector2.zero();
 
@@ -55,6 +55,8 @@ public class FightingNPC extends NPC {
 				this.attackEntity.visible = true;
 				this.attackEntity.detectCollision = true;
 				this.attackEntity.direction = this.direction;
+				
+				this.attackEntity.willCauseWound = true;
 				return;
 			}
 		}
@@ -71,7 +73,6 @@ public class FightingNPC extends NPC {
 				this.curAttackDistance = 0f;
 				this.attackEntity.visible = false;
 				this.attackEntity.detectCollision = false;
-				AudioManager.getInstance().stopPlay("playerWoundedSound");
 			}
 		}
 		
@@ -117,7 +118,7 @@ public class FightingNPC extends NPC {
 		this.animator.addAnimation("npcMoveUp", this.NPCMoveUpAnimation);
 
 		// Attack
-		this.attackEntity = new Entity();
+		this.attackEntity = new AttackEntity();
 		this.NPCAttack = new HashMap<Integer, Image>();
 		this.NPCAttackAnimation = new Animation();
 

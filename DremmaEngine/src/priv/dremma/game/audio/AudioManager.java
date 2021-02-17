@@ -36,6 +36,7 @@ public class AudioManager {
 
 	AudioInputStream audioIn;
 	private HashMap<String, Clip> clips = new HashMap<String, Clip>(); // 声音表
+	private HashMap<String, Integer> clipsPlayTimes = new HashMap<String, Integer>(); // 声音表
 	Thread thread;
 
 	/**
@@ -57,6 +58,7 @@ public class AudioManager {
 
 		try {
 			clips.put(name, AudioSystem.getClip());
+			clipsPlayTimes.put(name, 0);
 		} catch (LineUnavailableException e) {
 
 			e.printStackTrace();
@@ -79,7 +81,13 @@ public class AudioManager {
 	public synchronized void playOnce(String name) {
 		thread = new Thread(new Thread() {
 			public void run() {
-				clips.get(name).loop(1);
+				if (clipsPlayTimes.get(name) == 0) {
+					// 当准备播放一次的音效第一次播放时如果使用loop(1)会播放两次，故使用start()
+					clips.get(name).start();
+					clipsPlayTimes.put(name, clipsPlayTimes.get(name) + 1);
+				} else {
+					clips.get(name).loop(1);
+				}
 			}
 		}, GameCore.name + "_playOnce");
 		thread.start();
@@ -134,6 +142,7 @@ public class AudioManager {
 
 	public int getVolumn(String name) {
 		FloatControl gainControl = (FloatControl) clips.get(name).getControl(FloatControl.Type.MASTER_GAIN);
-		return (int)((gainControl.getValue()-gainControl.getMinimum())/(gainControl.getMaximum()-gainControl.getMinimum())*100);
+		return (int) ((gainControl.getValue() - gainControl.getMinimum())
+				/ (gainControl.getMaximum() - gainControl.getMinimum()) * 100);
 	}
 }

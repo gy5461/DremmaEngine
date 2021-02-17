@@ -101,7 +101,7 @@ public class GameCore extends Canvas implements Runnable {
 		AudioManager.getInstance().setVolumn("playerWoundedSound", 100);
 
 		// 从文件中加载地图
-		map = TileMap.loadTileMap(Resources.path + "maps/map3.txt");
+		map = TileMap.loadTileMap(Resources.path + "maps/map2.txt");
 		map.setPlayer(player);
 
 		// --------------场景中的物体----------------

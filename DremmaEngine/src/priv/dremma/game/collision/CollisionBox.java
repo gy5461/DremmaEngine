@@ -10,11 +10,13 @@ import java.util.Map.Entry;
 import java.util.Queue;
 
 import priv.dremma.game.audio.AudioManager;
+import priv.dremma.game.entities.AttackEntity;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.entities.FightingNPC;
 import priv.dremma.game.entities.NPC;
 import priv.dremma.game.entities.Player;
 import priv.dremma.game.tiles.TileMap;
+import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.IOHelper;
@@ -44,8 +46,6 @@ public class CollisionBox {
 	public boolean isTrigger;
 	public boolean isChoosenLeftUp;
 	public boolean isChoosenRightDown;
-
-	public static float BEATBACK = 50f;
 
 	public String name = null; // 碰撞盒名称
 
@@ -84,7 +84,7 @@ public class CollisionBox {
 		if (this.name != null && TileMap.getEntity(this.name).detectCollision == false) {
 			return;
 		}
-		
+
 		if (!CollisionBox.shouldRender) {
 			return;
 		}
@@ -180,7 +180,7 @@ public class CollisionBox {
 							}
 							// 如果entity的碰撞盒是攻击碰撞盒
 							else if (name.contains("Attack")) {
-								if(!((otherEntity instanceof Player) || (otherEntity instanceof FightingNPC))) {
+								if (!((otherEntity instanceof Player) || (otherEntity instanceof FightingNPC))) {
 									continue;
 								}
 								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector);
@@ -195,15 +195,16 @@ public class CollisionBox {
 										new Vector2(otherEntity.position
 												.add(new Vector2(otherEntity.getWidth() * otherEntity.getScale().x / 2f,
 														otherEntity.getHeight() * otherEntity.getScale().y / 2f))));
-								
-								CollisionBox nextOtherImageCollisionBox = otherImageCollisionBox.translate(otherEntity.moveVector);
-								
+
+								CollisionBox nextOtherImageCollisionBox = otherImageCollisionBox
+										.translate(otherEntity.moveVector);
+
 								if (nextCollisionBox.isIntersected(nextOtherImageCollisionBox) == true) {
 									collisionBox.onCollision(name, otherName);
 								}
 							} else if (otherEntity.moveVector.isEqual(Vector2.zero())) {
 								// 如果另一个实体静止并且本碰撞盒与另一碰撞盒都不是攻击碰撞盒
-								if(otherName.equals("Player") || otherName.contains("NPC")) {
+								if (otherName.equals("Player") || otherName.contains("NPC")) {
 									continue;
 								}
 								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector);
@@ -237,94 +238,65 @@ public class CollisionBox {
 	 * @param otherName 被撞到的碰撞盒的名称
 	 */
 	public void onCollision(String name, String otherName) {
-		//Debug.log(Debug.DebugLevel.INFO, name + " 撞上了:" + otherName);
+		// Debug.log(Debug.DebugLevel.INFO, name + " 撞上了:" + otherName);
 
 		Entity entity = TileMap.getEntity(name);
 		Entity otherEntity = TileMap.getEntity(otherName);
 
-		if (name.contains("playerAttack")) {
-			if (otherEntity instanceof FightingNPC) {
-				// 被打的实体是战斗型NPC，则该NPC受伤，被击退
-				Vector2 beatBack = Vector2.zero();
-				switch (entity.direction) {
-				case DOWN:
-					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
-							.mul(new Vector2(1, 1)).mul(Time.deltaTime);
-					break;
-				case LEFT:
-					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
-							.mul(new Vector2(-1, 1)).mul(Time.deltaTime);
-					break;
-				case RIGHT:
-					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
-							.mul(new Vector2(1, -1)).mul(Time.deltaTime);
-					break;
-				case UP:
-					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
-							.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
-					break;
+		// ------------------攻击处理--------------------
+		if (name.contains("Attack") && ((AttackEntity) entity).willCauseWound) {
+			if (name.contains("player")) {
+				if (otherEntity instanceof FightingNPC) {
+					// 被打的实体是战斗型NPC，则该NPC受伤
+					// 击退
+					otherEntity.retreat(entity.direction, 50f);
+					
+					AudioManager.getInstance().playOnce("ghostWoundedSound");
+					((AttackEntity) entity).willCauseWound = false;
+					Debug.log(Debug.DebugLevel.INFO, name + " 伤害了:" + otherName);
 				}
-				otherEntity.position = otherEntity.position.add(beatBack);
-				CollisionBox.collisionBoxs.get(otherName).trans(beatBack);
-				AudioManager.getInstance().playOnce("ghostWoundedSound");
+			} else if (name.contains("npc")) {
+				if (otherEntity instanceof Player) {
+					// npc打中了玩家
+					// 击退
+					otherEntity.retreat(entity.direction, 50f);
+					
+					AudioManager.getInstance().playOnce("playerWoundedSound");
+					((AttackEntity) entity).willCauseWound = false;
+					Debug.log(Debug.DebugLevel.INFO, name + " 伤害了:" + otherName);
+				}
 			}
-		} else if (name.contains("npcAttack")) {
-			if (otherEntity instanceof Player) {
-				// npc打中了玩家
-				// 玩家被击退
-				Vector2 beatBack = Vector2.zero();
-				switch (entity.direction) {
-				case DOWN:
-					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
-							.mul(new Vector2(1, 1)).mul(Time.deltaTime);
-					break;
-				case LEFT:
-					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
-							.mul(new Vector2(-1, 1)).mul(Time.deltaTime);
-					break;
-				case RIGHT:
-					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
-							.mul(new Vector2(1, -1)).mul(Time.deltaTime);
-					break;
-				case UP:
-					beatBack = new Vector2(CollisionBox.BEATBACK, CollisionBox.BEATBACK * TileMap.modifier)
-							.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
-					break;
-				}
-				otherEntity.position = otherEntity.position.add(beatBack);
-				CollisionBox.collisionBoxs.get(otherName).trans(beatBack);
-				AudioManager.getInstance().playOnce("playerWoundedSound");
-			}
-		} else {
-			if (entity instanceof NPC) {
-				// 碰撞后逆时针转向
-				switch (entity.direction) {
-				case UP:
-					entity.direction = Entity.EntityDirection.LEFT;
-					entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier))
-							.mul(new Vector2(-1, 1)).mul(Time.deltaTime);
-					break;
-				case DOWN:
-					entity.direction = Entity.EntityDirection.RIGHT;
-					entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier))
-							.mul(new Vector2(1, -1)).mul(Time.deltaTime);
-					break;
-				case LEFT:
-					entity.direction = Entity.EntityDirection.DOWN;
-					entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier))
-							.mul(new Vector2(1, 1)).mul(Time.deltaTime);
-					break;
-				case RIGHT:
-					entity.direction = Entity.EntityDirection.UP;
-					entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier))
-							.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
-					break;
-				}
 
-				((NPC) entity).startPos = entity.position;
-				((NPC) entity).endPos = ((NPC) entity).startPos
-						.add(entity.moveVector.mul(((NPC) entity).totalDistance));
+		}
+
+		// ------------------NPC碰到障碍物处理--------------------
+		if (entity instanceof NPC) {
+			// 碰撞后逆时针转向
+			switch (entity.direction) {
+			case UP:
+				entity.direction = Entity.EntityDirection.LEFT;
+				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier)).mul(new Vector2(-1, 1))
+						.mul(Time.deltaTime);
+				break;
+			case DOWN:
+				entity.direction = Entity.EntityDirection.RIGHT;
+				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier)).mul(new Vector2(1, -1))
+						.mul(Time.deltaTime);
+				break;
+			case LEFT:
+				entity.direction = Entity.EntityDirection.DOWN;
+				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier)).mul(new Vector2(1, 1))
+						.mul(Time.deltaTime);
+				break;
+			case RIGHT:
+				entity.direction = Entity.EntityDirection.UP;
+				entity.moveVector = (new Vector2(entity.speed, entity.speed * TileMap.modifier))
+						.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
+				break;
 			}
+
+			((NPC) entity).startPos = entity.position;
+			((NPC) entity).endPos = ((NPC) entity).startPos.add(entity.moveVector.mul(((NPC) entity).totalDistance));
 		}
 	}
 
@@ -335,7 +307,7 @@ public class CollisionBox {
 	 * @param otherName 被撞到的碰撞盒的名称
 	 */
 	public void onTriggerEnter(String name, String otherName) {
-		//Debug.log(Debug.DebugLevel.INFO, name + " 触发了:" + otherName);
+		// Debug.log(Debug.DebugLevel.INFO, name + " 触发了:" + otherName);
 	}
 
 	/**
@@ -407,7 +379,7 @@ public class CollisionBox {
 			if (name.contains("野鬼")) {
 				continue;
 			}
-			if(name.contains("mapBorder")) {
+			if (name.contains("mapBorder")) {
 				continue;
 			}
 			CollisionBox.collisionBoxs.get(name).setPos(leftUpPoint, rightDownPoint);

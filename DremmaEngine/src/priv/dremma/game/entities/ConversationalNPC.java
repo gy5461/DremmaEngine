@@ -10,7 +10,7 @@ import priv.dremma.game.util.Resources;
 public class ConversationalNPC extends NPC {
 
 	KeyInputHandler keyInputHandler;
-	int pressedTime = 0;
+	int pressTalkTime = 0;
 	public boolean isTalking;
 
 	public ConversationalNPC(KeyInputHandler keyInputHandler, float speed) {
@@ -24,18 +24,18 @@ public class ConversationalNPC extends NPC {
 		super.update();
 		if (this.nearPlayer()) {
 			if (!this.isTalking && this.keyInputHandler.talk.isPressed()
-					&& this.pressedTime < this.keyInputHandler.talk.getPressedTimes()) {
-				this.pressedTime = this.keyInputHandler.talk.getPressedTimes();
+					&& this.pressTalkTime < this.keyInputHandler.talk.getPressedTimes()) {
+				this.pressTalkTime = this.keyInputHandler.talk.getPressedTimes();
 				this.isTalking = true;
 			}
 		}
 		
 		if (this.isTalking && this.keyInputHandler.talk.isPressed()
-				&& this.pressedTime < this.keyInputHandler.talk.getPressedTimes()) {
+				&& this.pressTalkTime < this.keyInputHandler.talk.getPressedTimes()) {
 			// ¹Ø±Õ¶Ô»°
 			GameCore.getUIEntity("talkBox").visible = false;
 			this.isTalking = false;
-			this.pressedTime = this.keyInputHandler.talk.getPressedTimes();
+			this.pressTalkTime = this.keyInputHandler.talk.getPressedTimes();
 		}
 	}
 
