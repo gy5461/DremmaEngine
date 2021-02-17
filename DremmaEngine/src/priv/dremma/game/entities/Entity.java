@@ -27,7 +27,10 @@ public class Entity {
 
 	private float destRestreatDistance = 0f;
 	private float curRestreatDistance = 0f;
-	public Vector2 retreatDirection = Vector2.zero();
+	public Vector2 retreatVector = Vector2.zero();
+	
+	private Image staticImage = null;
+	public boolean isStatic = false;
 
 	public static enum EntityState {
 		STAND, MOVE, ATTACK, DEAD;
@@ -63,6 +66,9 @@ public class Entity {
 
 		this.visible = e.visible;
 		this.detectCollision = e.detectCollision;
+		
+		this.staticImage = e.staticImage;
+		this.isStatic = e.isStatic;
 	}
 
 	/**
@@ -94,18 +100,30 @@ public class Entity {
 	public Vector2 getScale() {
 		return this.scale;
 	}
+	
+	/**
+	 * 如果是静态物体，直接调用本方法设置图片
+	 * @param image
+	 */
+	public void setStaticImage(Image image) {
+		this.staticImage = image;
+		this.isStatic = true;
+	}
 
 	/**
-	 * 根据时间更新Entity
+	 * 更新Entity
 	 */
 	public void update() {
+		if(this.isStatic) {
+			return;
+		}
+		
 		// 后退处理
 		if (this.curRestreatDistance < this.destRestreatDistance) {
-			Vector2 back = this.retreatDirection.mul(Time.deltaTime);
-			this.position = this.position.add(back);
-			CollisionBox.collisionBoxs.get(this.name).trans(back);
+			this.position = this.position.add(this.retreatVector);
+			CollisionBox.collisionBoxs.get(this.name).trans(this.retreatVector);
 
-			this.curRestreatDistance += back.magnitude();
+			this.curRestreatDistance += this.retreatVector.magnitude();
 		}
 
 		if (this.animator == null) {
@@ -139,6 +157,9 @@ public class Entity {
 	 * @return
 	 */
 	public Image getImage() {
+		if(this.isStatic) {
+			return this.staticImage;
+		}
 		return animator.getAnimation(animator.getState()).getImage();
 	}
 
@@ -180,20 +201,20 @@ public class Entity {
 		Vector2 beatBack = Vector2.zero();
 		switch (direction) {
 		case DOWN:
-			beatBack = new Vector2(distance, distance * TileMap.modifier).mul(new Vector2(1, 1));
+			beatBack = new Vector2(distance, distance * TileMap.modifier).mul(new Vector2(1, 1)).mul(Time.deltaTime);
 			break;
 		case LEFT:
-			beatBack = new Vector2(distance, distance * TileMap.modifier).mul(new Vector2(-1, 1));
+			beatBack = new Vector2(distance, distance * TileMap.modifier).mul(new Vector2(-1, 1)).mul(Time.deltaTime);
 			break;
 		case RIGHT:
-			beatBack = new Vector2(distance, distance * TileMap.modifier).mul(new Vector2(1, -1));
+			beatBack = new Vector2(distance, distance * TileMap.modifier).mul(new Vector2(1, -1)).mul(Time.deltaTime);
 			break;
 		case UP:
-			beatBack = new Vector2(distance, distance * TileMap.modifier).mul(new Vector2(-1, -1));
+			beatBack = new Vector2(distance, distance * TileMap.modifier).mul(new Vector2(-1, -1)).mul(Time.deltaTime);
 			break;
 		}
 		this.destRestreatDistance = distance;
 		this.curRestreatDistance = 0f;
-		this.retreatDirection = beatBack;
+		this.retreatVector = beatBack;
 	}
 }

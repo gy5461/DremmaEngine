@@ -20,8 +20,6 @@ public class Animation {
 	public float totalDuration; // 动画总时长
 	
 	public boolean hasExitTime;
-	public boolean isStatic;
-	private Image staticImage;
 
 	/**
 	 * 构造新的Animation
@@ -30,7 +28,6 @@ public class Animation {
 		frames = new ArrayList<AnimFrame>();
 		totalDuration = 0f;
 		this.hasExitTime = false;
-		this.isStatic = false;
 		start();
 	}
 
@@ -43,11 +40,6 @@ public class Animation {
 	public synchronized void addFrame(Image image, float duration) {
 		totalDuration += duration;
 		frames.add(new AnimFrame(image, totalDuration));
-	}
-	
-	public void setStaticImage(Image image) {
-		this.staticImage = image;
-		this.isStatic = true;
 	}
 
 	/**
@@ -64,9 +56,6 @@ public class Animation {
 	 * @param elapsedTime
 	 */
 	public synchronized void update() {
-		if(this.isStatic) {
-			return;
-		}
 		
 		if (frames.size() > 1) {
 			curAnimTime += Time.deltaTime;
@@ -90,9 +79,6 @@ public class Animation {
 	 * @return
 	 */
 	public synchronized Image getImage() {
-		if(this.isStatic) {
-			return staticImage;
-		}
 		
 		if (frames.size() == 0) {
 			return null;

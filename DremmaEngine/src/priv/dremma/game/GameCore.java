@@ -7,26 +7,24 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map.Entry;
-import java.util.Queue;
 
 import javax.swing.JFrame;
 
-import priv.dremma.game.anim.Animation;
-import priv.dremma.game.anim.Animator;
 import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.entities.ConversationalNPC;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.entities.FightingNPC;
 import priv.dremma.game.entities.Player;
-import priv.dremma.game.entities.UIEntity;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.event.WindowInputHandler;
 import priv.dremma.game.gfx.Screen;
 import priv.dremma.game.tiles.TileMap;
+import priv.dremma.game.ui.Text;
+import priv.dremma.game.ui.UIEntity;
+import priv.dremma.game.ui.UIManager;
 import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Resources;
@@ -76,9 +74,6 @@ public class GameCore extends Canvas implements Runnable {
 
 	public static boolean willSave = true;
 
-	public static HashMap<String, UIEntity> uiEntities;
-	private Queue<UIEntity> renderUIEntities;
-
 	public void onStart() {
 		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // 设置2D游戏视角
 		player = new Player(this.keyInputHandler, 60f);
@@ -107,12 +102,8 @@ public class GameCore extends Canvas implements Runnable {
 		// --------------场景中的物体----------------
 
 		// tree1
-		Animator tree1Animator = new Animator();
-		Animation tree1Animation = new Animation();
-		tree1Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/tree1.png"));
-		tree1Animator.addAnimation("static", tree1Animation);
-		tree1Animator.setState("static", false);
-		Entity tree1Entity = new Entity(tree1Animator);
+		Entity tree1Entity = new Entity();
+		tree1Entity.setStaticImage(Resources.loadImage(Resources.path + "images/entities/tree1.png"));
 
 		tree1Entity.setScale(new Vector2(3f, 3f));
 		tree1Entity.name = "tree1_1";
@@ -127,12 +118,8 @@ public class GameCore extends Canvas implements Runnable {
 		map.addEntity(tree1Entity, new Vector2(3, 11));
 
 		// tree2
-		Animator tree2Animator = new Animator();
-		Animation tree2Animation = new Animation();
-		tree2Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/tree2.png"));
-		tree2Animator.addAnimation("static", tree2Animation);
-		tree2Animator.setState("static", false);
-		Entity tree2Entity = new Entity(tree2Animator);
+		Entity tree2Entity = new Entity();
+		tree2Entity.setStaticImage(Resources.loadImage(Resources.path + "images/entities/tree2.png"));
 
 		tree2Entity.name = "tree2";
 		tree2Entity.setScale(new Vector2(2f, 2f));
@@ -140,12 +127,8 @@ public class GameCore extends Canvas implements Runnable {
 		Debug.log(Debug.DebugLevel.INFO, "" + tree2Entity.getBottom());
 
 		// archiving
-		Animator archivingAnimator = new Animator();
-		Animation archivingAnimation = new Animation();
-		archivingAnimation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/archiving.png"));
-		archivingAnimator.addAnimation("static", archivingAnimation);
-		archivingAnimator.setState("static", false);
-		Entity archivingEntity = new Entity(archivingAnimator);
+		Entity archivingEntity = new Entity();
+		archivingEntity.setStaticImage(Resources.loadImage(Resources.path + "images/entities/archiving.png"));
 
 		archivingEntity.name = "archiving";
 		archivingEntity.setScale(new Vector2(0.2f, 0.2f));
@@ -153,60 +136,40 @@ public class GameCore extends Canvas implements Runnable {
 		CollisionBox.collisionBoxs.get("archiving").isTrigger = true; // 触发盒子
 
 		// chair1
-		Animator chair1Animator = new Animator();
-		Animation chair1Animation = new Animation();
-		chair1Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair1.png"));
-		chair1Animator.addAnimation("static", chair1Animation);
-		chair1Animator.setState("static", false);
-		Entity chair1Entity = new Entity(chair1Animator);
+		Entity chair1Entity = new Entity();
+		chair1Entity.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair1.png"));
 
 		chair1Entity.name = "chair1";
 		chair1Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair1Entity, new Vector2(4, 8));
 
 		// chair2
-		Animator chair2Animator = new Animator();
-		Animation chair2Animation = new Animation();
-		chair2Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair2.png"));
-		chair2Animator.addAnimation("static", chair2Animation);
-		chair2Animator.setState("static", false);
-		Entity chair2Entity = new Entity(chair2Animator);
+		Entity chair2Entity = new Entity();
+		chair2Entity.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair2.png"));
 
 		chair2Entity.name = "chair2";
 		chair2Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair2Entity, new Vector2(4, 5));
 
 		// chair3
-		Animator chair3Animator = new Animator();
-		Animation chair3Animation = new Animation();
-		chair3Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair3.png"));
-		chair3Animator.addAnimation("static", chair3Animation);
-		chair3Animator.setState("static", false);
-		Entity chair3Entity = new Entity(chair3Animator);
+		Entity chair3Entity = new Entity();
+		chair3Entity.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair3.png"));
 
 		chair3Entity.name = "chair3";
 		chair3Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair3Entity, new Vector2(4, 11));
 
 		// chair4
-		Animator chair4Animator = new Animator();
-		Animation chair4Animation = new Animation();
-		chair4Animation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair4.png"));
-		chair4Animator.addAnimation("static", chair4Animation);
-		chair4Animator.setState("static", false);
-		Entity chair4Entity = new Entity(chair4Animator);
+		Entity chair4Entity = new Entity();
+		chair4Entity.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair4.png"));
 
 		chair4Entity.name = "chair4";
 		chair4Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair4Entity, new Vector2(5, 5));
 
-		// chair4
-		Animator deskAnimator = new Animator();
-		Animation deskAnimation = new Animation();
-		deskAnimation.setStaticImage(Resources.loadImage(Resources.path + "images/entities/desk.png"));
-		deskAnimator.addAnimation("static", deskAnimation);
-		deskAnimator.setState("static", false);
-		Entity deskEntity = new Entity(deskAnimator);
+		// desk
+		Entity deskEntity = new Entity();
+		deskEntity.setStaticImage(Resources.loadImage(Resources.path + "images/entities/desk.png"));
 
 		deskEntity.name = "desk";
 		deskEntity.setScale(new Vector2(2f, 2f));
@@ -263,19 +226,42 @@ public class GameCore extends Canvas implements Runnable {
 				new Vector2(map.worldEndTileCenter.x + 2 + borderThickness, map.worldEndTileCenter.y)));
 
 		// --------------UI----------------
-		Animator talkBoxAnimator = new Animator();
-		Animation talkBoxAnimation = new Animation();
-		talkBoxAnimation.setStaticImage(Resources.loadImage(Resources.path + "images/对话框.png"));
-		talkBoxAnimator.addAnimation("static", talkBoxAnimation);
-		talkBoxAnimator.setState("static", false);
-		UIEntity talkBox = new UIEntity(talkBoxAnimator);
+		// 对话框
+		UIEntity talkBox = new UIEntity();
+		talkBox.setStaticImage(Resources.loadImage(Resources.path + "images/对话框.png"));
 		talkBox.name = "talkBox";
 		talkBox.visible = false;
 		talkBox.setScale(new Vector2(2f, 1.5f));
 		talkBox.position = new Vector2(GameCore.screen.width / 2f,
 				GameCore.screen.height - talkBox.getHeight() * talkBox.getScale().y / 2 - 25);
 
-		GameCore.addUI(talkBox);
+		UIManager.addUI(talkBox);
+
+		// 南极仙翁头像
+		UIEntity talkNPCProfile = new UIEntity();
+		talkNPCProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/南极仙翁头像.png"));
+		talkNPCProfile.name = "talkNPCProfile";
+		talkNPCProfile.visible = false;
+		talkNPCProfile.position = new Vector2(107, 325);
+
+		UIManager.addUI(talkNPCProfile);
+
+		// 主角头像
+		UIEntity playerProfile = new UIEntity();
+		playerProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/主角头像.png"));
+		playerProfile.name = "playerProfile";
+		playerProfile.visible = false;
+		playerProfile.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
+
+		UIManager.addUI(playerProfile);
+		
+		// 文字
+		Text text = new Text("欢迎你来到游戏世界！！");
+		text.name = "firstText";
+		text.visible = false;
+		text.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
+		
+		UIManager.addUI(text);
 
 		// --------------加载数据----------------
 
@@ -283,9 +269,9 @@ public class GameCore extends Canvas implements Runnable {
 
 		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
 
-		//---------------------配置-----------------------
-		//CollisionBox.shouldRender = false; // 不渲染碰撞盒
-		TranslateEntityHelper.shouldRender = false; // 不渲染移动拖拽帮助
+		// ---------------------配置-----------------------
+		CollisionBox.shouldRender = false; // 不渲染碰撞盒
+		// TranslateEntityHelper.shouldRender = false; // 不渲染移动拖拽帮助
 	}
 
 	public void onUpdate() {
@@ -307,8 +293,6 @@ public class GameCore extends Canvas implements Runnable {
 		mouseInputHandler = new MouseInputHandler(this);
 
 		screen = new Screen(GameCore.width * GameCore.scale, GameCore.height * GameCore.scale);
-		this.renderUIEntities = new LinkedList<UIEntity>();
-		GameCore.uiEntities = new HashMap<String, UIEntity>();
 
 		onStart();
 	}
@@ -380,21 +364,8 @@ public class GameCore extends Canvas implements Runnable {
 		// 绘制地图
 		map.draw(g);
 
-		// 绘制UI
-		Iterator<Entry<String, UIEntity>> uiEntitiesIterator = GameCore.getUIEntitiesIterator();
-		while (uiEntitiesIterator.hasNext()) {
-			HashMap.Entry<String, UIEntity> entry = (HashMap.Entry<String, UIEntity>) uiEntitiesIterator.next();
-			if (entry.getValue().visible == false) {
-				continue;
-			}
-			renderUIEntities.add(entry.getValue());
-		}
-
-		// 渲染UI队列
-		while (!renderUIEntities.isEmpty()) {
-			renderUIEntities.peek().draw(g);
-			renderUIEntities.poll();
-		}
+		// UI
+		UIManager.draw(g);
 
 		// 绘制碰撞盒
 		Iterator<Entry<String, CollisionBox>> collisionBoxsIterator = CollisionBox.getCollisionBoxsIterator();
@@ -546,7 +517,7 @@ public class GameCore extends Canvas implements Runnable {
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 					float deltaX = curPos.x - lastPos.x;
 
-					GameCore.getUIEntity(name).position.x += deltaX;
+					UIManager.getUIEntity(name).position.x += deltaX;
 				}
 
 				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
@@ -563,7 +534,7 @@ public class GameCore extends Canvas implements Runnable {
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 					float deltaY = curPos.y - lastPos.y;
 
-					GameCore.getUIEntity(name).position.y += deltaY;
+					UIManager.getUIEntity(name).position.y += deltaY;
 
 				}
 
@@ -580,7 +551,8 @@ public class GameCore extends Canvas implements Runnable {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 
-					GameCore.getUIEntity(name).position = GameCore.getUIEntity(name).position.add(curPos.sub(lastPos));
+					UIManager.getUIEntity(name).position = UIManager.getUIEntity(name).position
+							.add(curPos.sub(lastPos));
 				}
 
 				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
@@ -666,34 +638,4 @@ public class GameCore extends Canvas implements Runnable {
 		}
 	}
 
-	/**
-	 * 向游戏中添加UI
-	 * 
-	 * @param UIEntity
-	 */
-	public static void addUI(UIEntity UIEntity) {
-		if (!GameCore.uiEntities.containsKey(UIEntity.name)) {
-			GameCore.uiEntities.put(UIEntity.name, UIEntity);
-			if (!TranslateEntityHelper.translateEntities.containsKey(UIEntity.name)) {
-				TranslateEntityHelper translateEntityHelper = new TranslateEntityHelper(UIEntity);
-				TranslateEntityHelper.translateEntities.put(UIEntity.name, translateEntityHelper);
-			}
-		}
-	}
-
-	public static UIEntity getUIEntity(String name) {
-		if (GameCore.uiEntities.containsKey(name)) {
-			return GameCore.uiEntities.get(name);
-		}
-		return null;
-	}
-
-	/**
-	 * 获取游戏UI迭代器
-	 * 
-	 * @return
-	 */
-	public static Iterator<Entry<String, UIEntity>> getUIEntitiesIterator() {
-		return GameCore.uiEntities.entrySet().iterator();
-	}
 }

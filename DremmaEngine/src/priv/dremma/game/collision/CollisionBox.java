@@ -154,7 +154,7 @@ public class CollisionBox {
 			if (entity.detectCollision == false) {
 				continue;
 			}
-			if (!entity.moveVector.isEqual(Vector2.zero())) {
+			if (!entity.moveVector.add(entity.retreatVector).isEqual(Vector2.zero())) {
 				Iterator<Entry<String, CollisionBox>> otherIterator = CollisionBox.getCollisionBoxsIterator();
 				while (otherIterator.hasNext()) {
 					HashMap.Entry<String, CollisionBox> otherEntry = (HashMap.Entry<String, CollisionBox>) otherIterator
@@ -183,7 +183,7 @@ public class CollisionBox {
 								if (!((otherEntity instanceof Player) || (otherEntity instanceof FightingNPC))) {
 									continue;
 								}
-								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector);
+								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector.add(entity.retreatVector));
 								// 攻击时，应检测下一entity碰撞盒是否与otherEntity的下一图片相交
 								CollisionBox otherImageCollisionBox = new CollisionBox(
 										new Vector2(
@@ -197,7 +197,7 @@ public class CollisionBox {
 														otherEntity.getHeight() * otherEntity.getScale().y / 2f))));
 
 								CollisionBox nextOtherImageCollisionBox = otherImageCollisionBox
-										.translate(otherEntity.moveVector);
+										.translate(otherEntity.moveVector.add(otherEntity.retreatVector));
 
 								if (nextCollisionBox.isIntersected(nextOtherImageCollisionBox) == true) {
 									collisionBox.onCollision(name, otherName);
@@ -207,20 +207,21 @@ public class CollisionBox {
 								if (otherName.equals("Player") || otherName.contains("NPC")) {
 									continue;
 								}
-								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector);
+								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector.add(entity.retreatVector));
 
 								if (collisionBox.isIntersected(otherCollisionBox) == false
 										&& nextCollisionBox.isIntersected(otherCollisionBox) == true) {
+									Vector2 offset = nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint);
 									// 发生了碰撞
-									entity.position = entity.position.sub(entity.moveVector);
-									collisionBox.trans(entity.moveVector.mul(-1f));
+									entity.position = entity.position.sub(offset);
+									collisionBox.trans(offset.mul(-1));
 
 									collisionBox.onCollision(name, otherName);
 								} else if (collisionBox.isIntersected(otherCollisionBox) == true
 										&& nextCollisionBox.isIntersected(otherCollisionBox) == true) {
 									// 修复穿模
-									entity.position = entity.position.sub(entity.moveVector.mul(2));
-									collisionBox.trans(entity.moveVector.mul(-2f));
+									entity.position = entity.position.sub(entity.moveVector.add(entity.retreatVector).mul(2));
+									collisionBox.trans(entity.moveVector.add(entity.retreatVector).mul(-2f));
 								}
 							}
 
@@ -249,7 +250,7 @@ public class CollisionBox {
 				if (otherEntity instanceof FightingNPC) {
 					// 被打的实体是战斗型NPC，则该NPC受伤
 					// 击退
-					otherEntity.retreat(entity.direction, 50f);
+					otherEntity.retreat(entity.direction, 100f);
 					
 					AudioManager.getInstance().playOnce("ghostWoundedSound");
 					((AttackEntity) entity).willCauseWound = false;
@@ -297,6 +298,7 @@ public class CollisionBox {
 
 			((NPC) entity).startPos = entity.position;
 			((NPC) entity).endPos = ((NPC) entity).startPos.add(entity.moveVector.mul(((NPC) entity).totalDistance));
+			entity.retreatVector = Vector2.zero();
 		}
 	}
 

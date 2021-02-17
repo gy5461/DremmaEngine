@@ -10,7 +10,7 @@ import java.util.Queue;
 import java.util.Map.Entry;
 
 import priv.dremma.game.entities.Entity;
-import priv.dremma.game.entities.UIEntity;
+import priv.dremma.game.ui.UIEntity;
 
 public class TranslateEntityHelper {
 	public static HashMap<String, TranslateEntityHelper> translateEntities = new HashMap<String, TranslateEntityHelper>();
@@ -190,7 +190,7 @@ public class TranslateEntityHelper {
 	}
 
 	/**
-	 * 从文件中加载碰撞盒数据
+	 * 从文件中加载移动帮助数据
 	 */
 	@SuppressWarnings("unchecked")
 	public static void load() {
@@ -210,12 +210,13 @@ public class TranslateEntityHelper {
 			if (name.contains("Attack")) {
 				continue;
 			}
+
 			TranslateEntityHelper.translateEntities.get(name).entity.position = position;
 		}
 	}
 
 	/**
-	 * 将碰撞盒数据存进文件
+	 * 将移动帮助数据存进文件
 	 */
 	public static void save() {
 		Queue<Object> objs = new LinkedList<Object>();

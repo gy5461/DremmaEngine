@@ -61,6 +61,7 @@ public class KeyInputHandler implements KeyListener {
 	public Key right = new Key();
 	public Key attack = new Key();
 	public Key talk = new Key();
+	public Key enter = new Key();
 	public Key key = new Key();
 
 	@Override
@@ -105,6 +106,10 @@ public class KeyInputHandler implements KeyListener {
 		if (keyCode == KeyEvent.VK_T) {
 			flag = true;
 			talk.toggle(keyCode, isPressed);
+		}
+		if (keyCode == KeyEvent.VK_ENTER) {
+			flag = true;
+			enter.toggle(keyCode, isPressed);
 		}
 		if (!flag) {
 			key.toggle(keyCode, isPressed);

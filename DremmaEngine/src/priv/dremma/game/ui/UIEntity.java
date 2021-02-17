@@ -1,9 +1,10 @@
-package priv.dremma.game.entities;
+package priv.dremma.game.ui;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import priv.dremma.game.anim.Animator;
+import priv.dremma.game.entities.Entity;
 
 public class UIEntity extends Entity {
 	
