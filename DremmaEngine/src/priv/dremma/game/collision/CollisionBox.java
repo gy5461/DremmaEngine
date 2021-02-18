@@ -246,7 +246,7 @@ public class CollisionBox {
 
 		// ------------------攻击处理--------------------
 		if (entity instanceof AttackEntity && ((AttackEntity) entity).willCauseWound) {
-			if (entity instanceof Player) {
+			if (((AttackEntity) entity).attacker instanceof Player) {
 				if (otherEntity instanceof FightingNPC) {
 					// 被打的实体是战斗型NPC，则该NPC受伤
 					// 击退
@@ -256,7 +256,7 @@ public class CollisionBox {
 					((AttackEntity) entity).willCauseWound = false;
 					Debug.log(Debug.DebugLevel.INFO, name + " 伤害了:" + otherName);
 				}
-			} else if (entity instanceof FightingNPC) {
+			} else if (((AttackEntity) entity).attacker instanceof FightingNPC) {
 				if (otherEntity instanceof Player) {
 					// npc打中了玩家
 					// 击退

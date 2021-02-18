@@ -143,7 +143,7 @@ public class Player extends Entity {
 					if (!TileMap.entities.containsKey("playerAttackUp")) {
 						playerAttackUpAnimator = new Animator();
 						playerAttackUpAnimator.addAnimation("playerAttackUp", this.playerAttackUpAnimation);
-						playerAttackUpAttackEntity = new AttackEntity(playerAttackUpAnimator);
+						playerAttackUpAttackEntity = new AttackEntity(playerAttackUpAnimator, this);
 						playerAttackUpAttackEntity.animator.setState("playerAttackUp", true);
 						playerAttackUpAttackEntity.name = "playerAttackUpAttackEntity";
 						playerAttackUpAttackEntity.position = new Vector2(this.position);
@@ -188,7 +188,7 @@ public class Player extends Entity {
 					if (!TileMap.entities.containsKey("playerAttackDown")) {
 						playerAttackDownAnimator = new Animator();
 						playerAttackDownAnimator.addAnimation("playerAttackDown", this.playerAttackDownAnimation);
-						playerAttackDownAttackEntity = new AttackEntity(playerAttackDownAnimator);
+						playerAttackDownAttackEntity = new AttackEntity(playerAttackDownAnimator, this);
 						playerAttackDownAttackEntity.animator.setState("playerAttackDown", true);
 						playerAttackDownAttackEntity.name = "playerAttackDownAttackEntity";
 						playerAttackDownAttackEntity.position = new Vector2(this.position);
@@ -226,7 +226,7 @@ public class Player extends Entity {
 					if (!TileMap.entities.containsKey("playerAttackLeft")) {
 						playerAttackLeftAnimator = new Animator();
 						playerAttackLeftAnimator.addAnimation("playerAttackLeft", this.playerAttackLeftAnimation);
-						playerAttackLeftAttackEntity = new AttackEntity(playerAttackLeftAnimator);
+						playerAttackLeftAttackEntity = new AttackEntity(playerAttackLeftAnimator, this);
 						playerAttackLeftAttackEntity.animator.setState("playerAttackLeft", true);
 						playerAttackLeftAttackEntity.name = "playerAttackLeftAttackEntity";
 						playerAttackLeftAttackEntity.position = new Vector2(this.position);
@@ -270,7 +270,7 @@ public class Player extends Entity {
 					if (!TileMap.entities.containsKey("playerAttackRight")) {
 						playerAttackRightAnimator = new Animator();
 						playerAttackRightAnimator.addAnimation("playerAttackRight", this.playerAttackRightAnimation);
-						playerAttackRightAttackEntity = new AttackEntity(playerAttackRightAnimator);
+						playerAttackRightAttackEntity = new AttackEntity(playerAttackRightAnimator, this);
 						playerAttackRightAttackEntity.animator.setState("playerAttackRight", true);
 						playerAttackRightAttackEntity.name = "playerAttackRightAttackEntity";
 						playerAttackRightAttackEntity.position = new Vector2(this.position);

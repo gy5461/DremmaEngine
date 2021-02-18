@@ -118,7 +118,7 @@ public class FightingNPC extends NPC {
 		this.animator.addAnimation("npcMoveUp", this.NPCMoveUpAnimation);
 
 		// Attack
-		this.attackEntity = new AttackEntity();
+		this.attackEntity = new AttackEntity(this);
 		this.NPCAttack = new HashMap<Integer, Image>();
 		this.NPCAttackAnimation = new Animation();
 

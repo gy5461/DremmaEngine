@@ -124,6 +124,9 @@ public class Entity {
 			CollisionBox.collisionBoxs.get(this.name).trans(this.retreatVector);
 
 			this.curRestreatDistance += this.retreatVector.magnitude();
+		} else {
+			this.curRestreatDistance = 0f;
+			this.retreatVector = Vector2.zero();
 		}
 
 		if (this.animator == null) {
