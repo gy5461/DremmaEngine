@@ -89,6 +89,9 @@ public class GameCore extends Canvas implements Runnable {
 		Resources.load(Resources.ResourceType.Music, "runSound", Resources.path + "music/run.wav");
 		Resources.load(Resources.ResourceType.Music, "attackSound", Resources.path + "music/attack.wav");
 		Resources.load(Resources.ResourceType.Music, "ghostFloatSound", Resources.path + "music/¹íÆ¯¸¡Éù.wav");
+		
+		Resources.load(Resources.ResourceType.Music, "ghostDieSound", Resources.path + "music/¹íËÀÍö.wav");
+		Resources.load(Resources.ResourceType.Music, "playerDieSound", Resources.path + "music/Ö÷½ÇËÀÍö.wav");
 
 		Resources.load(Resources.ResourceType.Music, "ghostWoundedSound", Resources.path + "music/¹íÊÜÉË.wav");
 		AudioManager.getInstance().setVolumn("ghostWoundedSound", 100);

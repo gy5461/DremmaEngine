@@ -265,7 +265,7 @@ public class CollisionBox {
 					} else {
 						// NPC otherEntityÀ¿Õˆ
 						((FightingNPC) otherEntity).hp = 0;
-						Debug.log(Debug.DebugLevel.INFO, otherEntity.name + "À¿«Ã«Ã¡À£°");
+						((FightingNPC) otherEntity).die();
 					}
 				}
 			} else if (((AttackEntity) entity).attacker instanceof FightingNPC) {
@@ -285,7 +285,7 @@ public class CollisionBox {
 					} else {
 						// NPC otherEntityÀ¿Õˆ
 						((Player) otherEntity).hp = 0;
-						Debug.log(Debug.DebugLevel.INFO, otherEntity.name + "À¿«Ã«Ã¡À£°");
+						((Player) otherEntity).die();
 					}
 				}
 			}
