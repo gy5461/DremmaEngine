@@ -253,15 +253,45 @@ public class GameCore extends Canvas implements Runnable {
 		playerProfile.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
 
 		UIManager.addUI(playerProfile);
-		
+
 		// 文字
 		Text text = new Text("欢迎你来到游戏世界！！");
 		text.name = "firstText";
 		text.visible = false;
 		text.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
-		
+
 		UIManager.addUI(text);
 
+		// 玩家血条底部
+		UIEntity playerHpBarBase = new UIEntity();
+		playerHpBarBase.setStaticImage(Resources.loadImage(Resources.path + "images/血条底.png"));
+		playerHpBarBase.name = "playerHpBarBase";
+		playerHpBarBase.visible = true;
+		playerHpBarBase.setScale(new Vector2(300, 20));
+		playerHpBarBase.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
+
+		UIManager.addUI(playerHpBarBase);
+
+		// 玩家血条
+		UIEntity playerHpBar = new UIEntity();
+		playerHpBar.setStaticImage(Resources.loadImage(Resources.path + "images/border.png"));
+		playerHpBar.name = "playerHpBar";
+		playerHpBar.visible = true;
+		playerHpBar.setScale(new Vector2(300, 20));
+		playerHpBar.algin = UIEntity.UIAlign.LEFT;
+		playerHpBar.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
+
+		UIManager.addUI(playerHpBar);
+
+		// 玩家血条头像
+		UIEntity playerHpProfile = new UIEntity();
+		playerHpProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/主角头像.png"));
+		playerHpProfile.name = "playerHpProfile";
+		playerHpProfile.visible = true;
+		playerHpProfile.setScale(new Vector2(0.5f, 0.5f));
+		playerHpProfile.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
+
+		UIManager.addUI(playerHpProfile);
 		// --------------加载数据----------------
 
 		CollisionBox.load(); // 从数据文件中加载碰撞盒数据
@@ -440,128 +470,258 @@ public class GameCore extends Canvas implements Runnable {
 			return;
 		}
 
-		Iterator<Entry<String, TranslateEntityHelper>> translateEntitiesIterator = TranslateEntityHelper
-				.getTranslateEntitiesHelperIterator();
-		while (translateEntitiesIterator.hasNext()) {
-			HashMap.Entry<String, TranslateEntityHelper> entry = (HashMap.Entry<String, TranslateEntityHelper>) translateEntitiesIterator
-					.next();
-			String name = entry.getKey();
-			TranslateEntityHelper translateEntity = entry.getValue();
-
-			if (translateEntity.entity.visible == false) {
-				continue;
-			}
-
-			if (translateEntity.shouldTransScreenPos) {
+		if (TranslateEntityHelper.hasLock) {
+			if (TranslateEntityHelper.lockedEntity.entity.visible == true &&
+					TranslateEntityHelper.lockedEntity.shouldTransScreenPos) {
 
 				// 当拖拽x轴时
 				if (this.mouseInputHandler.mouse.isPressed()
-						&& (this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xAxis))) {
+						&& (this.mouseInputHandler.worldCurPosIsInRect(TranslateEntityHelper.lockedEntity.xAxis))) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 					float deltaX = curPos.x - lastPos.x;
 
-					TileMap.entities.get(name).position.x += deltaX;
-					CollisionBox.collisionBoxs.get(name).trans(new Vector2(deltaX, 0));
+					TileMap.entities.get(TranslateEntityHelper.lockedEntity.entity.name).position.x += deltaX;
+					CollisionBox.collisionBoxs.get(TranslateEntityHelper.lockedEntity.entity.name).trans(new Vector2(deltaX, 0));
 				}
 
 				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
-						&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xAxis)) {
-					translateEntity.choosenX = true;
+						&& this.mouseInputHandler.worldCurPosIsInRect(TranslateEntityHelper.lockedEntity.xAxis)) {
+					TranslateEntityHelper.lockedEntity.choosenX = true;
 				} else {
-					translateEntity.choosenX = false;
+					TranslateEntityHelper.lockedEntity.choosenX = false;
 				}
 
 				// 当拖拽y轴时
 				if (this.mouseInputHandler.mouse.isPressed()
-						&& (this.mouseInputHandler.worldCurPosIsInRect(translateEntity.yAxis))) {
+						&& (this.mouseInputHandler.worldCurPosIsInRect(TranslateEntityHelper.lockedEntity.yAxis))) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 					float deltaY = curPos.y - lastPos.y;
 
-					TileMap.entities.get(name).position.y += deltaY;
-					CollisionBox.collisionBoxs.get(name).trans(new Vector2(0, deltaY));
+					TileMap.entities.get(TranslateEntityHelper.lockedEntity.entity.name).position.y += deltaY;
+					CollisionBox.collisionBoxs.get(TranslateEntityHelper.lockedEntity.entity.name).trans(new Vector2(0, deltaY));
 
 				}
 
 				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
-						&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.yAxis)) {
-					translateEntity.choosenY = true;
+						&& this.mouseInputHandler.worldCurPosIsInRect(TranslateEntityHelper.lockedEntity.yAxis)) {
+					TranslateEntityHelper.lockedEntity.choosenY = true;
 				} else {
-					translateEntity.choosenY = false;
+					TranslateEntityHelper.lockedEntity.choosenY = false;
 				}
 
 				// 当拖拽黄色部分时，在两个方向上移动
 				if (this.mouseInputHandler.mouse.isPressed()
-						&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xyAxis)) {
+						&& this.mouseInputHandler.worldCurPosIsInRect(TranslateEntityHelper.lockedEntity.xyAxis)) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 
-					TileMap.entities.get(name).position = TileMap.entities.get(name).position.add(curPos.sub(lastPos));
-					CollisionBox.collisionBoxs.get(name).trans(curPos.sub(lastPos));
+					TileMap.entities.get(TranslateEntityHelper.lockedEntity.entity.name).position = TileMap.entities.get(TranslateEntityHelper.lockedEntity.entity.name).position
+							.add(curPos.sub(lastPos));
+					CollisionBox.collisionBoxs.get(TranslateEntityHelper.lockedEntity.entity.name).trans(curPos.sub(lastPos));
 
 				}
 
 				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
-						&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xyAxis)) {
-					translateEntity.choosenXY = true;
+						&& this.mouseInputHandler.worldCurPosIsInRect(TranslateEntityHelper.lockedEntity.xyAxis)) {
+					TranslateEntityHelper.lockedEntity.choosenXY = true;
 				} else {
-					translateEntity.choosenXY = false;
+					TranslateEntityHelper.lockedEntity.choosenXY = false;
 				}
 			} else {
 				// 当拖拽x轴时
 				if (this.mouseInputHandler.mouse.isPressed()
-						&& (this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xAxis))) {
+						&& (this.mouseInputHandler.screenCurPosIsInRect(TranslateEntityHelper.lockedEntity.xAxis))) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 					float deltaX = curPos.x - lastPos.x;
 
-					UIManager.getUIEntity(name).position.x += deltaX;
+					UIManager.getUIEntity(TranslateEntityHelper.lockedEntity.entity.name).position.x += deltaX;
 				}
 
 				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
-						&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xAxis)) {
-					translateEntity.choosenX = true;
+						&& this.mouseInputHandler.screenCurPosIsInRect(TranslateEntityHelper.lockedEntity.xAxis)) {
+					TranslateEntityHelper.lockedEntity.choosenX = true;
 				} else {
-					translateEntity.choosenX = false;
+					TranslateEntityHelper.lockedEntity.choosenX = false;
 				}
 
 				// 当拖拽y轴时
 				if (this.mouseInputHandler.mouse.isPressed()
-						&& (this.mouseInputHandler.screenCurPosIsInRect(translateEntity.yAxis))) {
+						&& (this.mouseInputHandler.screenCurPosIsInRect(TranslateEntityHelper.lockedEntity.yAxis))) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 					float deltaY = curPos.y - lastPos.y;
 
-					UIManager.getUIEntity(name).position.y += deltaY;
+					UIManager.getUIEntity(TranslateEntityHelper.lockedEntity.entity.name).position.y += deltaY;
 
 				}
 
 				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
-						&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.yAxis)) {
-					translateEntity.choosenY = true;
+						&& this.mouseInputHandler.screenCurPosIsInRect(TranslateEntityHelper.lockedEntity.yAxis)) {
+					TranslateEntityHelper.lockedEntity.choosenY = true;
 				} else {
-					translateEntity.choosenY = false;
+					TranslateEntityHelper.lockedEntity.choosenY = false;
 				}
 
 				// 当拖拽黄色部分时，在两个方向上移动
 				if (this.mouseInputHandler.mouse.isPressed()
-						&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xyAxis)) {
+						&& this.mouseInputHandler.screenCurPosIsInRect(TranslateEntityHelper.lockedEntity.xyAxis)) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 
-					UIManager.getUIEntity(name).position = UIManager.getUIEntity(name).position
+					UIManager.getUIEntity(TranslateEntityHelper.lockedEntity.entity.name).position = UIManager.getUIEntity(TranslateEntityHelper.lockedEntity.entity.name).position
 							.add(curPos.sub(lastPos));
 				}
 
 				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
-						&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xyAxis)) {
-					translateEntity.choosenXY = true;
+						&& this.mouseInputHandler.screenCurPosIsInRect(TranslateEntityHelper.lockedEntity.xyAxis)) {
+					TranslateEntityHelper.lockedEntity.choosenXY = true;
 				} else {
-					translateEntity.choosenXY = false;
+					TranslateEntityHelper.lockedEntity.choosenXY = false;
 				}
 			}
 
+			if (TranslateEntityHelper.lockedEntity.choosenX || TranslateEntityHelper.lockedEntity.choosenY || TranslateEntityHelper.lockedEntity.choosenXY) {
+				// 当有移动帮助被选中时，应锁定，只能进入该移动帮助进行事件监听
+				TranslateEntityHelper.hasLock = true;
+			} else {
+				TranslateEntityHelper.hasLock = false;
+			}
+
+		} else {
+			// 无锁则遍历
+			Iterator<Entry<String, TranslateEntityHelper>> translateEntitiesIterator = TranslateEntityHelper
+					.getTranslateEntitiesHelperIterator();
+			while (translateEntitiesIterator.hasNext()) {
+				HashMap.Entry<String, TranslateEntityHelper> entry = (HashMap.Entry<String, TranslateEntityHelper>) translateEntitiesIterator
+						.next();
+				String name = entry.getKey();
+				TranslateEntityHelper translateEntity = entry.getValue();
+
+				if (translateEntity.entity.visible == false) {
+					continue;
+				}
+
+				if (translateEntity.shouldTransScreenPos) {
+
+					// 当拖拽x轴时
+					if (this.mouseInputHandler.mouse.isPressed()
+							&& (this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xAxis))) {
+						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+						float deltaX = curPos.x - lastPos.x;
+
+						TileMap.entities.get(name).position.x += deltaX;
+						CollisionBox.collisionBoxs.get(name).trans(new Vector2(deltaX, 0));
+					}
+
+					if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+							&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xAxis)) {
+						translateEntity.choosenX = true;
+					} else {
+						translateEntity.choosenX = false;
+					}
+
+					// 当拖拽y轴时
+					if (this.mouseInputHandler.mouse.isPressed()
+							&& (this.mouseInputHandler.worldCurPosIsInRect(translateEntity.yAxis))) {
+						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+						float deltaY = curPos.y - lastPos.y;
+
+						TileMap.entities.get(name).position.y += deltaY;
+						CollisionBox.collisionBoxs.get(name).trans(new Vector2(0, deltaY));
+
+					}
+
+					if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+							&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.yAxis)) {
+						translateEntity.choosenY = true;
+					} else {
+						translateEntity.choosenY = false;
+					}
+
+					// 当拖拽黄色部分时，在两个方向上移动
+					if (this.mouseInputHandler.mouse.isPressed()
+							&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xyAxis)) {
+						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+
+						TileMap.entities.get(name).position = TileMap.entities.get(name).position
+								.add(curPos.sub(lastPos));
+						CollisionBox.collisionBoxs.get(name).trans(curPos.sub(lastPos));
+
+					}
+
+					if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+							&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xyAxis)) {
+						translateEntity.choosenXY = true;
+					} else {
+						translateEntity.choosenXY = false;
+					}
+				} else {
+					// 当拖拽x轴时
+					if (this.mouseInputHandler.mouse.isPressed()
+							&& (this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xAxis))) {
+						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+						float deltaX = curPos.x - lastPos.x;
+
+						UIManager.getUIEntity(name).position.x += deltaX;
+					}
+
+					if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+							&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xAxis)) {
+						translateEntity.choosenX = true;
+					} else {
+						translateEntity.choosenX = false;
+					}
+
+					// 当拖拽y轴时
+					if (this.mouseInputHandler.mouse.isPressed()
+							&& (this.mouseInputHandler.screenCurPosIsInRect(translateEntity.yAxis))) {
+						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+						float deltaY = curPos.y - lastPos.y;
+
+						UIManager.getUIEntity(name).position.y += deltaY;
+
+					}
+
+					if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+							&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.yAxis)) {
+						translateEntity.choosenY = true;
+					} else {
+						translateEntity.choosenY = false;
+					}
+
+					// 当拖拽黄色部分时，在两个方向上移动
+					if (this.mouseInputHandler.mouse.isPressed()
+							&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xyAxis)) {
+						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
+						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
+
+						UIManager.getUIEntity(name).position = UIManager.getUIEntity(name).position
+								.add(curPos.sub(lastPos));
+					}
+
+					if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
+							&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xyAxis)) {
+						translateEntity.choosenXY = true;
+					} else {
+						translateEntity.choosenXY = false;
+					}
+				}
+
+				if (translateEntity.choosenX || translateEntity.choosenY || translateEntity.choosenXY) {
+					// 当有移动帮助被选中时，应锁定，只能进入该移动帮助进行事件监听
+					TranslateEntityHelper.hasLock = true;
+					TranslateEntityHelper.lockedEntity = translateEntity;
+				}
+
+			}
 		}
 	}
 

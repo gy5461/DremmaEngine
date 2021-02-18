@@ -1,5 +1,6 @@
 package priv.dremma.game.entities;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.HashMap;
 
@@ -26,11 +27,17 @@ public class FightingNPC extends NPC {
 
 	float attackDistance = 400f;
 	float curAttackDistance = 0f;
+	
+	public int hp;	// 血条
+	public int attackHarm;	// 攻击造成的伤害
 
 	public FightingNPC(float speed) {
 		super(speed);
 		this.moveSound = "ghostFloatSound";
 		this.nearDistance = 300f;
+		
+		this.hp = 100;
+		this.attackHarm = 10;
 	}
 
 	@Override
@@ -157,6 +164,14 @@ public class FightingNPC extends NPC {
 			this.animator.setState("npcMoveUp", false);
 			break;
 		}
+	}
+	
+	@Override
+	public void draw(Graphics2D g) {
+		super.draw(g);
+		
+		// 画血条（黑底红色）
+		
 	}
 
 }

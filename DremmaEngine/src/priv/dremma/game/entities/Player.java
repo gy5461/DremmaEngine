@@ -11,6 +11,7 @@ import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.tiles.TileMap;
+import priv.dremma.game.ui.UIManager;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
@@ -67,11 +68,19 @@ public class Player extends Entity {
 
 	public int pressAttackTimes = 0; // 攻击次数
 
+	public int hp; // 血条
+	public int maxHp; // 满血量
+	public int attackHarm; // 攻击造成的伤害
+
 	public Player(KeyInputHandler keyInputHandler, float speed) {
 		super();
 		this.keyInputHandler = keyInputHandler;
 		this.name = "剑侠客";
 		this.speed = speed;
+
+		this.hp = 100;
+		this.maxHp = hp;
+		this.attackHarm = 20;
 		CollisionBox.collisionBoxs.put(this.name,
 				new CollisionBox(this.position.sub(new Vector2(33, -17)), this.position.add(new Vector2(25, 90))));
 		this.loadAnimation();
@@ -128,7 +137,7 @@ public class Player extends Entity {
 			if (this.keyInputHandler.attack.isPressed()
 					&& this.pressAttackTimes < this.keyInputHandler.attack.getPressedTimes()) {
 				this.pressAttackTimes = this.keyInputHandler.attack.getPressedTimes();
-				
+
 				AudioManager.getInstance().stopPlay("runSound");
 				AudioManager.getInstance().playLoop("attackSound");
 
@@ -153,14 +162,19 @@ public class Player extends Entity {
 						TileMap.addEntity("playerAttackUp", playerAttackUpAttackEntity);
 					}
 
-					if (playerAttackUpAttackEntity != null && !CollisionBox.collisionBoxs.containsKey("playerAttackUp")) {
-						CollisionBox.collisionBoxs.put("playerAttackUp",
-								new CollisionBox(playerAttackUpAttackEntity.position.sub(new Vector2(
-										playerAttackUpAttackEntity.getWidth() * playerAttackUpAttackEntity.getScale().x / 2
-												- ATTACK_OFFSETX,
-										playerAttackUpAttackEntity.getHeight() * playerAttackUpAttackEntity.getScale().y / 2
-												- ATTACK_OFFSETY)),
-										playerAttackUpAttackEntity.position));
+					if (playerAttackUpAttackEntity != null
+							&& !CollisionBox.collisionBoxs.containsKey("playerAttackUp")) {
+						CollisionBox.collisionBoxs
+								.put("playerAttackUp",
+										new CollisionBox(
+												playerAttackUpAttackEntity.position.sub(new Vector2(
+														playerAttackUpAttackEntity.getWidth()
+																* playerAttackUpAttackEntity.getScale().x / 2
+																- ATTACK_OFFSETX,
+														playerAttackUpAttackEntity.getHeight()
+																* playerAttackUpAttackEntity.getScale().y / 2
+																- ATTACK_OFFSETY)),
+												playerAttackUpAttackEntity.position));
 					}
 
 					if (CollisionBox.collisionBoxs.get("playerAttackUp").leftUpPoint
@@ -198,14 +212,15 @@ public class Player extends Entity {
 						TileMap.addEntity("playerAttackDown", playerAttackDownAttackEntity);
 					}
 
-					if (playerAttackDownAttackEntity != null && !CollisionBox.collisionBoxs.containsKey("playerAttackDown")) {
+					if (playerAttackDownAttackEntity != null
+							&& !CollisionBox.collisionBoxs.containsKey("playerAttackDown")) {
 						CollisionBox.collisionBoxs.put("playerAttackDown", new CollisionBox(
 								playerAttackDownAttackEntity.position,
 								playerAttackDownAttackEntity.position.add(new Vector2(
-										playerAttackDownAttackEntity.getWidth() * playerAttackDownAttackEntity.getScale().x / 2
-												- ATTACK_OFFSETX,
-										playerAttackDownAttackEntity.getHeight() * playerAttackDownAttackEntity.getScale().y / 2
-												- ATTACK_OFFSETY))));
+										playerAttackDownAttackEntity.getWidth()
+												* playerAttackDownAttackEntity.getScale().x / 2 - ATTACK_OFFSETX,
+										playerAttackDownAttackEntity.getHeight()
+												* playerAttackDownAttackEntity.getScale().y / 2 - ATTACK_OFFSETY))));
 					}
 
 					if (CollisionBox.collisionBoxs.get("playerAttackDown").leftUpPoint
@@ -236,14 +251,16 @@ public class Player extends Entity {
 						TileMap.addEntity("playerAttackLeft", playerAttackLeftAttackEntity);
 					}
 
-					if (playerAttackLeftAttackEntity != null && !CollisionBox.collisionBoxs.containsKey("playerAttackLeft")) {
+					if (playerAttackLeftAttackEntity != null
+							&& !CollisionBox.collisionBoxs.containsKey("playerAttackLeft")) {
 						CollisionBox.collisionBoxs.put("playerAttackLeft", new CollisionBox(
 								playerAttackLeftAttackEntity.position.sub(new Vector2(
-										playerAttackLeftAttackEntity.getWidth() * playerAttackLeftAttackEntity.getScale().x / 2
-												- Player.ATTACK_OFFSETX,
+										playerAttackLeftAttackEntity.getWidth()
+												* playerAttackLeftAttackEntity.getScale().x / 2 - Player.ATTACK_OFFSETX,
 										0)),
 								playerAttackLeftAttackEntity.position.add(new Vector2(0,
-										playerAttackLeftAttackEntity.getHeight() * playerAttackLeftAttackEntity.getScale().y / 2
+										playerAttackLeftAttackEntity.getHeight()
+												* playerAttackLeftAttackEntity.getScale().y / 2
 												- Player.ATTACK_OFFSETY))));
 					}
 
@@ -663,5 +680,9 @@ public class Player extends Entity {
 	@Override
 	public void draw(Graphics2D g) {
 		super.draw(g);
+
+		// 画血条（黑底绿色）
+		UIManager.getUIEntity("playerHpBar").getScale().x = 300 * this.hp * 1.0f / this.maxHp;
+		//UIManager.getUIEntity("playerHpBar").position.x -= 300 * (1.0f - this.hp * 1.0f / this.maxHp);
 	}
 }

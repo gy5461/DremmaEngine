@@ -183,7 +183,8 @@ public class CollisionBox {
 								if (!((otherEntity instanceof Player) || (otherEntity instanceof FightingNPC))) {
 									continue;
 								}
-								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector.add(entity.retreatVector));
+								CollisionBox nextCollisionBox = collisionBox
+										.translate(entity.moveVector.add(entity.retreatVector));
 								// 攻击时，应检测下一entity碰撞盒是否与otherEntity的下一图片相交
 								CollisionBox otherImageCollisionBox = new CollisionBox(
 										new Vector2(
@@ -207,7 +208,8 @@ public class CollisionBox {
 								if (otherName.equals("Player") || otherName.contains("NPC")) {
 									continue;
 								}
-								CollisionBox nextCollisionBox = collisionBox.translate(entity.moveVector.add(entity.retreatVector));
+								CollisionBox nextCollisionBox = collisionBox
+										.translate(entity.moveVector.add(entity.retreatVector));
 
 								if (collisionBox.isIntersected(otherCollisionBox) == false
 										&& nextCollisionBox.isIntersected(otherCollisionBox) == true) {
@@ -220,7 +222,8 @@ public class CollisionBox {
 								} else if (collisionBox.isIntersected(otherCollisionBox) == true
 										&& nextCollisionBox.isIntersected(otherCollisionBox) == true) {
 									// 修复穿模
-									entity.position = entity.position.sub(entity.moveVector.add(entity.retreatVector).mul(2));
+									entity.position = entity.position
+											.sub(entity.moveVector.add(entity.retreatVector).mul(2));
 									collisionBox.trans(entity.moveVector.add(entity.retreatVector).mul(-2f));
 								}
 							}
@@ -251,20 +254,39 @@ public class CollisionBox {
 					// 被打的实体是战斗型NPC，则该NPC受伤
 					// 击退
 					otherEntity.retreat(entity.direction, 100f);
-					
+
+					// 播放NPC受伤音效
 					AudioManager.getInstance().playOnce("ghostWoundedSound");
 					((AttackEntity) entity).willCauseWound = false;
-					Debug.log(Debug.DebugLevel.INFO, name + " 伤害了:" + otherName);
+
+					// 减血
+					if (((FightingNPC) otherEntity).hp > ((Player) ((AttackEntity) entity).attacker).attackHarm) {
+						((FightingNPC) otherEntity).hp -= ((Player) ((AttackEntity) entity).attacker).attackHarm;
+					} else {
+						// NPC otherEntity死亡
+						((FightingNPC) otherEntity).hp = 0;
+						Debug.log(Debug.DebugLevel.INFO, otherEntity.name + "死翘翘了！");
+					}
 				}
 			} else if (((AttackEntity) entity).attacker instanceof FightingNPC) {
 				if (otherEntity instanceof Player) {
 					// npc打中了玩家
 					// 击退
 					otherEntity.retreat(entity.direction, 50f);
-					
+
+					// 播放玩家受伤音效
 					AudioManager.getInstance().playOnce("playerWoundedSound");
 					((AttackEntity) entity).willCauseWound = false;
 					Debug.log(Debug.DebugLevel.INFO, name + " 伤害了:" + otherName);
+
+					// 减血
+					if (((Player) otherEntity).hp > ((FightingNPC) ((AttackEntity) entity).attacker).attackHarm) {
+						((Player) otherEntity).hp -= ((FightingNPC) ((AttackEntity) entity).attacker).attackHarm;
+					} else {
+						// NPC otherEntity死亡
+						((Player) otherEntity).hp = 0;
+						Debug.log(Debug.DebugLevel.INFO, otherEntity.name + "死翘翘了！");
+					}
 				}
 			}
 

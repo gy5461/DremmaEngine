@@ -31,6 +31,10 @@ public class TranslateEntityHelper {
 	// 双轴
 	public Rect xyAxis;
 	public boolean choosenXY;
+	
+	public static boolean hasLock = false;
+	public static TranslateEntityHelper lockedEntity = null;
+	
 
 	static String path = Resources.path + "data/translateEntities.dat"; // 数据文件目录
 
