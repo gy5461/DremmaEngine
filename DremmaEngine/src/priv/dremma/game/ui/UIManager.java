@@ -1,14 +1,15 @@
 package priv.dremma.game.ui;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.TranslateEntityHelper;
 
 public class UIManager {
 
-	public static ArrayList<UIEntity> uiEntities = new ArrayList<UIEntity>();
+	public static Queue<UIEntity> uiEntities = new LinkedList<UIEntity>();
 
 	static String path = Resources.path + "data/ui.dat"; // 数据文件目录
 
