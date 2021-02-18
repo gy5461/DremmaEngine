@@ -178,8 +178,7 @@ public class GameCore extends Canvas implements Runnable {
 		// --------------场景中的NPC----------------
 
 		// 南极仙翁（对话NPC）
-		ConversationalNPC talkNPC = new ConversationalNPC(this.keyInputHandler, 0);
-		talkNPC.name = "南极仙翁";
+		ConversationalNPC talkNPC = new ConversationalNPC(this.keyInputHandler, 0, "南极仙翁");
 		talkNPC.setScale(new Vector2(2f, 2f));
 		map.addNPC(talkNPC, new Vector2(1043, 275));
 

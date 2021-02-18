@@ -70,7 +70,7 @@ public class Player extends Entity {
 	public Player(KeyInputHandler keyInputHandler, float speed) {
 		super();
 		this.keyInputHandler = keyInputHandler;
-		this.name = "Player";
+		this.name = "╫ёою©м";
 		this.speed = speed;
 		CollisionBox.collisionBoxs.put(this.name,
 				new CollisionBox(this.position.sub(new Vector2(33, -17)), this.position.add(new Vector2(25, 90))));

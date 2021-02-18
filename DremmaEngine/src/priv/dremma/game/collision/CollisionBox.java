@@ -245,8 +245,8 @@ public class CollisionBox {
 		Entity otherEntity = TileMap.getEntity(otherName);
 
 		// ------------------攻击处理--------------------
-		if (name.contains("Attack") && ((AttackEntity) entity).willCauseWound) {
-			if (name.contains("player")) {
+		if (entity instanceof AttackEntity && ((AttackEntity) entity).willCauseWound) {
+			if (entity instanceof Player) {
 				if (otherEntity instanceof FightingNPC) {
 					// 被打的实体是战斗型NPC，则该NPC受伤
 					// 击退
@@ -256,7 +256,7 @@ public class CollisionBox {
 					((AttackEntity) entity).willCauseWound = false;
 					Debug.log(Debug.DebugLevel.INFO, name + " 伤害了:" + otherName);
 				}
-			} else if (name.contains("npc")) {
+			} else if (entity instanceof FightingNPC) {
 				if (otherEntity instanceof Player) {
 					// npc打中了玩家
 					// 击退
