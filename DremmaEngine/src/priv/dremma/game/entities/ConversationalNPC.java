@@ -2,6 +2,10 @@ package priv.dremma.game.entities;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -9,6 +13,7 @@ import priv.dremma.game.event.KeyInputHandler;
 import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.ui.Text;
 import priv.dremma.game.ui.UIManager;
+import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Resources;
 
 public class ConversationalNPC extends NPC {
@@ -20,6 +25,8 @@ public class ConversationalNPC extends NPC {
 
 	public Queue<String> conversation = new LinkedList<String>();
 
+	public String idleChat = null;
+
 	public ConversationalNPC(KeyInputHandler keyInputHandler, float speed, String name) {
 		super(speed);
 		this.nearDistance = 80f;
@@ -29,16 +36,33 @@ public class ConversationalNPC extends NPC {
 
 		this.setStaticImage(Resources.loadImage(Resources.path + "images/entities/南极仙翁.png"));
 
-		this.conversation.add(this.name + "：欢迎来到梦玛世界，我是南极仙翁，你好！");
-		this.conversation.add(TileMap.player.name + "：" + this.name + "，你好！我是剑侠客，请问我下一步需要做什么呢？");
-		this.conversation.add(this.name + "：传说这里有一只游荡的野鬼，它身上围绕着鬼火，神出鬼没、杀人无数。");
-		this.conversation.add(this.name + "：少侠，我希望你可以为民除害，拯救苍生！！");
-		this.conversation.add(TileMap.player.name + "：" + "原来如此，多谢老者。侠之大者、为国为民，我定不辱使命！");
-		this.conversation.add(this.name + "：果真后生可谓，我这里有一本武林秘籍《九阳神功》，希望可以助你一臂之力！！");
-		this.conversation.add(TileMap.player.name + "：多谢老者。");
+		this.readConversation(Resources.path + "conversation/conversation.txt");
+	}
 
-		// 最后一句
-		this.conversation.add(this.name + "：浮生偷得半日闲。(๑‾ ꇴ ‾๑)");
+	private void readConversation(String path) {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(path));
+			while (true) {
+				String line;
+				try {
+					line = reader.readLine();
+					if (line == null) {
+						reader.close();
+						break;
+					}
+					if (line.startsWith("(Idle)")) {
+						this.idleChat = GUtils.split(line)[1];
+					} else {
+						this.conversation.add(line);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public synchronized void update() {
@@ -77,17 +101,20 @@ public class ConversationalNPC extends NPC {
 
 			UIManager.getUIEntity("firstText").visible = true;
 			((Text) UIManager.getUIEntity("firstText")).color = Color.white;
-			this.setTalkContent();
+			if (!this.conversation.isEmpty()) {
+				this.setTalkContent(this.conversation.peek());
+			}
 
 			// 在谈话时，玩家按Enter键进行翻页
 			if (this.keyInputHandler.enter.isPressed()
 					&& this.pressEnterTime < this.keyInputHandler.enter.getPressedTimes()) {
 				// 处理交流队列，进行翻页
-				if (this.conversation.size() > 1) {
+				if (this.conversation.size() > 0) {
 					this.conversation.poll();
-					if (this.conversation.size() == 1) {
+					if (this.conversation.size() == 0) {
 						this.closeConversation();
-						TileMap.player.attackHarm += 5;
+						this.setTalkContent(this.idleChat);
+						TileMap.player.attackHarm += 5;	// 给游戏主角神功
 					}
 				} else {
 					this.closeConversation();
@@ -99,13 +126,13 @@ public class ConversationalNPC extends NPC {
 		}
 	}
 
-	private void setTalkContent() {
-		((Text) UIManager.getUIEntity("firstText")).content = this.conversation.peek();
-		if (this.conversation.peek().startsWith(this.name)) {
+	private void setTalkContent(String content) {
+		((Text) UIManager.getUIEntity("firstText")).content = content;
+		if (content.startsWith(this.name)) {
 			UIManager.getUIEntity("talkNPCProfile").visible = true;
 			UIManager.getUIEntity("playerProfile").visible = false;
 		}
-		if (this.conversation.peek().startsWith(TileMap.player.name)) {
+		if (content.startsWith(TileMap.player.name)) {
 			UIManager.getUIEntity("talkNPCProfile").visible = false;
 			UIManager.getUIEntity("playerProfile").visible = true;
 		}

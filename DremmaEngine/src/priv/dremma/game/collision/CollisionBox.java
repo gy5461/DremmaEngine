@@ -174,12 +174,14 @@ public class CollisionBox {
 						} else {
 							// 进行碰撞检测
 							Entity otherEntity = TileMap.getEntity(otherName);
+
 							// 如果otherEntity的碰撞盒是攻击碰撞盒
-							if (otherName.contains("Attack")) {
+							if (otherEntity instanceof AttackEntity) {
 								// 什么都不做
+								continue;
 							}
 							// 如果entity的碰撞盒是攻击碰撞盒
-							else if (name.contains("Attack")) {
+							if (entity instanceof AttackEntity) {
 								if (!((otherEntity instanceof Player) || (otherEntity instanceof FightingNPC))) {
 									continue;
 								}
@@ -203,11 +205,9 @@ public class CollisionBox {
 								if (nextCollisionBox.isIntersected(nextOtherImageCollisionBox) == true) {
 									collisionBox.onCollision(name, otherName);
 								}
-							} else if (otherEntity.moveVector.isEqual(Vector2.zero())) {
-								// 如果另一个实体静止并且本碰撞盒与另一碰撞盒都不是攻击碰撞盒
-								if (otherName.equals("Player") || otherName.contains("NPC")) {
-									continue;
-								}
+							}
+							// 如果另一个实体静止
+							else if (otherEntity.moveVector.isEqual(Vector2.zero())) {
 								CollisionBox nextCollisionBox = collisionBox
 										.translate(entity.moveVector.add(entity.retreatVector));
 
@@ -253,7 +253,7 @@ public class CollisionBox {
 				if (otherEntity instanceof FightingNPC) {
 					// 被打的实体是战斗型NPC，则该NPC受伤
 					// 击退
-					otherEntity.retreat(entity.direction, 100f);
+					otherEntity.retreat(((AttackEntity) entity).attacker.direction, 100f);
 
 					// 播放NPC受伤音效
 					AudioManager.getInstance().playOnce("ghostWoundedSound");
@@ -273,7 +273,7 @@ public class CollisionBox {
 				if (otherEntity instanceof Player) {
 					// npc打中了玩家
 					// 击退
-					otherEntity.retreat(entity.direction, 50f);
+					otherEntity.retreat(((AttackEntity) entity).attacker.direction, 50f);
 
 					// 播放玩家受伤音效
 					AudioManager.getInstance().playOnce("playerWoundedSound");
@@ -407,7 +407,7 @@ public class CollisionBox {
 			if (name.contains("mapBorder")) {
 				continue;
 			}
-			if(name.contains("Attack")) {
+			if (name.contains("Attack")) {
 				continue;
 			}
 			CollisionBox.collisionBoxs.get(name).setPos(leftUpPoint, rightDownPoint);

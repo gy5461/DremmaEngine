@@ -93,8 +93,8 @@ public class Player extends Entity {
 		this.name = "╫ёою©м";
 		this.speed = speed;
 
-		this.hp = 5;
-		this.maxHp = hp;
+		this.maxHp = 5;
+		this.hp = maxHp;
 		this.attackHarm = 1;
 		CollisionBox.collisionBoxs.put(this.name,
 				new CollisionBox(this.position.sub(new Vector2(33, -17)), this.position.add(new Vector2(25, 90))));

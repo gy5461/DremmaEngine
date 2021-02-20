@@ -303,8 +303,8 @@ public class GameCore extends Canvas implements Runnable {
 		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
 
 		// ---------------------配置-----------------------
-		CollisionBox.shouldRender = false; // 不渲染碰撞盒
-		TranslateEntityHelper.shouldRender = false; // 不渲染移动拖拽帮助
+//		CollisionBox.shouldRender = false; // 不渲染碰撞盒
+//		TranslateEntityHelper.shouldRender = false; // 不渲染移动拖拽帮助
 	}
 
 	public void onUpdate() {

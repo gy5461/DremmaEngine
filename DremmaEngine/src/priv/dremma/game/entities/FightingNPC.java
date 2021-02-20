@@ -41,8 +41,9 @@ public class FightingNPC extends NPC {
 		this.moveSound = "ghostFloatSound";
 		this.nearDistance = 300f;
 
-		this.hp = 20;
-		this.maxHp = hp;
+		this.maxHp = 20;
+		this.hp = maxHp;
+
 		this.attackHarm = 1;
 	}
 
@@ -76,12 +77,11 @@ public class FightingNPC extends NPC {
 		}
 
 		if (this.attackEntity.visible == true) {
+			Vector2 attackNewPos = Vector2.lerp(this.attackEntity.position, this.attackEndPos, Time.deltaTime);
 			// 鬼火运动一段距离后消失
-			this.curAttackDistance += (Vector2.lerp(this.attackEntity.position, this.attackEndPos, Time.deltaTime)
-					.sub(this.attackEntity.position)).magnitude();
-			this.attackEntity.moveVector = Vector2.lerp(this.attackEntity.position, this.attackEndPos, Time.deltaTime)
-					.sub(this.attackEntity.position);
-			this.attackEntity.position = Vector2.lerp(this.attackEntity.position, this.attackEndPos, Time.deltaTime);
+			this.curAttackDistance += (attackNewPos.sub(this.attackEntity.position)).magnitude();
+			this.attackEntity.moveVector = attackNewPos.sub(this.attackEntity.position);
+			this.attackEntity.position = attackNewPos;
 
 			CollisionBox.collisionBoxs.get(this.attackEntity.name).setPos(
 					new Vector2(this.attackEntity.position.sub(30f)), new Vector2(this.attackEntity.position.add(30f)));
@@ -100,7 +100,7 @@ public class FightingNPC extends NPC {
 
 		float duration = 0.5f / 4.0f; // NPC动画每组4张，0.5秒播放4次
 		float attackDuration = 1.0f / 10.0f; // NPC动画每组10张，1秒播放10次
-		float dieDuration = 2.0f / 10.0f; // NPC动画每组10张，2秒播放10次
+		float dieDuration = 8.0f / 64.0f; // NPC动画每组10张，2秒播放10次
 
 		// Down
 		for (int i = 1; i <= 4; i++) {
@@ -160,9 +160,9 @@ public class FightingNPC extends NPC {
 		attackEntity.animator.setState("npcAttack", false);
 
 		// 死亡
-		for (int i = 10; i >= 1; i--) {
-			this.NPCDie.put(i, Resources.loadImage(Resources.path + "images/entities/野鬼/鬼火/鬼火_" + i + ".png"));
-			this.NPCDieAnimation.addFrame(this.NPCAttack.get(i), dieDuration);
+		for (int i = 0; i <= 63; i++) {
+			this.NPCDie.put(i, Resources.loadImage(Resources.path + "images/entities/野鬼/死亡/死亡_" + i + ".png"));
+			this.NPCDieAnimation.addFrame(this.NPCDie.get(i), dieDuration);
 		}
 		this.animator.addAnimation("npcDie", this.NPCDieAnimation);
 
@@ -192,7 +192,6 @@ public class FightingNPC extends NPC {
 
 		AudioManager.getInstance().playOnce("ghostDieSound");
 		this.animator.setState("npcDie", false);
-		this.setScale(Vector2.one().mul(4));
 
 		// 1秒后NPC消失
 		Timer timer = new Timer();
@@ -202,7 +201,7 @@ public class FightingNPC extends NPC {
 			public void run() {
 				visible = false;
 			}
-		}, 2000);
+		}, 8000);
 	}
 
 	@Override
@@ -212,7 +211,7 @@ public class FightingNPC extends NPC {
 		if (this.state == Entity.EntityState.DEAD) {
 			return;
 		}
-		
+
 		Vector2 npcScreenPos = GUtils.worldPixelToViewPort(this.position.sub(
 				new Vector2(this.getWidth() * this.getScale().x / 2, this.getHeight() * this.getScale().y / 2 + 20)));
 
