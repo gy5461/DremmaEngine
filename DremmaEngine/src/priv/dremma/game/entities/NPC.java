@@ -36,7 +36,7 @@ public class NPC extends Entity {
 	Animation NPCMoveRightAnimation = new Animation();
 	Animation NPCMoveLeftAnimation = new Animation();
 
-	// FightingNPC的攻击动画
+	// NPC死亡动画
 	HashMap<Integer, Image> NPCDie = new HashMap<Integer, Image>();
 	Animation NPCDieAnimation = new Animation();
 

@@ -142,7 +142,7 @@ public class Player extends Entity {
 					}
 
 					if (this.animator.getState().contains("Right")) {
-						// 插值，从(0, 0)到(-ATTACK_LERP, -ATTACK_LERP * TileMap.modifier)
+						// 插值，从(0, 0)到(ATTACK_LERP, -ATTACK_LERP * TileMap.modifier)
 						Vector2 transValue = Vector2.lerp(Vector2.zero(),
 								new Vector2(ATTACK_LERP, -ATTACK_LERP * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackRight").moveVector = transValue;

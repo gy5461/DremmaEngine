@@ -30,7 +30,7 @@ public class Animator {
 	 */
 	public synchronized void setState(String destState, boolean hasExitTime) {
 		if (this.animations.get(destState) == null) {
-			Debug.log(Debug.DebugLevel.SERVERE, "Ŀ�Ķ���״̬" + destState + "������");
+			Debug.log(Debug.DebugLevel.SERVERE, "目的动画状态" + destState + "不存在");
 			return;
 		}
 		if (this.state == null) {

@@ -193,7 +193,7 @@ public class FightingNPC extends NPC {
 		AudioManager.getInstance().playOnce("ghostDieSound");
 		this.animator.setState("npcDie", false);
 
-		// 1秒后NPC消失
+		// 8秒后NPC消失
 		Timer timer = new Timer();
 
 		timer.schedule(new TimerTask() {

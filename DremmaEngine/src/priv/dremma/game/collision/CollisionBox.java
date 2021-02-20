@@ -333,7 +333,7 @@ public class CollisionBox {
 	 * @param otherName 被撞到的碰撞盒的名称
 	 */
 	public void onTriggerEnter(String name, String otherName) {
-		// Debug.log(Debug.DebugLevel.INFO, name + " ������:" + otherName);
+		// Debug.log(Debug.DebugLevel.INFO, name + " 触发了:" + otherName);
 	}
 
 	/**
