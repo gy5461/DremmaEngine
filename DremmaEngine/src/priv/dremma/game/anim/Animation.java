@@ -6,23 +6,23 @@ import java.util.ArrayList;
 import priv.dremma.game.util.Time;
 
 /**
- * Animation¹ÜÀíÒ»ÏµÁĞÍ¼Ïñ£¨Ö¡£©ºÍÃ¿¸öÏÔÊ¾Æ÷µÄÊ±¼äÁ¿
+ * Animationç®¡ç†ä¸€ç³»åˆ—å›¾åƒï¼ˆå¸§ï¼‰å’Œæ¯ä¸ªæ˜¾ç¤ºå™¨çš„æ—¶é—´é‡
  * 
  * @author guoyi
  *
  */
 public class Animation {
 
-	private ArrayList<AnimFrame> frames; // ¶¯»­¹Ø¼üÖ¡Êı×é
-	private int curFrameIndex; // µ±Ç°Ö¡ÔÚ¹Ø¼üÖ¡Êı×éÖĞµÄÏÂ±ê
-	public float curAnimTime; // µ±Ç°¶¯»­²¥·ÅÊ±³¤
+	private ArrayList<AnimFrame> frames; // åŠ¨ç”»å…³é”®å¸§æ•°ç»„
+	private int curFrameIndex; // å½“å‰å¸§åœ¨å…³é”®å¸§æ•°ç»„ä¸­çš„ä¸‹æ ‡
+	public float curAnimTime; // å½“å‰åŠ¨ç”»æ’­æ”¾æ—¶é•¿
 
-	public float totalDuration; // ¶¯»­×ÜÊ±³¤
+	public float totalDuration; // åŠ¨ç”»æ€»æ—¶é•¿
 	
 	public boolean hasExitTime;
 
 	/**
-	 * ¹¹ÔìĞÂµÄAnimation
+	 * æ„é€ æ–°çš„Animation
 	 */
 	public Animation() {
 		frames = new ArrayList<AnimFrame>();
@@ -32,10 +32,10 @@ public class Animation {
 	}
 
 	/**
-	 * ½«Ö¸¶¨ÏÔÊ¾Ê±¼äµÄÍ¼Ïñ¼Ó½ø¶¯»­ÖĞ
+	 * å°†æŒ‡å®šæ˜¾ç¤ºæ—¶é—´çš„å›¾åƒåŠ è¿›åŠ¨ç”»ä¸­
 	 * 
-	 * @param image    Í¼Ïñ
-	 * @param duration Ö¸¶¨ÏÔÊ¾Ê±¼ä
+	 * @param image    å›¾åƒ
+	 * @param duration æŒ‡å®šæ˜¾ç¤ºæ—¶é—´
 	 */
 	public synchronized void addFrame(Image image, float duration) {
 		totalDuration += duration;
@@ -43,7 +43,7 @@ public class Animation {
 	}
 
 	/**
-	 * ´ÓÍ·¿ªÊ¼±¾¶¯»­
+	 * ä»å¤´å¼€å§‹æœ¬åŠ¨ç”»
 	 */
 	public synchronized void start() {
 		curAnimTime = 0;
@@ -51,7 +51,7 @@ public class Animation {
 	}
 
 	/**
-	 * ¸ù¾İ¹ıÈ¥µÄÊ±¼ä³¤¶È¸üĞÂ¶¯»­
+	 * æ ¹æ®è¿‡å»çš„æ—¶é—´é•¿åº¦æ›´æ–°åŠ¨ç”»
 	 * 
 	 * @param elapsedTime
 	 */
@@ -61,7 +61,7 @@ public class Animation {
 			curAnimTime += Time.deltaTime;
 
 			if (curAnimTime >= totalDuration) {
-				// ¶¯»­µ½½áÎ²£¬´ÓÍ·¿ªÊ¼
+				// åŠ¨ç”»åˆ°ç»“å°¾ï¼Œä»å¤´å¼€å§‹
 				curAnimTime = curAnimTime % totalDuration;
 				curFrameIndex = 0;
 			}
@@ -74,7 +74,7 @@ public class Animation {
 	}
 
 	/**
-	 * È¡µÃÕâ¸öAnimationµÄµ±Ç°Í¼Ïñ£¬Èç¹ûÃ»ÓĞÍ¼Ïñ£¬Ôò·µ»Ønull
+	 * å–å¾—è¿™ä¸ªAnimationçš„å½“å‰å›¾åƒï¼Œå¦‚æœæ²¡æœ‰å›¾åƒï¼Œåˆ™è¿”å›null
 	 * 
 	 * @return
 	 */

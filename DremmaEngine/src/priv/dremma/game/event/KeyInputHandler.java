@@ -7,27 +7,27 @@ import priv.dremma.game.GameCore;
 import priv.dremma.game.util.Debug;
 
 /**
- * ¼üÅÌÊäÈë´¦ÀíÀà
+ * é”®ç›˜è¾“å…¥å¤„ç†ç±»
  * 
  * @author guoyi
  *
  */
 public class KeyInputHandler implements KeyListener {
 
-	// ÎªgameÌí¼Ó¼üÅÌÊäÈë¼àÌı
+	// ä¸ºgameæ·»åŠ é”®ç›˜è¾“å…¥ç›‘å¬
 	public KeyInputHandler(GameCore game) {
 		game.addKeyListener(this);
 	}
 
 	/**
-	 * ÄÚ²¿Àà£¬¼ü
+	 * å†…éƒ¨ç±»ï¼Œé”®
 	 * 
 	 * @author guoyi
 	 *
 	 */
 	public class Key {
-		private int pressedTimes = 0; // °´¼ü´ÎÊı
-		private boolean isPressed = false; // ÊÇ·ñ±»°´
+		private int pressedTimes = 0; // æŒ‰é”®æ¬¡æ•°
+		private boolean isPressed = false; // æ˜¯å¦è¢«æŒ‰
 		public int keyCode;
 
 		public int getPressedTimes() {
@@ -38,7 +38,7 @@ public class KeyInputHandler implements KeyListener {
 			return isPressed;
 		}
 
-		// ´¥·¢¼ü
+		// è§¦å‘é”®
 		public void toggle(int keyCode, boolean isPressed) {
 			this.keyCode = keyCode;
 			this.isPressed = isPressed;
@@ -54,7 +54,7 @@ public class KeyInputHandler implements KeyListener {
 		}
 	}
 
-	// ÉÏÏÂ×óÓÒĞéÄâ·½Ïò¼ü
+	// ä¸Šä¸‹å·¦å³è™šæ‹Ÿæ–¹å‘é”®
 	public Key up = new Key();
 	public Key down = new Key();
 	public Key left = new Key();
@@ -66,13 +66,13 @@ public class KeyInputHandler implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		toggleKey(e.getKeyCode(), true); // °´¼üÊÂ¼ş·¢ÉúÊ±´¥·¢¼ü
+		toggleKey(e.getKeyCode(), true); // æŒ‰é”®äº‹ä»¶å‘ç”Ÿæ—¶è§¦å‘é”®
 		e.consume();
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		toggleKey(e.getKeyCode(), false); // ÊÍ·Å¼üÊÂ¼ş·¢ÉúÊ±½«±¾¼üÊÇ·ñ±»°´Ñ¹ÊôĞÔÉèÎªfalse
+		toggleKey(e.getKeyCode(), false); // é‡Šæ”¾é”®äº‹ä»¶å‘ç”Ÿæ—¶å°†æœ¬é”®æ˜¯å¦è¢«æŒ‰å‹å±æ€§è®¾ä¸ºfalse
 		e.consume();
 	}
 

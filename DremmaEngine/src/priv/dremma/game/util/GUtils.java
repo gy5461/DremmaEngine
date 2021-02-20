@@ -7,18 +7,18 @@ import java.util.*;
 import priv.dremma.game.gfx.Screen;
 
 /**
- * ¾²Ì¬¹¤¾ßÀà
+ * é™æ€å·¥å…·ç±»
  *
  */
 public final class GUtils {
 	public static final int INT_ERROR = -2147483648;
 
 	/**
-	 * °ÑÒ»¸öÕûĞÍÊı×éÀ©³äÖ¸¶¨µÄ´óĞ¡¡£
+	 * æŠŠä¸€ä¸ªæ•´å‹æ•°ç»„æ‰©å……æŒ‡å®šçš„å¤§å°ã€‚
 	 * 
-	 * @²ÎÊı oldArray ±»À©³äµÄÊı×é
-	 * @²ÎÊı expand À©³äµÄ´óĞ¡
-	 * @·µ»Ø Ò»¸öĞÂÊı×é£¬¾ÉÊı×é±»¿½±´ÔÚÆäÖĞ¿ªÊ¼²¿·Ö£¬»¹Ê£ÏÂÒ»Ğ©¿Õ¼äÓÃÓÚÈİÄÉ¸ü¶àÔªËØ£¬
+	 * @å‚æ•° oldArray è¢«æ‰©å……çš„æ•°ç»„
+	 * @å‚æ•° expand æ‰©å……çš„å¤§å°
+	 * @è¿”å› ä¸€ä¸ªæ–°æ•°ç»„ï¼Œæ—§æ•°ç»„è¢«æ‹·è´åœ¨å…¶ä¸­å¼€å§‹éƒ¨åˆ†ï¼Œè¿˜å‰©ä¸‹ä¸€äº›ç©ºé—´ç”¨äºå®¹çº³æ›´å¤šå…ƒç´ ï¼Œ
 	 */
 	public final static int[] expandArray(int[] oldArray, int expand) {
 		int[] newArray = new int[oldArray.length + expand];
@@ -27,11 +27,11 @@ public final class GUtils {
 	}
 
 	/**
-	 * °ÑÒ»¸ö¶şÎ¬Í¼ÏñÊı×éµÄĞĞÊıÀ©´óÖ¸¶¨´óĞ¡¡£
+	 * æŠŠä¸€ä¸ªäºŒç»´å›¾åƒæ•°ç»„çš„è¡Œæ•°æ‰©å¤§æŒ‡å®šå¤§å°ã€‚
 	 * 
-	 * @²ÎÊı oldArray ÒªÀ©´óµÄÊı×é£»
-	 * @²ÎÊı expand À©´óµÄÊıÄ¿£»
-	 * @·µ»Ø Ò»¸öĞÂÊı×é¡£
+	 * @å‚æ•° oldArray è¦æ‰©å¤§çš„æ•°ç»„ï¼›
+	 * @å‚æ•° expand æ‰©å¤§çš„æ•°ç›®ï¼›
+	 * @è¿”å› ä¸€ä¸ªæ–°æ•°ç»„ã€‚
 	 */
 	public final static Image[][] expandArray(Image[][] oldArray, int expand) {
 		Image[][] newArray = new Image[oldArray.length + expand][];
@@ -40,15 +40,15 @@ public final class GUtils {
 	}
 
 	/********************************************************************************************
-	 ****** ****************ÊÓ¿Ú×ø±ê¡¢ÊÀ½çÏñËØ×ø±êºÍÊÀ½çtile×ø±êÖ®¼äµÄ×ª»»·½·¨**********************
+	 ****** ****************è§†å£åæ ‡ã€ä¸–ç•Œåƒç´ åæ ‡å’Œä¸–ç•Œtileåæ ‡ä¹‹é—´çš„è½¬æ¢æ–¹æ³•**********************
 	 *******************************************************************************************/
 	/**
-	 * ÊÓ¿Ú×ø±ê×ª»»³ÉÊÀ½çÏñËØ×ø±ê.
+	 * è§†å£åæ ‡è½¬æ¢æˆä¸–ç•Œåƒç´ åæ ‡.
 	 * 
-	 * @param vx:         ÊÓ¿Ú×ø±êx£»
-	 * @param vy:         ÊÓ¿Ú×ø±êy£»
-	 * @param basePointX: ÊÓ¿Ú×óÉÏ½ÇµÄÊÀ½çxÏñËØ×ø±ê£»
-	 * @param basePointY: ÊÓ¿Ú×óÉÏ½ÇµÄÊÀ½çyÏñËØ×ø±ê£» return ÊÀ½çÏñËØ×ø±ê.
+	 * @param vx:         è§†å£åæ ‡xï¼›
+	 * @param vy:         è§†å£åæ ‡yï¼›
+	 * @param basePointX: è§†å£å·¦ä¸Šè§’çš„ä¸–ç•Œxåƒç´ åæ ‡ï¼›
+	 * @param basePointY: è§†å£å·¦ä¸Šè§’çš„ä¸–ç•Œyåƒç´ åæ ‡ï¼› return ä¸–ç•Œåƒç´ åæ ‡.
 	 **/
 	public static Vector2 viewPortToWorldPixel(Vector2 viewport) {
 		Vector2 worldPixel = Vector2.zero();
@@ -59,12 +59,12 @@ public final class GUtils {
 	}
 
 	/**
-	 ** ÊÀ½çÏñËØ×ø±ê×ª»»³ÉÊÓ¿Ú×ø±ê.
+	 ** ä¸–ç•Œåƒç´ åæ ‡è½¬æ¢æˆè§†å£åæ ‡.
 	 * 
-	 * @param x:          ÊÀ½çÏñËØ×ø±êx£»
-	 * @param y:          ÊÀ½çÏñËØ×ø±êy£»
-	 * @param basePointX: ÊÓ¿Ú×óÉÏ½ÇµÄÊÀ½çxÏñËØ×ø±ê£»
-	 * @param basePointY: ÊÓ¿Ú×óÉÏ½ÇµÄÊÀ½çyÏñËØ×ø±ê£» return ÊÓ¿Ú×ø±ê.
+	 * @param x:          ä¸–ç•Œåƒç´ åæ ‡xï¼›
+	 * @param y:          ä¸–ç•Œåƒç´ åæ ‡yï¼›
+	 * @param basePointX: è§†å£å·¦ä¸Šè§’çš„ä¸–ç•Œxåƒç´ åæ ‡ï¼›
+	 * @param basePointY: è§†å£å·¦ä¸Šè§’çš„ä¸–ç•Œyåƒç´ åæ ‡ï¼› return è§†å£åæ ‡.
 	 *
 	 **/
 	public static Vector2 worldPixelToViewPort(Vector2 worldPixel) {
@@ -75,8 +75,8 @@ public final class GUtils {
 	}
 
 	/**
-	 * ÊÀ½çÏñËØ×ø±ê×ª»»³ÉÊÀ½çtile×ø±ê. @ param x: ÊÀ½çÏñËØx×ø±ê£» @ param y: ÊÀ½çÏñËØy×ø±ê£» @ renturn
-	 * ÊÀ½çtile×ø±ê¡£
+	 * ä¸–ç•Œåƒç´ åæ ‡è½¬æ¢æˆä¸–ç•Œtileåæ ‡. @ param x: ä¸–ç•Œåƒç´ xåæ ‡ï¼› @ param y: ä¸–ç•Œåƒç´ yåæ ‡ï¼› @ renturn
+	 * ä¸–ç•Œtileåæ ‡ã€‚
 	 **/
 	public static Vector2 worldPixelToWorldTile(Vector2 world, float tileWidth, float tileHeight) {
 		float Atx, Aty, centerx, centery;
@@ -116,12 +116,12 @@ public final class GUtils {
 	}
 
 	/**
-	 * ÊÓ¿Ú×ø±ê×ª»»³ÉÊÀ½çtile×ø±ê.
+	 * è§†å£åæ ‡è½¬æ¢æˆä¸–ç•Œtileåæ ‡.
 	 * 
-	 * @param vx:         ÊÓ¿Ú×ø±êx£»
-	 * @param vy:         ÊÓ¿Ú×ø±êy£»
-	 * @param basePointX: ÊÓ¿Ú×óÉÏ½ÇµÄÊÀ½çxÏñËØ×ø±ê£»
-	 * @param basePointY: ÊÓ¿Ú×óÉÏ½ÇµÄÊÀ½çyÏñËØ×ø±ê£» return ÊÀ½çtile×ø±ê.
+	 * @param vx:         è§†å£åæ ‡xï¼›
+	 * @param vy:         è§†å£åæ ‡yï¼›
+	 * @param basePointX: è§†å£å·¦ä¸Šè§’çš„ä¸–ç•Œxåƒç´ åæ ‡ï¼›
+	 * @param basePointY: è§†å£å·¦ä¸Šè§’çš„ä¸–ç•Œyåƒç´ åæ ‡ï¼› return ä¸–ç•Œtileåæ ‡.
 	 **/
 	public static Vector2 viewPortToWorldTile(Vector2 viewport, Vector2 basePoint, float tileWidth, float tileHeight) {
 		Vector2 worldPiexl = viewPortToWorldPixel(viewport);
@@ -129,32 +129,34 @@ public final class GUtils {
 	}
 
 	/**
-	 * ÊÀ½çÄ³¸ötileµÄÖĞĞÄµã×ª»»³ÉÊÀ½çÏñËØ×ø±ê.
+	 * ä¸–ç•ŒæŸä¸ªtileçš„ä¸­å¿ƒç‚¹è½¬æ¢æˆä¸–ç•Œåƒç´ åæ ‡.
 	 * 
-	 * @param x:          ÊÀ½çtile×ø±êx£»
-	 * @param y:          ÊÀ½çtile×ø±êy£»
-	 * @param basePointX: ÊÓ¿Ú×óÉÏ½ÇµÄÊÀ½çxÏñËØ×ø±ê£»
-	 * @param basePointY: ÊÓ¿Ú×óÉÏ½ÇµÄÊÀ½çyÏñËØ×ø±ê£» return ÊÓ¿Ú×ø±ê.
+	 * @param x:          ä¸–ç•Œtileåæ ‡xï¼›
+	 * @param y:          ä¸–ç•Œtileåæ ‡yï¼›
+	 * @param basePointX: è§†å£å·¦ä¸Šè§’çš„ä¸–ç•Œxåƒç´ åæ ‡ï¼›
+	 * @param basePointY: è§†å£å·¦ä¸Šè§’çš„ä¸–ç•Œyåƒç´ åæ ‡ï¼› return è§†å£åæ ‡.
 	 **/
 	public static Vector2 worldTileCenterToWorldPixel(Vector2 tile, float tileWidth, float tileHeight, Vector2 scale) {
 		tile = tile.sub(Vector2.one());
 		Vector2 pixel = Vector2.zero();
 
 		if (tile.y % 2 == 1) {
-			pixel = new Vector2(tile.x * tileWidth - tileWidth / 2, tile.y * tileHeight/2 - tileHeight/2).mul(scale);
+			pixel = new Vector2(tile.x * tileWidth - tileWidth / 2, tile.y * tileHeight / 2 - tileHeight / 2)
+					.mul(scale);
 		} else {
-			pixel = new Vector2(tile.x * tileWidth - tileWidth / 2, tile.y * tileHeight/2 - tileHeight/2).mul(scale);
+			pixel = new Vector2(tile.x * tileWidth - tileWidth / 2, tile.y * tileHeight / 2 - tileHeight / 2)
+					.mul(scale);
 		}
 		return pixel;
 	}
 
 	/**
-	 * ÊÀ½çÄ³¸ötileµÄÖĞĞÄµã×ª»»³ÉÊÓ¿Ú×ø±ê.
+	 * ä¸–ç•ŒæŸä¸ªtileçš„ä¸­å¿ƒç‚¹è½¬æ¢æˆè§†å£åæ ‡.
 	 * 
-	 * @param x:          ÊÀ½çtile×ø±êx£»
-	 * @param y:          ÊÀ½çtile×ø±êy£»
-	 * @param basePointX: ÊÓ¿Ú×óÉÏ½ÇµÄÊÀ½çxÏñËØ×ø±ê£»
-	 * @param basePointY: ÊÓ¿Ú×óÉÏ½ÇµÄÊÀ½çyÏñËØ×ø±ê£» return ÊÓ¿Ú×ø±ê.
+	 * @param x:          ä¸–ç•Œtileåæ ‡xï¼›
+	 * @param y:          ä¸–ç•Œtileåæ ‡yï¼›
+	 * @param basePointX: è§†å£å·¦ä¸Šè§’çš„ä¸–ç•Œxåƒç´ åæ ‡ï¼›
+	 * @param basePointY: è§†å£å·¦ä¸Šè§’çš„ä¸–ç•Œyåƒç´ åæ ‡ï¼› return è§†å£åæ ‡.
 	 **/
 	public static Vector2 worldTileCenterToViewPort(Vector2 tile, Vector2 basePoint, float tileWidth,
 			float tileHeight) {
@@ -170,10 +172,10 @@ public final class GUtils {
 		}
 	}
 
-	// Ğ±×ø±ê×ª»»³ÉÓÎÏ·ÊÀ½çµÄtileµÄÖ±×ø±ê
-	// ÔÚĞ±×ø±êÏµÖĞ£¬´ÓÔ­µãÑØx·½Ïò×ßµ½ÖĞ¼äµã£¬ËüµÄx×ø±êÓëÄ¿±êµãµÄx×ø±êÏàÍ¬£¬
-	// Õâ¸öÖĞ¼äµã£¬ÔÚÖ±×ø±êÏµÖĞÏà¶ÔÓëÔ­µãµÄ×ø±êÎªmxºÍmy£»È»ºó´ÓÖĞ¼äµã³ö·¢ÑØ×ÅĞ±×ø±êÏµµÄyÖáÏòÄ¿±êµãÇ°½ø¡£
-	// ÔÚ´ËÂÃÍ¾ÖĞË³Ğò¾­¹ıµÄµãµÄÖ±×ø±ê±íÏÖ³öºÜÇ¿µÄ¹æÂÉĞÔ£¬¾İ´ËÎÒÃÇµÃµ½Ä¿±êµãÏà¶ÔÓëÔ­µãµÄÖ±×ø±ê¡£
+	// æ–œåæ ‡è½¬æ¢æˆæ¸¸æˆä¸–ç•Œçš„tileçš„ç›´åæ ‡
+	// åœ¨æ–œåæ ‡ç³»ä¸­ï¼Œä»åŸç‚¹æ²¿xæ–¹å‘èµ°åˆ°ä¸­é—´ç‚¹ï¼Œå®ƒçš„xåæ ‡ä¸ç›®æ ‡ç‚¹çš„xåæ ‡ç›¸åŒï¼Œ
+	// è¿™ä¸ªä¸­é—´ç‚¹ï¼Œåœ¨ç›´åæ ‡ç³»ä¸­ç›¸å¯¹ä¸åŸç‚¹çš„åæ ‡ä¸ºmxå’Œmyï¼›ç„¶åä»ä¸­é—´ç‚¹å‡ºå‘æ²¿ç€æ–œåæ ‡ç³»çš„yè½´å‘ç›®æ ‡ç‚¹å‰è¿›ã€‚
+	// åœ¨æ­¤æ—…é€”ä¸­é¡ºåºç»è¿‡çš„ç‚¹çš„ç›´åæ ‡è¡¨ç°å‡ºå¾ˆå¼ºçš„è§„å¾‹æ€§ï¼Œæ®æ­¤æˆ‘ä»¬å¾—åˆ°ç›®æ ‡ç‚¹ç›¸å¯¹ä¸åŸç‚¹çš„ç›´åæ ‡ã€‚
 	public static Vector2 slantTileToWorldTile(Vector2 origin, Vector2 tile) {
 		Vector2 tileXY = Vector2.zero();
 		float mx = origin.x + (origin.y % 2 + tile.x) / 2;
@@ -183,20 +185,20 @@ public final class GUtils {
 		return tileXY;
 	}
 
-	// °ÑÒ»¸öÊÀ½çtileµÄÖ±×ø±ê£¨destX,destY£©×ª»»³ÉÒÔÁíÒ»¸ötile×ø±ê£¨oringX,oringY£©ÎªÔ­µãµÄ×ø±êÏµ
+	// æŠŠä¸€ä¸ªä¸–ç•Œtileçš„ç›´åæ ‡ï¼ˆdestX,destYï¼‰è½¬æ¢æˆä»¥å¦ä¸€ä¸ªtileåæ ‡ï¼ˆoringX,oringYï¼‰ä¸ºåŸç‚¹çš„åæ ‡ç³»
 	public static Vector2 worldTileToSlantTile(Vector2 origin, Vector2 dest) {
 		Vector2 destination = Vector2.zero();
 		float tempX, tempY;
 		float distantY = dest.y - origin.y;
-		// ÔÚÖ±×ø±êÏµÖĞ£¬´ÓÔ­µãÔÚx·½ÏòÉÏ×ßµ½ÖĞ¼äµã£¬ËüµÄx×ø±êÓëÄ¿±êµãµÄx×ø±êÏàÍ¬£»
-		// Õâ¸öÖĞ¼äµã£¬ÔÚĞ±×ø±êÏµÖĞµÄÏà¶ÔÓëÔ­µãµÄ×ø±êÎªÏÂÃæµÄtempXºÍtempY¡£
+		// åœ¨ç›´åæ ‡ç³»ä¸­ï¼Œä»åŸç‚¹åœ¨xæ–¹å‘ä¸Šèµ°åˆ°ä¸­é—´ç‚¹ï¼Œå®ƒçš„xåæ ‡ä¸ç›®æ ‡ç‚¹çš„xåæ ‡ç›¸åŒï¼›
+		// è¿™ä¸ªä¸­é—´ç‚¹ï¼Œåœ¨æ–œåæ ‡ç³»ä¸­çš„ç›¸å¯¹ä¸åŸç‚¹çš„åæ ‡ä¸ºä¸‹é¢çš„tempXå’ŒtempYã€‚
 		tempX = dest.x - origin.x;
 		tempY = -tempX;
-		// ´ÓÖĞ¼äµã³ö·¢£¬ÑØ×ÅÖ±½Ç×ø±êÏµµÄyÖá£¬ÏòÄ¿±êµãÇ°½ø£»
-		// ÔÚÕâ¸öÂÃÍ¾ÖĞË³Ğò¾­¹ıµÄµãµÄĞ±×ø±ê±íÏÖ³öºÜÇ¿µÄ¹æÂÉĞĞ:·ÖÁ½ÖÖÇé¿ö£º
-		// ÏòÏÂ×ß£ºÊ×ÏÈµÚÒ»²½Ê±x×ø±ê¼Ó1£¬µÚ¶ş²½y×ø±ê¼Ó1£¬Èç´Ë½»Ìæ£¬Ö±µ½x×ø±êÓëy×ø±êÖ®ºÍÎªdistantY£¬¼´µ½´ïÄ¿±êµã¡£
-		// ÕâÑù£¬Ä¿±êµãµÄĞ±×ø±ê×ÔÈ»¾ÍµÃµ½ÁË¡£
-		// ÏòÉÏ×ß£ºÊ×ÏÈµÚÒ»²½Ê±y×ø±ê¼õ1£¬µÚ¶ş²½x×ø±ê¼õ1£¬Èç´Ë½»Ìæ£¬Ö±µ½x×ø±êÓëy×ø±êÖ®ºÍÎªdistantY£¬¼´µ½´ïÄ¿±êµã¡£
+		// ä»ä¸­é—´ç‚¹å‡ºå‘ï¼Œæ²¿ç€ç›´è§’åæ ‡ç³»çš„yè½´ï¼Œå‘ç›®æ ‡ç‚¹å‰è¿›ï¼›
+		// åœ¨è¿™ä¸ªæ—…é€”ä¸­é¡ºåºç»è¿‡çš„ç‚¹çš„æ–œåæ ‡è¡¨ç°å‡ºå¾ˆå¼ºçš„è§„å¾‹è¡Œ:åˆ†ä¸¤ç§æƒ…å†µï¼š
+		// å‘ä¸‹èµ°ï¼šé¦–å…ˆç¬¬ä¸€æ­¥æ—¶xåæ ‡åŠ 1ï¼Œç¬¬äºŒæ­¥yåæ ‡åŠ 1ï¼Œå¦‚æ­¤äº¤æ›¿ï¼Œç›´åˆ°xåæ ‡ä¸yåæ ‡ä¹‹å’Œä¸ºdistantYï¼Œå³åˆ°è¾¾ç›®æ ‡ç‚¹ã€‚
+		// è¿™æ ·ï¼Œç›®æ ‡ç‚¹çš„æ–œåæ ‡è‡ªç„¶å°±å¾—åˆ°äº†ã€‚
+		// å‘ä¸Šèµ°ï¼šé¦–å…ˆç¬¬ä¸€æ­¥æ—¶yåæ ‡å‡1ï¼Œç¬¬äºŒæ­¥xåæ ‡å‡1ï¼Œå¦‚æ­¤äº¤æ›¿ï¼Œç›´åˆ°xåæ ‡ä¸yåæ ‡ä¹‹å’Œä¸ºdistantYï¼Œå³åˆ°è¾¾ç›®æ ‡ç‚¹ã€‚
 		if (distantY > 0) {
 			tempX += distantY / 2;
 			tempY += distantY / 2;
@@ -221,7 +223,7 @@ public final class GUtils {
 
 	/*
 	 * *****************************************************************************
-	 * * ¶ÁĞ´ÎÄ±¾µÄ¹¤¾ß************************************************
+	 * * è¯»å†™æ–‡æœ¬çš„å·¥å…·************************************************
 	 ******************************************************************************/
 
 	/**
@@ -246,7 +248,7 @@ public final class GUtils {
 				}
 			}
 		} catch (IOException ioe) {
-			System.out.println("¶ÁÎÄ±¾Ê±·¢ÉúÒì³££¡£¡£¡");
+			System.out.println("è¯»æ–‡æœ¬æ—¶å‘ç”Ÿå¼‚å¸¸ï¼ï¼ï¼");
 		}
 		if (s != null) {
 			return s.toString();
@@ -255,7 +257,7 @@ public final class GUtils {
 		}
 	}
 
-	// ¶ÔÒ»¸öSting½øĞĞ·Ö¸î£¬·Ö¸îµÄ½çÏßÎªÒ»¸ö»ò¶à¸ö¿Õ¸ñÜŞ' '¡£
+	// å¯¹ä¸€ä¸ªStingè¿›è¡Œåˆ†å‰²ï¼Œåˆ†å‰²çš„ç•Œçº¿ä¸ºä¸€ä¸ªæˆ–å¤šä¸ªç©ºæ ¼è‹»' 'ã€‚
 	public static String[] split(String s) {
 		Vector<String> resultBuffer = new Vector<String>();
 		String trimed = s.trim();
@@ -274,43 +276,44 @@ public final class GUtils {
 		return result;
 	}
 
-	// ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶Á³öÖ¸¶¨ÊôĞÔÃûµÄÒ»¸ö×Ö·û´®ĞÍÊôĞÔÖµ
+	// åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å‡ºæŒ‡å®šå±æ€§åçš„ä¸€ä¸ªå­—ç¬¦ä¸²å‹å±æ€§å€¼
 	public static int getIntProperty(String sourceStr, String propertyName) {
 		sourceStr = sourceStr.trim();
 		if (!sourceStr.startsWith("#")) {
-			System.out.println("ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶ÁÈ¡×Ö·û´®ĞÍµÄÊôĞÔ£ºµÚÒ»¸ö×Ö·û²»ÊÇ # £¡");
+			System.out.println("åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å–å­—ç¬¦ä¸²å‹çš„å±æ€§ï¼šç¬¬ä¸€ä¸ªå­—ç¬¦ä¸æ˜¯ # ï¼");
 		}
 		String result = sourceStr.substring(1);
 		result = result.trim();
 		if (!result.startsWith(propertyName)) {
-			System.out.println("ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶ÁÈ¡×Ö·û´®ĞÍµÄÊôĞÔ£ºÊµ¼ÊÊôĞÔÃûÊÇ£º" + result + "£¡ÓëÊäÈë²ÎÊı²»·û:" + propertyName + " £¡");
+			System.out.println(
+					"åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å–å­—ç¬¦ä¸²å‹çš„å±æ€§ï¼šå®é™…å±æ€§åæ˜¯ï¼š" + result + "ï¼ä¸è¾“å…¥å‚æ•°ä¸ç¬¦:" + propertyName + " ï¼");
 		}
 		result = result.substring(propertyName.length());
 		result = result.trim();
 		return Integer.parseInt(result);
 	}
 
-	// ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶Á³öÖ¸¶¨ÊôĞÔÃûµÄÈô¸ÉÕûĞÍÊôĞÔÖµ
+	// åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å‡ºæŒ‡å®šå±æ€§åçš„è‹¥å¹²æ•´å‹å±æ€§å€¼
 	public static int[] getIntProperties(String sourceStr, String propertyName, int num) {
 		String[] splitted = split(sourceStr);
 		if (splitted.length != num + 2) {
-			System.out.println("ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶ÁÈ¡ÕûĞÍÊôĞÔ£¨" + propertyName + "£©£ºÔªËØµÄ¸öÊı²»¶Ô£¡");
+			System.out.println("åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å–æ•´å‹å±æ€§ï¼ˆ" + propertyName + "ï¼‰ï¼šå…ƒç´ çš„ä¸ªæ•°ä¸å¯¹ï¼");
 			return null;
 		}
 		int[] result = new int[num];
 		if (!splitted[0].equalsIgnoreCase("#")) {
-			System.out.println("ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶ÁÈ¡ÕûĞÍÊôĞÔ£¨" + propertyName + "£©£ºµÚÒ»¸ö×Ö·û²»ÊÇ # £¡¸ñÊ½³ö´í");
+			System.out.println("åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å–æ•´å‹å±æ€§ï¼ˆ" + propertyName + "ï¼‰ï¼šç¬¬ä¸€ä¸ªå­—ç¬¦ä¸æ˜¯ # ï¼æ ¼å¼å‡ºé”™");
 			return null;
 		}
 		if (!splitted[1].equalsIgnoreCase(propertyName)) {
-			System.out.println("ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶ÁÈ¡ÕûĞÍÊôĞÔ£¨" + propertyName + "£©£º¶Á³öµÄÊôĞÔÃûÓëÊäÈë²ÎÊı²»ÜŞ£¡");
+			System.out.println("åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å–æ•´å‹å±æ€§ï¼ˆ" + propertyName + "ï¼‰ï¼šè¯»å‡ºçš„å±æ€§åä¸è¾“å…¥å‚æ•°ä¸è‹»ï¼");
 			return null;
 		}
 		for (int i = 0; i < num; i++) {
 			try {
 				result[i] = Integer.parseInt(splitted[i + 2]);
 			} catch (NumberFormatException e) {
-				System.out.println("ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶ÁÈ¡ÊôĞÔ£¨" + propertyName + "£©£º×Ö·û´®²»ÄÜ×ª»»Îªint:" + splitted[i + 1]);
+				System.out.println("åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å–å±æ€§ï¼ˆ" + propertyName + "ï¼‰ï¼šå­—ç¬¦ä¸²ä¸èƒ½è½¬æ¢ä¸ºint:" + splitted[i + 1]);
 				return null;
 			}
 		}
@@ -318,33 +321,34 @@ public final class GUtils {
 
 	}
 
-	// ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶Á³öÖ¸¶¨ÊôĞÔÃûµÄÒ»¸ö×Ö·û´®ĞÍÊôĞÔÖµ
+	// åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å‡ºæŒ‡å®šå±æ€§åçš„ä¸€ä¸ªå­—ç¬¦ä¸²å‹å±æ€§å€¼
 	public static String getStringProperty(String sourceStr, String propertyName) {
 		sourceStr = sourceStr.trim();
 		if (!sourceStr.startsWith("#")) {
-			System.out.println("ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶ÁÈ¡×Ö·û´®ĞÍµÄÊôĞÔ£ºµÚÒ»¸ö×Ö·û²»ÊÇ # £¡");
+			System.out.println("åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å–å­—ç¬¦ä¸²å‹çš„å±æ€§ï¼šç¬¬ä¸€ä¸ªå­—ç¬¦ä¸æ˜¯ # ï¼");
 			return null;
 		}
 		String result = sourceStr.substring(1);
 		result = result.trim();
 		if (!result.startsWith(propertyName)) {
-			System.out.println("ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶ÁÈ¡×Ö·û´®ĞÍµÄÊôĞÔ£ºÊµ¼ÊÊôĞÔÃûÊÇ£º" + result + "£¡ÓëÊäÈë²ÎÊı²»·û:" + propertyName + " £¡");
+			System.out.println(
+					"åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å–å­—ç¬¦ä¸²å‹çš„å±æ€§ï¼šå®é™…å±æ€§åæ˜¯ï¼š" + result + "ï¼ä¸è¾“å…¥å‚æ•°ä¸ç¬¦:" + propertyName + " ï¼");
 			return null;
 		}
 		result = result.substring(propertyName.length());
 		return result.trim();
 	}
 
-	// ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶Á³öÖ¸¶¨ÊôĞÔÃûµÄÈô¸É×Ö·û´®ĞÍµÄÊôĞÔ
+	// åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å‡ºæŒ‡å®šå±æ€§åçš„è‹¥å¹²å­—ç¬¦ä¸²å‹çš„å±æ€§
 	public static String[] getStringProperties(String sourceStr, String propertyName) {
 		String[] splitted = split(sourceStr);
 		String[] result = new String[splitted.length - 2];
 		if (!splitted[0].equalsIgnoreCase("#")) {
-			System.out.println("ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶ÁÈ¡ÕûĞÍÊôĞÔ£¨" + propertyName + "£©£ºµÚÒ»¸ö×Ö·û²»ÊÇ # £¡¸ñÊ½³ö´í");
+			System.out.println("åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å–æ•´å‹å±æ€§ï¼ˆ" + propertyName + "ï¼‰ï¼šç¬¬ä¸€ä¸ªå­—ç¬¦ä¸æ˜¯ # ï¼æ ¼å¼å‡ºé”™");
 			return null;
 		}
 		if (!splitted[1].equalsIgnoreCase(propertyName)) {
-			System.out.println("ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶ÁÈ¡ÕûĞÍÊôĞÔ£¨" + propertyName + "£©£º¶Á³öµÄÊôĞÔÃûÓëÊäÈë²ÎÊı²»ÜŞ£¡");
+			System.out.println("åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å–æ•´å‹å±æ€§ï¼ˆ" + propertyName + "ï¼‰ï¼šè¯»å‡ºçš„å±æ€§åä¸è¾“å…¥å‚æ•°ä¸è‹»ï¼");
 			return null;
 		}
 		for (int i = 0; i < splitted.length - 2; i++) {
@@ -360,7 +364,7 @@ public final class GUtils {
 		} else if (trueOrFalse.equalsIgnoreCase("false")) {
 			return false;
 		} else {
-			System.out.println("ÔÚÒ»ĞĞ×Ö·û´®ÖĞ¶ÁÈ¡²¼¶ûĞÍÊôĞÔ£¨" + propertyName + "£©Ã»ÓĞ¶Áµ½ true »òÕßÊÇ false £¡£¡£¡");
+			System.out.println("åœ¨ä¸€è¡Œå­—ç¬¦ä¸²ä¸­è¯»å–å¸ƒå°”å‹å±æ€§ï¼ˆ" + propertyName + "ï¼‰æ²¡æœ‰è¯»åˆ° true æˆ–è€…æ˜¯ false ï¼ï¼ï¼");
 			return false;
 		}
 	}

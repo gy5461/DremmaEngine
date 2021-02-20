@@ -51,7 +51,14 @@ public class ConversationalNPC extends NPC {
 						break;
 					}
 					if (line.startsWith("(Idle)")) {
-						this.idleChat = GUtils.split(line)[1];
+						String[] idle = GUtils.split(line);
+						for (int i = 1; i < idle.length; i++) {
+							if (i == idle.length - 1) {
+								this.idleChat += idle[i];
+							} else {
+								this.idleChat += idle[i] + " ";
+							}
+						}
 					} else {
 						this.conversation.add(line);
 					}
@@ -114,7 +121,7 @@ public class ConversationalNPC extends NPC {
 					if (this.conversation.size() == 0) {
 						this.closeConversation();
 						this.setTalkContent(this.idleChat);
-						TileMap.player.attackHarm += 5;	// 给游戏主角神功
+						TileMap.player.attackHarm += 5; // 给游戏主角神功
 					}
 				} else {
 					this.closeConversation();

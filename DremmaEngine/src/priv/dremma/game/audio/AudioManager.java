@@ -15,7 +15,7 @@ import priv.dremma.game.GameCore;
 import priv.dremma.game.util.Resources;
 
 /**
- * ÒôÆµ²¥·Å¹ÜÀíÀà
+ * éŸ³é¢‘æ’­æ”¾ç®¡ç†ç±»
  * 
  * @author guoyi
  *
@@ -35,12 +35,12 @@ public class AudioManager {
 	}
 
 	AudioInputStream audioIn;
-	private HashMap<String, Clip> clips = new HashMap<String, Clip>(); // ÉùÒô±í
-	private HashMap<String, Integer> clipsPlayTimes = new HashMap<String, Integer>(); // ÉùÒô±í
+	private HashMap<String, Clip> clips = new HashMap<String, Clip>(); // å£°éŸ³è¡¨
+	private HashMap<String, Integer> clipsPlayTimes = new HashMap<String, Integer>(); // å£°éŸ³è¡¨
 	Thread thread;
 
 	/**
-	 * ÒôÀÖ×ÊÔ´³õÊ¼»¯
+	 * éŸ³ä¹èµ„æºåˆå§‹åŒ–
 	 * 
 	 * @param name
 	 */
@@ -74,15 +74,15 @@ public class AudioManager {
 	}
 
 	/**
-	 * ²¥·ÅÒ»´Î
+	 * æ’­æ”¾ä¸€æ¬¡
 	 * 
-	 * @param name ÒôÀÖÃû
+	 * @param name éŸ³ä¹å
 	 */
 	public synchronized void playOnce(String name) {
 		thread = new Thread(new Thread() {
 			public void run() {
 				if (clipsPlayTimes.get(name) == 0) {
-					// µ±×¼±¸²¥·ÅÒ»´ÎµÄÒôĞ§µÚÒ»´Î²¥·ÅÊ±Èç¹ûÊ¹ÓÃloop(1)»á²¥·ÅÁ½´Î£¬¹ÊÊ¹ÓÃstart()
+					// å½“å‡†å¤‡æ’­æ”¾ä¸€æ¬¡çš„éŸ³æ•ˆç¬¬ä¸€æ¬¡æ’­æ”¾æ—¶å¦‚æœä½¿ç”¨loop(1)ä¼šæ’­æ”¾ä¸¤æ¬¡ï¼Œæ•…ä½¿ç”¨start()
 					clips.get(name).start();
 					clipsPlayTimes.put(name, clipsPlayTimes.get(name) + 1);
 				} else {
@@ -94,7 +94,7 @@ public class AudioManager {
 	}
 
 	/**
-	 * Ñ­»·²¥·Å
+	 * å¾ªç¯æ’­æ”¾
 	 * 
 	 * @param name
 	 */
@@ -108,7 +108,7 @@ public class AudioManager {
 	}
 
 	/**
-	 * Í£Ö¹²¥·Å
+	 * åœæ­¢æ’­æ”¾
 	 * 
 	 * @param name
 	 */
@@ -124,10 +124,10 @@ public class AudioManager {
 	}
 
 	/**
-	 * ÉèÖÃÌØ¶¨Ãû³ÆµÄÒôÀÖÒôÁ¿
+	 * è®¾ç½®ç‰¹å®šåç§°çš„éŸ³ä¹éŸ³é‡
 	 * 
 	 * @param name
-	 * @param volumn 0¡«100£¬±íÊ¾ÒôÁ¿°Ù·ÖÊı
+	 * @param volumn 0ï½100ï¼Œè¡¨ç¤ºéŸ³é‡ç™¾åˆ†æ•°
 	 */
 	public synchronized void setVolumn(String name, int volumn) {
 		thread = new Thread(new Thread() {

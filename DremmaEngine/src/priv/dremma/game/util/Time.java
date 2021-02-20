@@ -3,28 +3,28 @@ package priv.dremma.game.util;
 import priv.dremma.game.GameCore;
 
 /**
- * Ê±¼äÀà
+ * æ—¶é—´ç±»
  * 
  * @author guoyi
  *
  */
 public class Time {
 
-	public static long lastTime = System.currentTimeMillis(); // ¼ÇÂ¼ÉÏÒ»ÃëµÄÊ±¼ä£¬µ¥Î»ÎªºÁÃë
-	public static long lastnsTime = System.nanoTime(); // ¼ÇÂ¼ÉÏÒ»´ÎÑ­»·ÄÉÃëÊı
-	public static long lastFramensTime = System.nanoTime(); // ¼ÇÂ¼ÉÏÒ»Ö¡µÄÄÉÃëÊı
-	// Ã¿Ãë1e9ÄÉÃë£¬Ã¿ÃëäÖÈ¾60Ö¡»­ÃæÊÇÈËÑÛÉÏÏŞ£¬Ö¸ÔÚÃ¿ÃëäÖÈ¾60Ö¡»­ÃæµÄÇ°ÌáÏÂ£¬Ã¿Ö¡ĞèÒª¶àÉÙÄÉÃë
+	public static long lastTime = System.currentTimeMillis(); // è®°å½•ä¸Šä¸€ç§’çš„æ—¶é—´ï¼Œå•ä½ä¸ºæ¯«ç§’
+	public static long lastnsTime = System.nanoTime(); // è®°å½•ä¸Šä¸€æ¬¡å¾ªç¯çº³ç§’æ•°
+	public static long lastFramensTime = System.nanoTime(); // è®°å½•ä¸Šä¸€å¸§çš„çº³ç§’æ•°
+	// æ¯ç§’1e9çº³ç§’ï¼Œæ¯ç§’æ¸²æŸ“60å¸§ç”»é¢æ˜¯äººçœ¼ä¸Šé™ï¼ŒæŒ‡åœ¨æ¯ç§’æ¸²æŸ“60å¸§ç”»é¢çš„å‰æä¸‹ï¼Œæ¯å¸§éœ€è¦å¤šå°‘çº³ç§’
 	public static final float NSPERFRAME = 1000000000.0f / 60.0f;
-	private static float deltaFrame = 0; // ÄÉÃëÊıµÄ±ä»¯³ıÒÔnsPerFrame£¬¼´±ä»¯µÄÖ¡Êı
-	public static float deltaTime = 0; // Ã¿Ö¡µÄÓÃÊ±£¬µ¥Î»ÎªÃë
-	public static float elapsedTime = 0; // ¹ıÈ¥µÄÊ±¼ä
-	public static long curnsTime; // ¼ÇÂ¼µ±Ç°ÄÉÃëÊı
-	// Èç¹ûĞèÒª²âÊÔ»úÆ÷¼«ÏŞ£¬½¨Òé½«shouldRenderÊ¼ÖÕÉèÖÃÎªtrue
-	public static boolean shouldRender; // ±ê¼ÇÊÇ·ñĞèÒªäÖÈ¾£¬µ±deltaFrame>=1Ê±£¬ÊÇäÖÈ¾µÄÊ±»ú
+	private static float deltaFrame = 0; // çº³ç§’æ•°çš„å˜åŒ–é™¤ä»¥nsPerFrameï¼Œå³å˜åŒ–çš„å¸§æ•°
+	public static float deltaTime = 0; // æ¯å¸§çš„ç”¨æ—¶ï¼Œå•ä½ä¸ºç§’
+	public static float elapsedTime = 0; // è¿‡å»çš„æ—¶é—´
+	public static long curnsTime; // è®°å½•å½“å‰çº³ç§’æ•°
+	// å¦‚æœéœ€è¦æµ‹è¯•æœºå™¨æé™ï¼Œå»ºè®®å°†shouldRenderå§‹ç»ˆè®¾ç½®ä¸ºtrue
+	public static boolean shouldRender; // æ ‡è®°æ˜¯å¦éœ€è¦æ¸²æŸ“ï¼Œå½“deltaFrame>=1æ—¶ï¼Œæ˜¯æ¸²æŸ“çš„æ—¶æœº
 
 	public static void printFrames() {
 		if (System.currentTimeMillis() - Time.lastTime > 1000) {
-			// ÓÎÏ·Ã¿¹ı1Ãë£¬´òÓ¡Ö¡Êı£¨Ö¡ÊıÖ¸Ò»ÃëÄÚÓÎÏ·äÖÈ¾»­ÃæµÄÕÅÊı£©
+			// æ¸¸æˆæ¯è¿‡1ç§’ï¼Œæ‰“å°å¸§æ•°ï¼ˆå¸§æ•°æŒ‡ä¸€ç§’å†…æ¸¸æˆæ¸²æŸ“ç”»é¢çš„å¼ æ•°ï¼‰
 			Debug.log(Debug.DebugLevel.INFO, "Game Frames :" + GameCore.frames);
 			Time.lastTime += 1000;
 			GameCore.frames = 0;
@@ -36,7 +36,7 @@ public class Time {
 		Time.deltaFrame += (Time.curnsTime - Time.lastnsTime) / Time.NSPERFRAME;
 		Time.lastnsTime = Time.curnsTime;
 
-		// ±ä»¯µÄÄÉÃëÊıÔÚÂú×ãÈËÑÛÉÏÏŞµÄÇ°ÌáÏÂÖµµÃäÖÈ¾Ò»Ö¡
+		// å˜åŒ–çš„çº³ç§’æ•°åœ¨æ»¡è¶³äººçœ¼ä¸Šé™çš„å‰æä¸‹å€¼å¾—æ¸²æŸ“ä¸€å¸§
 		if (FloatCompare.isBiggerOrEqual(Time.deltaFrame, 1.0f)) {
 			Time.deltaFrame--;
 			Time.deltaTime = (Time.curnsTime - Time.lastFramensTime) / 1e9f;
@@ -47,6 +47,6 @@ public class Time {
 			Time.shouldRender = false;
 		}
 
-		printFrames(); // ´òÓ¡Ö¡Êı
+		printFrames(); // æ‰“å°å¸§æ•°
 	}
 }

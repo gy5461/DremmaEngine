@@ -18,7 +18,7 @@ import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
 /**
- * ÓÎÏ·Ö÷½ÇÀà
+ * æ¸¸æˆä¸»è§’ç±»
  * 
  * @author guoyi
  *
@@ -27,7 +27,7 @@ public class Player extends Entity {
 
 	KeyInputHandler keyInputHandler;
 
-	// Õ¾Á¢¶¯»­
+	// ç«™ç«‹åŠ¨ç”»
 	HashMap<Integer, Image> playerStandUp = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> playerStandDown = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> playerStandRight = new HashMap<Integer, Image>();
@@ -38,7 +38,7 @@ public class Player extends Entity {
 	Animation playerStandRightAnimation = new Animation();
 	Animation playerStandLeftAnimation = new Animation();
 
-	// ÅÜ²½¶¯»­
+	// è·‘æ­¥åŠ¨ç”»
 	HashMap<Integer, Image> playerRunUp = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> playerRunDown = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> playerRunRight = new HashMap<Integer, Image>();
@@ -49,7 +49,7 @@ public class Player extends Entity {
 	Animation playerRunRightAnimation = new Animation();
 	Animation playerRunLeftAnimation = new Animation();
 
-	// ¹¥»÷¶¯»­£¨½üÕ½£©
+	// æ”»å‡»åŠ¨ç”»ï¼ˆè¿‘æˆ˜ï¼‰
 	HashMap<Integer, Image> playerAttackUp = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> playerAttackDown = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> playerAttackRight = new HashMap<Integer, Image>();
@@ -60,11 +60,11 @@ public class Player extends Entity {
 	Animation playerAttackRightAnimation = new Animation();
 	Animation playerAttackLeftAnimation = new Animation();
 
-	// ËÀÍö¶¯»­£ºÌ§¹×
+	// æ­»äº¡åŠ¨ç”»ï¼šæŠ¬æ£º
 	HashMap<Integer, Image> playerDie = new HashMap<Integer, Image>();
 	Animation playerDieAnimation = new Animation();
 
-	// Ê¤Àû¶¯»­£ºÅÄÊÖ
+	// èƒœåˆ©åŠ¨ç”»ï¼šæ‹æ‰‹
 	HashMap<Integer, Image> playerClapUp = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> playerClapDown = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> playerClapRight = new HashMap<Integer, Image>();
@@ -75,22 +75,22 @@ public class Player extends Entity {
 	Animation playerClapRightAnimation = new Animation();
 	Animation playerClapLeftAnimation = new Animation();
 
-	Vector2 lastMoveVector = Vector2.zero(); // ÉÏÒ»¸ömoveVector
+	Vector2 lastMoveVector = Vector2.zero(); // ä¸Šä¸€ä¸ªmoveVector
 
-	public static final float ATTACK_LERP = 135f; // ¹¥»÷¶¯×÷²åÖµ¾àÀë
-	public static final float ATTACK_OFFSETX = 130f; // ÎªÁËµÃµ½ºÏÊÊ´óĞ¡µÄ¹¥»÷Åö×²ºĞx·½ÏòµÄÆ«ÒÆÁ¿
-	public static final float ATTACK_OFFSETY = 115f; // ÎªÁËµÃµ½ºÏÊÊ´óĞ¡µÄ¹¥»÷Åö×²ºĞy·½ÏòµÄÆ«ÒÆÁ¿
+	public static final float ATTACK_LERP = 135f; // æ”»å‡»åŠ¨ä½œæ’å€¼è·ç¦»
+	public static final float ATTACK_OFFSETX = 130f; // ä¸ºäº†å¾—åˆ°åˆé€‚å¤§å°çš„æ”»å‡»ç¢°æ’ç›’xæ–¹å‘çš„åç§»é‡
+	public static final float ATTACK_OFFSETY = 115f; // ä¸ºäº†å¾—åˆ°åˆé€‚å¤§å°çš„æ”»å‡»ç¢°æ’ç›’yæ–¹å‘çš„åç§»é‡
 
-	public int pressAttackTimes = 0; // ¹¥»÷´ÎÊı
+	public int pressAttackTimes = 0; // æ”»å‡»æ¬¡æ•°
 
-	public int hp; // ÑªÌõ
-	public int maxHp; // ÂúÑªÁ¿
-	public int attackHarm; // ¹¥»÷Ôì³ÉµÄÉËº¦
+	public int hp; // è¡€æ¡
+	public int maxHp; // æ»¡è¡€é‡
+	public int attackHarm; // æ”»å‡»é€ æˆçš„ä¼¤å®³
 
 	public Player(KeyInputHandler keyInputHandler, float speed) {
 		super();
 		this.keyInputHandler = keyInputHandler;
-		this.name = "½£ÏÀ¿Í";
+		this.name = "å‰‘ä¾ å®¢";
 		this.speed = speed;
 
 		this.maxHp = 5;
@@ -106,19 +106,19 @@ public class Player extends Entity {
 
 			switch (GameCore.viewAngle) {
 			case ViewAngle2DOT5:
-				// ¸ù¾İµ±Ç°¶¯»­×´Ì¬³õÊ¼»¯½ÇÉ«×´Ì¬
+				// æ ¹æ®å½“å‰åŠ¨ç”»çŠ¶æ€åˆå§‹åŒ–è§’è‰²çŠ¶æ€Ì¬
 				if (this.animator.getState() != null && (this.animator.getState().contains("playerRun")
 						|| (this.animator.getState().contains("playerStand")))) {
-					this.state = Entity.EntityState.STAND; // Õ¾Á¢/ÅÜ²½¶¯»­²¥·ÅÖĞ£¬½ÇÉ«´¦ÓÚÕ¾Á¢×´Ì¬
+					this.state = Entity.EntityState.STAND; // ç«™ç«‹/è·‘æ­¥åŠ¨ç”»æ’­æ”¾ä¸­ï¼Œè§’è‰²å¤„äºç«™ç«‹çŠ¶æ€Ì¬
 				}
 
 				if (this.animator.getState() != null && this.animator.getState().contains("playerAttack")) {
-					this.state = Entity.EntityState.ATTACK; // ¹¥»÷¶¯»­²¥·ÅÖĞ£¬½ÇÉ«´¦ÓÚ¹¥»÷×´Ì¬
+					this.state = Entity.EntityState.ATTACK; // æ”»å‡»åŠ¨ç”»æ’­æ”¾ä¸­ï¼Œè§’è‰²å¤„äºæ”»å‡»çŠ¶æ€
 				}
 
 				if (this.state == Entity.EntityState.ATTACK) {
 					if (this.animator.getState().contains("Up")) {
-						// ²åÖµ£¬´Ó(0, 0)µ½(-ATTACK_LERP, -ATTACK_LERP * TileMap.modifier)
+						// æ’å€¼ï¼Œä»(0, 0)åˆ°(-ATTACK_LERP, -ATTACK_LERP * TileMap.modifier)
 						Vector2 transValue = Vector2.lerp(Vector2.zero(),
 								new Vector2(-ATTACK_LERP, -ATTACK_LERP * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackUp").moveVector = transValue;
@@ -126,7 +126,7 @@ public class Player extends Entity {
 					}
 
 					if (this.animator.getState().contains("Down")) {
-						// ²åÖµ£¬´Ó(0, 0)µ½(ATTACK_LERP, ATTACK_LERP * TileMap.modifier)
+						// æ’å€¼ï¼Œä»(0, 0)åˆ°(ATTACK_LERP, ATTACK_LERP * TileMap.modifier)
 						Vector2 transValue = Vector2.lerp(Vector2.zero(),
 								new Vector2(ATTACK_LERP, ATTACK_LERP * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackDown").moveVector = transValue;
@@ -134,7 +134,7 @@ public class Player extends Entity {
 					}
 
 					if (this.animator.getState().contains("Left")) {
-						// ²åÖµ£¬´Ó(0, 0)µ½(-ATTACK_LERP, ATTACK_LERP * TileMap.modifier)
+						// æ’å€¼ï¼Œä»(0, 0)åˆ°(-ATTACK_LERP, ATTACK_LERP * TileMap.modifier)
 						Vector2 transValue = Vector2.lerp(Vector2.zero(),
 								new Vector2(-ATTACK_LERP, ATTACK_LERP * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackLeft").moveVector = transValue;
@@ -142,7 +142,7 @@ public class Player extends Entity {
 					}
 
 					if (this.animator.getState().contains("Right")) {
-						// ²åÖµ£¬´Ó(0, 0)µ½(-ATTACK_LERP, -ATTACK_LERP * TileMap.modifier)
+						// æ’å€¼ï¼Œä»(0, 0)åˆ°(-ATTACK_LERP, -ATTACK_LERP * TileMap.modifier)
 						Vector2 transValue = Vector2.lerp(Vector2.zero(),
 								new Vector2(ATTACK_LERP, -ATTACK_LERP * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackRight").moveVector = transValue;
@@ -150,7 +150,7 @@ public class Player extends Entity {
 					}
 				}
 
-				// ´¦Àí¹¥»÷
+				// å¤„ç†æ”»å‡»
 				if (this.keyInputHandler.attack.isPressed()
 						&& this.pressAttackTimes < this.keyInputHandler.attack.getPressedTimes()) {
 					this.pressAttackTimes = this.keyInputHandler.attack.getPressedTimes();
@@ -163,7 +163,7 @@ public class Player extends Entity {
 						this.animator.setState("playerAttackUp", true);
 						this.animator.setState("playerStandUp", false);
 
-						// ½üÕ½Åö×²ºĞ Up
+						// è¿‘æˆ˜ç¢°æ’ç›’ Up
 						Animator playerAttackUpAnimator = null;
 						AttackEntity playerAttackUpAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackUp")) {
@@ -209,7 +209,7 @@ public class Player extends Entity {
 						this.animator.setState("playerAttackDown", true);
 						this.animator.setState("playerStandDown", false);
 
-						// ½üÕ½Åö×²ºĞ Down
+						// è¿‘æˆ˜ç¢°æ’ç›’ Down
 						Animator playerAttackDownAnimator = null;
 						AttackEntity playerAttackDownAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackDown")) {
@@ -249,7 +249,7 @@ public class Player extends Entity {
 						this.animator.setState("playerAttackLeft", true);
 						this.animator.setState("playerStandLeft", false);
 
-						// ½üÕ½Åö×²ºĞ Left
+						// è¿‘æˆ˜ç¢°æ’ç›’ Left
 						Animator playerAttackLeftAnimator = null;
 						AttackEntity playerAttackLeftAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackLeft")) {
@@ -298,7 +298,7 @@ public class Player extends Entity {
 						this.animator.setState("playerAttackRight", true);
 						this.animator.setState("playerStandRight", false);
 
-						// ½üÕ½Åö×²ºĞ Right
+						// è¿‘æˆ˜ç¢°æ’ç›’ Right
 						Animator playerAttackRightAnimator = null;
 						AttackEntity playerAttackRightAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackRight")) {
@@ -349,7 +349,7 @@ public class Player extends Entity {
 					this.state = Entity.EntityState.ATTACK;
 				}
 
-				// ´¦ÀíÒÆ¶¯
+				// å¤„ç†ç§»åŠ¨
 				if (this.state == Entity.EntityState.STAND) {
 					// AudioManager.getInstance().stopPlay("ghostWoundedSound");
 					if (this.keyInputHandler.up.isPressed()) {
@@ -379,7 +379,7 @@ public class Player extends Entity {
 					}
 				}
 
-				// ´¦ÀíÕ¾Á¢
+				// å¤„ç†ç«™ç«‹
 				if (this.state == Entity.EntityState.STAND) {
 					CollisionBox.collisionBoxs.remove("playerAttackUp");
 					CollisionBox.collisionBoxs.remove("playerAttackDown");
@@ -429,7 +429,7 @@ public class Player extends Entity {
 			case ViewAngle2:
 				this.state = Entity.EntityState.STAND;
 
-				// ´¦ÀíÒÆ¶¯
+				// å¤„ç†ç§»åŠ¨
 				if (this.state == Entity.EntityState.STAND) {
 					if (this.keyInputHandler.up.isPressed()) {
 						this.animator.setState("playerRunUp", false);
@@ -458,7 +458,7 @@ public class Player extends Entity {
 					}
 				}
 
-				// ´¦ÀíÕ¾Á¢
+				// å¤„ç†ç«™ç«‹
 				if (this.state == Entity.EntityState.STAND) {
 
 					switch (this.direction) {
@@ -489,7 +489,7 @@ public class Player extends Entity {
 		}
 
 		if (this.state == Entity.EntityState.WIN) {
-			// ²¥·ÅÅÄÊÖ¶¯»­
+			// æ’­æ”¾æ‹æ‰‹åŠ¨ç”»
 			switch (this.direction) {
 			case DOWN:
 				this.animator.setState("playerClapDown", true);
@@ -507,7 +507,7 @@ public class Player extends Entity {
 		}
 
 		if (this.state == Entity.EntityState.DEAD) {
-			// ²¥·ÅËÀÍö¶¯»­
+			// æ’­æ”¾æ­»äº¡åŠ¨ç”»
 			this.animator.setState("playerDie", true);
 			if (!(this.animator.getState() != null && this.animator.getState().contains("playerAttack"))) {
 				this.setScale(new Vector2(0.5f, 0.5f));
@@ -516,24 +516,24 @@ public class Player extends Entity {
 
 		super.update();
 
-		// ÉèÖÃÅö×²ºĞ×ø±ê
+		// è®¾ç½®ç¢°æ’ç›’åæ ‡
 		CollisionBox.collisionBoxs.get(this.name).leftUpPoint = this.position.sub(new Vector2(33, -17));
 		CollisionBox.collisionBoxs.get(this.name).rightDownPoint = this.position.add(new Vector2(25, 90));
 	}
 
 	/**
-	 * ¼ÓÔØ¶¯»­×ÊÔ´
+	 * åŠ è½½åŠ¨ç”»èµ„æº
 	 */
 	public void loadAnimation() {
 		if (this.animator == null) {
 			this.animator = new Animator();
 		}
-		float duration = 1.0f / 8.0f; // ÈËÎï¶¯»­Ã¿×é8ÕÅ£¬Ò»Ãë²¥·Å8´Î
+		float duration = 1.0f / 8.0f; // äººç‰©åŠ¨ç”»æ¯ç»„8å¼ ï¼Œä¸€ç§’æ’­æ”¾8æ¬¡
 
-		float attackDuration = 1.0f / 10.0f; // ¹¥»÷¶¯»­Ã¿×é10ÕÅ£¬Ò»Ãë²¥·Å10´Î
+		float attackDuration = 1.0f / 10.0f; // æ”»å‡»åŠ¨ç”»æ¯ç»„10å¼ ï¼Œä¸€ç§’æ’­æ”¾10æ¬¡
 
-		float dieDuration = 2.0f / 10.0f; // ËÀÍö¶¯»­Ã¿×é10ÕÅ£¬¶şÃë²¥·Å10´Î
-		float clapDuration = 1.0f / 11.0f; // ÅÄÊÖ¶¯»­Ã¿×é11ÕÅ£¬Ò»Ãë²¥·Å11´Î
+		float dieDuration = 2.0f / 10.0f; // æ­»äº¡åŠ¨ç”»æ¯ç»„10å¼ ï¼ŒäºŒç§’æ’­æ”¾10æ¬¡
+		float clapDuration = 1.0f / 11.0f; // æ‹æ‰‹åŠ¨ç”»æ¯ç»„11å¼ ï¼Œä¸€ç§’æ’­æ”¾11æ¬¡
 
 		switch (GameCore.viewAngle) {
 		case ViewAngle2DOT5:
@@ -617,7 +617,7 @@ public class Player extends Entity {
 			}
 			this.animator.addAnimation("playerAttackLeft", this.playerAttackLeftAnimation);
 
-			// ËÀÍö¶¯»­
+			// æ­»äº¡åŠ¨ç”»
 			for (int i = 1; i <= 10; i++) {
 				this.playerDie.put(i,
 						Resources.loadImage(Resources.path + "images/animations/player_die/player_die_" + i + ".png"));
@@ -625,7 +625,7 @@ public class Player extends Entity {
 			}
 			this.animator.addAnimation("playerDie", this.playerDieAnimation);
 
-			// Ê¤Àû¶¯»­
+			// èƒœåˆ©åŠ¨ç”»
 			for (int i = 1; i <= 11; i++) {
 				this.playerClapDown.put(i, Resources
 						.loadImage(Resources.path + "images/animations/player_clap/player_clap_" + i + ".png"));
@@ -654,7 +654,7 @@ public class Player extends Entity {
 			}
 			this.animator.addAnimation("playerClapRight", this.playerClapRightAnimation);
 
-			// ³õÊ¼»¯¶¯»­×´Ì¬
+			// åˆå§‹åŒ–åŠ¨ç”»çŠ¶æ€
 			switch (this.state) {
 			case STAND:
 				switch (this.direction) {
@@ -774,9 +774,9 @@ public class Player extends Entity {
 		AudioManager.getInstance().stopPlay("runSound");
 		AudioManager.getInstance().stopPlay("attackSound");
 		AudioManager.getInstance().stopPlay("playerWoundedSound");
-		// ²¥·ÅËÀÍöÒôĞ§
+		// æ’­æ”¾æ­»äº¡éŸ³æ•ˆ
 		AudioManager.getInstance().playLoop("playerDieSound");
-		// ÓÎÏ·½áÊø£¬¹Ø±Õ±³¾°ÒôÀÖ
+		// æ¸¸æˆç»“æŸï¼Œå…³é—­èƒŒæ™¯éŸ³ä¹
 		AudioManager.getInstance().stopPlay("backgroundSound");
 	}
 
@@ -786,9 +786,9 @@ public class Player extends Entity {
 		AudioManager.getInstance().stopPlay("runSound");
 		AudioManager.getInstance().stopPlay("attackSound");
 		AudioManager.getInstance().stopPlay("playerWoundedSound");
-		// ÓÎÏ·½áÊø£¬¹Ø±Õ±³¾°ÒôÀÖ
+		// æ¸¸æˆç»“æŸï¼Œå…³é—­èƒŒæ™¯éŸ³ä¹
 		AudioManager.getInstance().stopPlay("backgroundSound");
-		// ²¥·ÅÑÌ»¨ÒôĞ§
+		// æ’­æ”¾çƒŸèŠ±éŸ³æ•ˆ
 		AudioManager.getInstance().playLoop("playerWinSound");
 		AudioManager.getInstance().playLoop("playerClapSound");
 
@@ -798,7 +798,7 @@ public class Player extends Entity {
 	public void draw(Graphics2D g) {
 		super.draw(g);
 
-		// »­ÑªÌõ£¨ºÚµ×ÂÌÉ«£©
+		// ç”»è¡€æ¡ï¼ˆé»‘åº•ç»¿è‰²ï¼‰
 		UIManager.getUIEntity("playerHpBar").getScale().x = 300 * this.hp * 1.0f / this.maxHp;
 		// UIManager.getUIEntity("playerHpBar").position.x -= 300 * (1.0f - this.hp *
 		// 1.0f / this.maxHp);

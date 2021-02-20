@@ -9,7 +9,7 @@ import priv.dremma.game.event.WindowInputHandler;
 import priv.dremma.game.util.Resources;
 
 /**
- * ÓÎÏ·¼ÓÔØÀà£¬¿ÉÉú³ÉAppletĞ¡³ÌĞò
+ * æ¸¸æˆåŠ è½½ç±»ï¼Œå¯ç”ŸæˆAppletå°ç¨‹åº
  * 
  * @author guoyi
  *
@@ -43,29 +43,29 @@ public class GameLauncher extends Applet {
 	}
 
 	public static void lauchToApplication() {
-		GameCore.debug = true; // ¿ªÆôdebugÄ£Ê½
+		GameCore.debug = true; // å¼€å¯debugæ¨¡å¼
 		game.isApplet = false;
 		Resources.path = "res/";
 
-		game.window = new JFrame(GameCore.name); // ĞÂ½¨ÓÎÏ·´°Ìå
-		game.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // ÉèÖÃÄ¬ÈÏÇé¿öÏÂ¹Ø±Õ´°ÌåÍË³ö³ÌĞò
+		game.window = new JFrame(GameCore.name); // æ–°å»ºæ¸¸æˆçª—ä½“
+		game.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // è®¾ç½®é»˜è®¤æƒ…å†µä¸‹å…³é—­çª—ä½“é€€å‡ºç¨‹åº
 
-		game.window.setLayout(new BorderLayout()); // ÉèÖÃ²¼¾Ö¹ÜÀíÆ÷
+		game.window.setLayout(new BorderLayout()); // è®¾ç½®å¸ƒå±€ç®¡ç†å™¨
 
-		game.window.add(game, BorderLayout.CENTER); // ²¼¾Öµ½ÆÁÄ»ÖĞÑë
-		game.window.setSize(GameCore.DIMENSIONS); // ÉèÖÃ´°¿Ú´óĞ¡
+		game.window.add(game, BorderLayout.CENTER); // å¸ƒå±€åˆ°å±å¹•ä¸­å¤®
+		game.window.setSize(GameCore.DIMENSIONS); // è®¾ç½®çª—å£å¤§å°
 
-		game.window.setResizable(false); // Ä¬ÈÏ´°Ìå²»¿É¸Ä±ä´óĞ¡
-		game.window.setLocationRelativeTo(null); // Ê¹´°ÌåÏà¶ÔÓÚ¿Õ×é¼ş
-		game.window.setVisible(true); // ÉèÖÃ´°Ìå¿É¼û
-		game.setFocusable(true); // Ä¬ÈÏ¾Û½¹ÓÎÏ·
-		game.windowInputHandler = new WindowInputHandler(game); // Ö»ÓĞApplicationÓµÓĞ´°ÌåÊÂ¼ş
+		game.window.setResizable(false); // é»˜è®¤çª—ä½“ä¸å¯æ”¹å˜å¤§å°
+		game.window.setLocationRelativeTo(null); // ä½¿çª—ä½“ç›¸å¯¹äºç©ºç»„ä»¶
+		game.window.setVisible(true); // è®¾ç½®çª—ä½“å¯è§
+		game.setFocusable(true); // é»˜è®¤èšç„¦æ¸¸æˆ
+		game.windowInputHandler = new WindowInputHandler(game); // Ö»åªæœ‰Applicationæ‹¥æœ‰çª—ä½“äº‹ä»¶
 
-		game.start(); // ¿ªÊ¼ÓÎÏ·
+		game.start(); // å¼€å§‹æ¸¸æˆ
 	}
 
 	public static void main(String[] args) {
-		game = new GameCore(); // ÓÉÓÚmain·½·¨ÊÇ¾²Ì¬·½·¨£¬¹ÊĞèÒª½«gameÉèÎª¾²Ì¬±äÁ¿
+		game = new GameCore(); // ç”±äºmainæ–¹æ³•æ˜¯é™æ€æ–¹æ³•ï¼Œæ•…éœ€è¦å°†gameè®¾ä¸ºé™æ€å˜é‡
 		lauchToApplication();
 	}
 }

@@ -33,7 +33,7 @@ import priv.dremma.game.util.TranslateEntityHelper;
 import priv.dremma.game.util.Vector2;
 
 /**
- * ÓÎÏ·Ö÷ÌåÀà£¬°üº¬ÓÎÏ·´°Ìå¡¢äÖÈ¾µÈ
+ * æ¸¸æˆä¸»ä½“ç±»ï¼ŒåŒ…å«æ¸¸æˆçª—ä½“ã€æ¸²æŸ“ç­‰
  * 
  * @author guoyi
  *
@@ -41,26 +41,26 @@ import priv.dremma.game.util.Vector2;
 @SuppressWarnings("serial")
 public class GameCore extends Canvas implements Runnable {
 
-	public JFrame window; // ÓÎÏ·´°Ìå
+	public JFrame window; // æ¸¸æˆçª—ä½“
 
-	public Thread thread; // ÓÎÏ·Ïß³Ì
-	public boolean isRunning; // ÓÎÏ·ÊÇ·ñÕıÔÚÔËĞĞ
+	public Thread thread; // æ¸¸æˆçº¿ç¨‹
+	public boolean isRunning; // æ¸¸æˆæ˜¯å¦æ­£åœ¨è¿è¡Œ
 
 	public static enum GameViewAngle {
-		ViewAngle2DOT5, ViewAngle2; // ÓÎÏ·ÊÓ½Ç£¬2.5D or 2D
+		ViewAngle2DOT5, ViewAngle2; // æ¸¸æˆè§†è§’ï¼Œ2.5D or 2D
 	}
 
-	public static String name = "DremmaEngine"; // Ãû³Æ
-	public static int width = 160; // ´°Ìå¿í¶È
-	public static int height = width / 12 * 9; // ´°Ìå¸ß¶È
-	public static int scale = 6; // ´°Ìå·Å´ó±¶Êı
+	public static String name = "DremmaEngine"; // åç§°
+	public static int width = 160; // çª—ä½“å®½åº¦
+	public static int height = width / 12 * 9; // çª—ä½“é«˜åº¦
+	public static int scale = 6; // çª—ä½“æ”¾å¤§å€æ•°
 	public static final Dimension DIMENSIONS = new Dimension(width * scale, height * scale);
 
-	public static boolean debug = true; // ÓÎÏ·ÒıÇæÄ¬ÈÏÎªDebugÄ£Ê½
+	public static boolean debug = true; // æ¸¸æˆå¼•æ“é»˜è®¤ä¸ºDebugæ¨¡å¼
 	public boolean isApplet = false;
-	public static GameViewAngle viewAngle; // ÓÎÏ·ÊÓ½Ç
+	public static GameViewAngle viewAngle; // æ¸¸æˆè§†è§’
 
-	public static int frames = 0; // ÓÎÏ·Ö¡Êı
+	public static int frames = 0; // æ¸¸æˆå¸§æ•°
 
 	private BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
@@ -75,36 +75,36 @@ public class GameCore extends Canvas implements Runnable {
 	public static boolean willSave = true;
 
 	public void onStart() {
-		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // ÉèÖÃ2DÓÎÏ·ÊÓ½Ç
+		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // è®¾ç½®2Dæ¸¸æˆè§†è§’
 		player = new Player(this.keyInputHandler, 60f);
 
 		player.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.height / 2f);
 
 		player.setScale(new Vector2(2f, 2f));
 
-		// ¼ÓÔØÒôÀÖ
+		// åŠ è½½éŸ³ä¹
 		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");
 		AudioManager.getInstance().playLoop("backgroundSound");
 
 		Resources.load(Resources.ResourceType.Music, "runSound", Resources.path + "music/run.wav");
 		Resources.load(Resources.ResourceType.Music, "attackSound", Resources.path + "music/attack.wav");
-		Resources.load(Resources.ResourceType.Music, "ghostFloatSound", Resources.path + "music/¹íÆ¯¸¡Éù.wav");
+		Resources.load(Resources.ResourceType.Music, "ghostFloatSound", Resources.path + "music/é¬¼æ¼‚æµ®å£°.wav");
 		
-		Resources.load(Resources.ResourceType.Music, "ghostDieSound", Resources.path + "music/¹íËÀÍö.wav");
-		Resources.load(Resources.ResourceType.Music, "playerDieSound", Resources.path + "music/Ö÷½ÇËÀÍö.wav");
-		Resources.load(Resources.ResourceType.Music, "playerWinSound", Resources.path + "music/Ö÷½ÇÊ¤Àû.wav");
+		Resources.load(Resources.ResourceType.Music, "ghostDieSound", Resources.path + "music/é¬¼æ­»äº¡.wav");
+		Resources.load(Resources.ResourceType.Music, "playerDieSound", Resources.path + "music/ä¸»è§’æ­»äº¡.wav");
+		Resources.load(Resources.ResourceType.Music, "playerWinSound", Resources.path + "music/ä¸»è§’èƒœåˆ©.wav");
 		Resources.load(Resources.ResourceType.Music, "playerClapSound", Resources.path + "music/clap.wav");
 
-		Resources.load(Resources.ResourceType.Music, "ghostWoundedSound", Resources.path + "music/¹íÊÜÉË.wav");
+		Resources.load(Resources.ResourceType.Music, "ghostWoundedSound", Resources.path + "music/é¬¼å—ä¼¤.wav");
 		AudioManager.getInstance().setVolumn("ghostWoundedSound", 100);
-		Resources.load(Resources.ResourceType.Music, "playerWoundedSound", Resources.path + "music/Ö÷½ÇÊÜÉË.wav");
+		Resources.load(Resources.ResourceType.Music, "playerWoundedSound", Resources.path + "music/ä¸»è§’å—ä¼¤.wav");
 		AudioManager.getInstance().setVolumn("playerWoundedSound", 100);
 
-		// ´ÓÎÄ¼şÖĞ¼ÓÔØµØÍ¼
+		// ä»æ–‡ä»¶ä¸­åŠ è½½åœ°å›¾
 		map = TileMap.loadTileMap(Resources.path + "maps/map2.txt");
 		map.setPlayer(player);
 
-		// --------------³¡¾°ÖĞµÄÎïÌå----------------
+		// --------------åœºæ™¯ä¸­çš„ç‰©ä½“----------------
 
 		// tree1
 		Entity tree1Entity = new Entity();
@@ -137,7 +137,7 @@ public class GameCore extends Canvas implements Runnable {
 		archivingEntity.name = "archiving";
 		archivingEntity.setScale(new Vector2(0.2f, 0.2f));
 		map.addEntity(archivingEntity, new Vector2(3, 6));
-		CollisionBox.collisionBoxs.get("archiving").isTrigger = true; // ´¥·¢ºĞ×Ó
+		CollisionBox.collisionBoxs.get("archiving").isTrigger = true; // è§¦å‘ç›’å­
 
 		// chair1
 		Entity chair1Entity = new Entity();
@@ -179,23 +179,23 @@ public class GameCore extends Canvas implements Runnable {
 		deskEntity.setScale(new Vector2(2f, 2f));
 		map.addEntity(deskEntity, new Vector2(5, 8));
 
-		// --------------³¡¾°ÖĞµÄNPC----------------
+		// --------------åœºæ™¯ä¸­çš„NPC----------------
 
-		// ÄÏ¼«ÏÉÎÌ£¨¶Ô»°NPC£©
-		ConversationalNPC talkNPC = new ConversationalNPC(this.keyInputHandler, 0, "ÄÏ¼«ÏÉÎÌ");
+		// å—æä»™ç¿ï¼ˆå¯¹è¯NPCï¼‰
+		ConversationalNPC talkNPC = new ConversationalNPC(this.keyInputHandler, 0, "å—æä»™ç¿");
 		talkNPC.setScale(new Vector2(2f, 2f));
 		map.addNPC(talkNPC, new Vector2(1043, 275));
 
-		// Ò°¹í£¨´ò¶·NPC£©
+		// é‡é¬¼ï¼ˆæ‰“æ–—NPCï¼‰
 		FightingNPC fightingNPC = new FightingNPC(30);
-		fightingNPC.name = "Ò°¹í";
+		fightingNPC.name = "é‡é¬¼";
 		fightingNPC.setScale(new Vector2(2f, 2f));
 		map.addNPC(fightingNPC, new Vector2(800, 600));
 
-		// --------------³¡¾°ÖĞµÄ±ß½ç----------------
+		// --------------åœºæ™¯ä¸­çš„è¾¹ç•Œ----------------
 
 		float borderThickness = 100f;
-		// ÎªµØÍ¼±ß½çÌí¼ÓÅö×²ºĞ Up
+		// ä¸ºåœ°å›¾è¾¹ç•Œæ·»åŠ ç¢°æ’ç›’ Up
 		Entity mapBorderUp = new Entity();
 		mapBorderUp.name = "mapBorderUp";
 		mapBorderUp.visible = false;
@@ -203,7 +203,7 @@ public class GameCore extends Canvas implements Runnable {
 		CollisionBox.collisionBoxs.put("mapBorderUp",
 				new CollisionBox(new Vector2(0, -2 - borderThickness), new Vector2(map.worldEndTileCenter.x, -1)));
 
-		// ÎªµØÍ¼±ß½çÌí¼ÓÅö×²ºĞ Down
+		// ä¸ºåœ°å›¾è¾¹ç•Œæ·»åŠ ç¢°æ’ç›’ Down
 		Entity mapBorderDown = new Entity();
 		mapBorderDown.name = "mapBorderDown";
 		mapBorderDown.visible = false;
@@ -212,7 +212,7 @@ public class GameCore extends Canvas implements Runnable {
 				new CollisionBox(new Vector2(0, map.worldEndTileCenter.y + 1 - 23),
 						new Vector2(map.worldEndTileCenter.x, map.worldEndTileCenter.y + 2 - 23 + borderThickness)));
 
-		// ÎªµØÍ¼±ß½çÌí¼ÓÅö×²ºĞ Left
+		// ä¸ºåœ°å›¾è¾¹ç•Œæ·»åŠ ç¢°æ’ç›’ Left
 		Entity mapBorderLeft = new Entity();
 		mapBorderLeft.name = "mapBorderLeft";
 		mapBorderLeft.visible = false;
@@ -220,7 +220,7 @@ public class GameCore extends Canvas implements Runnable {
 		CollisionBox.collisionBoxs.put("mapBorderLeft",
 				new CollisionBox(new Vector2(-2 - borderThickness, 0), new Vector2(-1, map.worldEndTileCenter.y)));
 
-		// ÎªµØÍ¼±ß½çÌí¼ÓÅö×²ºĞ Right
+		// ä¸ºåœ°å›¾è¾¹ç•Œæ·»åŠ ç¢°æ’ç›’ Right
 		Entity mapBorderRight = new Entity();
 		mapBorderRight.name = "mapBorderRight";
 		mapBorderRight.visible = false;
@@ -229,9 +229,9 @@ public class GameCore extends Canvas implements Runnable {
 				new Vector2(map.worldEndTileCenter.x + 2 + borderThickness, map.worldEndTileCenter.y)));
 
 		// --------------UI----------------
-		// ¶Ô»°¿ò
+		// å¯¹è¯æ¡†
 		UIEntity talkBox = new UIEntity();
-		talkBox.setStaticImage(Resources.loadImage(Resources.path + "images/¶Ô»°¿ò.png"));
+		talkBox.setStaticImage(Resources.loadImage(Resources.path + "images/å¯¹è¯æ¡†.png"));
 		talkBox.name = "talkBox";
 		talkBox.visible = false;
 		talkBox.setScale(new Vector2(2f, 1.5f));
@@ -240,35 +240,35 @@ public class GameCore extends Canvas implements Runnable {
 
 		UIManager.addUI(talkBox);
 
-		// ÄÏ¼«ÏÉÎÌÍ·Ïñ
+		// å—æä»™ç¿å¤´åƒ
 		UIEntity talkNPCProfile = new UIEntity();
-		talkNPCProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/ÄÏ¼«ÏÉÎÌÍ·Ïñ.png"));
+		talkNPCProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/å—æä»™ç¿å¤´åƒ.png"));
 		talkNPCProfile.name = "talkNPCProfile";
 		talkNPCProfile.visible = false;
 		talkNPCProfile.position = new Vector2(107, 325);
 
 		UIManager.addUI(talkNPCProfile);
 
-		// Ö÷½ÇÍ·Ïñ
+		// ä¸»è§’å¤´åƒ
 		UIEntity playerProfile = new UIEntity();
-		playerProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/Ö÷½ÇÍ·Ïñ.png"));
+		playerProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/ä¸»è§’å¤´åƒ.png"));
 		playerProfile.name = "playerProfile";
 		playerProfile.visible = false;
 		playerProfile.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
 
 		UIManager.addUI(playerProfile);
 
-		// ÎÄ×Ö
-		Text text = new Text("»¶Ó­ÄãÀ´µ½ÓÎÏ·ÊÀ½ç£¡£¡");
+		// æ–‡å­—
+		Text text = new Text("æ¬¢è¿ä½ æ¥åˆ°æ¸¸æˆä¸–ç•Œï¼ï¼");
 		text.name = "firstText";
 		text.visible = false;
 		text.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
 
 		UIManager.addUI(text);
 
-		// Íæ¼ÒÑªÌõµ×²¿
+		// ç©å®¶è¡€æ¡åº•éƒ¨
 		UIEntity playerHpBarBase = new UIEntity();
-		playerHpBarBase.setStaticImage(Resources.loadImage(Resources.path + "images/ÑªÌõµ×.png"));
+		playerHpBarBase.setStaticImage(Resources.loadImage(Resources.path + "images/è¡€æ¡åº•.png"));
 		playerHpBarBase.name = "playerHpBarBase";
 		playerHpBarBase.visible = true;
 		playerHpBarBase.setScale(new Vector2(300, 20));
@@ -276,7 +276,7 @@ public class GameCore extends Canvas implements Runnable {
 
 		UIManager.addUI(playerHpBarBase);
 
-		// Íæ¼ÒÑªÌõ
+		// ç©å®¶è¡€æ¡
 		UIEntity playerHpBar = new UIEntity();
 		playerHpBar.setStaticImage(Resources.loadImage(Resources.path + "images/border.png"));
 		playerHpBar.name = "playerHpBar";
@@ -287,24 +287,24 @@ public class GameCore extends Canvas implements Runnable {
 
 		UIManager.addUI(playerHpBar);
 
-		// Íæ¼ÒÑªÌõÍ·Ïñ
+		// ç©å®¶è¡€æ¡å¤´åƒ
 		UIEntity playerHpProfile = new UIEntity();
-		playerHpProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/Ö÷½ÇÍ·Ïñ.png"));
+		playerHpProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/ä¸»è§’å¤´åƒ.png"));
 		playerHpProfile.name = "playerHpProfile";
 		playerHpProfile.visible = true;
 		playerHpProfile.setScale(new Vector2(0.5f, 0.5f));
 		playerHpProfile.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
 
 		UIManager.addUI(playerHpProfile);
-		// --------------¼ÓÔØÊı¾İ----------------
+		// --------------åŠ è½½æ•°æ®----------------
 
-		CollisionBox.load(); // ´ÓÊı¾İÎÄ¼şÖĞ¼ÓÔØÅö×²ºĞÊı¾İ
+		CollisionBox.load(); // ä»æ•°æ®æ–‡ä»¶ä¸­åŠ è½½ç¢°æ’ç›’æ•°æ®
 
-		TranslateEntityHelper.load(); // ´ÓÊı¾İÎÄ¼şÖĞ¼ÓÔØÒÆ¶¯°ïÖúÊı¾İ
+		TranslateEntityHelper.load(); // ä»æ•°æ®æ–‡ä»¶ä¸­åŠ è½½ç§»åŠ¨å¸®åŠ©æ•°æ®
 
-		// ---------------------ÅäÖÃ-----------------------
-//		CollisionBox.shouldRender = false; // ²»äÖÈ¾Åö×²ºĞ
-//		TranslateEntityHelper.shouldRender = false; // ²»äÖÈ¾ÒÆ¶¯ÍÏ×§°ïÖú
+		// ---------------------é…ç½®-----------------------
+//		CollisionBox.shouldRender = false; // ä¸æ¸²æŸ“ç¢°æ’ç›’
+//		TranslateEntityHelper.shouldRender = false; // ä¸æ¸²æŸ“ç§»åŠ¨æ‹–æ‹½å¸®åŠ©
 	}
 
 	public void onUpdate() {
@@ -319,7 +319,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	/**
-	 * ÔÚÓÎÏ·Ñ­»·¿ªÊ¼Ç°½øĞĞ³õÊ¼»¯¹¤×÷
+	 * åœ¨æ¸¸æˆå¾ªç¯å¼€å§‹å‰è¿›è¡Œåˆå§‹åŒ–å·¥ä½œ
 	 */
 	public void init() {
 		keyInputHandler = new KeyInputHandler(this);
@@ -331,7 +331,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	public synchronized void start() {
-		// ¼ÓÔØÓÎÏ·×ÊÔ´
+		// åŠ è½½æ¸¸æˆèµ„æº
 		isRunning = true;
 		thread = new Thread(this, name + "_main");
 		thread.start();
@@ -341,7 +341,7 @@ public class GameCore extends Canvas implements Runnable {
 		isRunning = false;
 
 		try {
-			thread.join(); // µÈ´ıÏß³ÌthreadÔËĞĞ½áÊø
+			thread.join(); // ç­‰å¾…çº¿ç¨‹threadè¿è¡Œç»“æŸ
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -352,20 +352,20 @@ public class GameCore extends Canvas implements Runnable {
 		try {
 			init();
 
-			while (isRunning) { // ÓÎÏ·Ñ­»·
+			while (isRunning) { // æ¸¸æˆå¾ªç¯
 
 				Time.update();
 
-				// Time.shouldRender = true; //½â³ıshouldRender¶ÔÓÚ60Ö¡×óÓÒµÄÏŞÖÆ
+				// Time.shouldRender = true; //è§£é™¤shouldRenderå¯¹äº60å¸§å·¦å³çš„é™åˆ¶
 				if (Time.shouldRender) {
-					// ÓÎÏ·¿ª·¢Õß¸üĞÂ
+					// æ¸¸æˆå¼€å‘è€…æ›´æ–°
 					onUpdate();
 
-					// Åö×²
+					// ç¢°æ’
 					collisionBoxAjustUpdate();
 					CollisionBox.collisionDetection();
 
-					// ÒÆ¶¯°ïÖú
+					// ç§»åŠ¨å¸®åŠ©
 					translateEntityAjustUpdate();
 					this.mouseInputHandler.update();
 
@@ -378,7 +378,7 @@ public class GameCore extends Canvas implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			Debug.log(Debug.DebugLevel.SERVERE, "³ö´íÀ²!!!");
+			Debug.log(Debug.DebugLevel.SERVERE, "å‡ºé”™å•¦!!!");
 			e.printStackTrace();
 			willSave = false;
 		}
@@ -391,16 +391,16 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	public void draw(Graphics2D g) {
-		// äÖÈ¾bufferedImage
+		// æ¸²æŸ“bufferedImage
 		g.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
 
-		// »æÖÆµØÍ¼
+		// ç»˜åˆ¶åœ°å›¾
 		map.draw(g);
 
 		// UI
 		UIManager.draw(g);
 
-		// »æÖÆÅö×²ºĞ
+		// ç»˜åˆ¶ç¢°æ’ç›’
 		Iterator<Entry<String, CollisionBox>> collisionBoxsIterator = CollisionBox.getCollisionBoxsIterator();
 		while (collisionBoxsIterator.hasNext()) {
 			HashMap.Entry<String, CollisionBox> entry = (HashMap.Entry<String, CollisionBox>) collisionBoxsIterator
@@ -409,7 +409,7 @@ public class GameCore extends Canvas implements Runnable {
 			collisionBox.draw(g);
 		}
 
-		// »æÖÆÒÆ¶¯°ïÖú
+		// ç»˜åˆ¶ç§»åŠ¨å¸®åŠ©
 		Iterator<Entry<String, TranslateEntityHelper>> translateEntitiesIterator = TranslateEntityHelper
 				.getTranslateEntitiesHelperIterator();
 		while (translateEntitiesIterator.hasNext()) {
@@ -425,7 +425,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	/**
-	 * äÖÈ¾ÓÎÏ·
+	 * æ¸²æŸ“æ¸¸æˆ
 	 */
 	public void render() {
 		if (!this.getBS().contentsLost()) {
@@ -434,7 +434,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	/**
-	 * »ñÈ¡2D»­±Ê
+	 * è·å–2Dç”»ç¬”
 	 * 
 	 * @return
 	 */
@@ -443,23 +443,23 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	/**
-	 * »ñÈ¡Buffer Strategy
+	 * è·å–Buffer Strategy
 	 * 
 	 * @return
 	 */
 	private BufferStrategy getBS() {
-		BufferStrategy bufferStrategy = this.getBufferStrategy(); // È¡µÃ±¾CanvasµÄbuffer strategy
+		BufferStrategy bufferStrategy = this.getBufferStrategy(); // å–å¾—æœ¬Canvasçš„buffer strategy
 		if (bufferStrategy == null) {
-			this.createBufferStrategy(2); // Í¨¹ıË«»º´æ¡¢·­Ò³¼¼Êõ£¬½â¾ö°×ÆÁÉÁË¸¡¢ÁÑ¿ªµÈÎÊÌâ
+			this.createBufferStrategy(2); // é€šè¿‡åŒç¼“å­˜ã€ç¿»é¡µæŠ€æœ¯ï¼Œè§£å†³ç™½å±é—ªçƒã€è£‚å¼€ç­‰é—®é¢˜
 		}
 		return this.getBufferStrategy();
 	}
 
 	/**
-	 * ÉèÖÃÓÎÏ·Ãû³Æ
+	 * è®¾ç½®æ¸¸æˆåç§°
 	 */
 	public void setName(String name) {
-		if (isApplet) { // appletĞ¡³ÌĞò²»ĞèÒªÉèÖÃÃû³Æ
+		if (isApplet) { // appletå°ç¨‹åºä¸éœ€è¦è®¾ç½®åç§°
 			return;
 		}
 		GameCore.name = name;
@@ -467,7 +467,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	/**
-	 * ÓÃÓÚµ÷ÕûÆäËûÊµÌåµÄÎ»ÖÃ
+	 * ç”¨äºè°ƒæ•´å…¶ä»–å®ä½“çš„ä½ç½®
 	 */
 	public synchronized void translateEntityAjustUpdate() {
 		if (!TranslateEntityHelper.shouldRender) {
@@ -478,7 +478,7 @@ public class GameCore extends Canvas implements Runnable {
 			if (TranslateEntityHelper.lockedEntity.entity.visible == true &&
 					TranslateEntityHelper.lockedEntity.shouldTransScreenPos) {
 
-				// µ±ÍÏ×§xÖáÊ±
+				// å½“æ‹–æ‹½xè½´æ—¶
 				if (this.mouseInputHandler.mouse.isPressed()
 						&& (this.mouseInputHandler.worldCurPosIsInRect(TranslateEntityHelper.lockedEntity.xAxis))) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -496,7 +496,7 @@ public class GameCore extends Canvas implements Runnable {
 					TranslateEntityHelper.lockedEntity.choosenX = false;
 				}
 
-				// µ±ÍÏ×§yÖáÊ±
+				// å½“æ‹–æ‹½yè½´æ—¶
 				if (this.mouseInputHandler.mouse.isPressed()
 						&& (this.mouseInputHandler.worldCurPosIsInRect(TranslateEntityHelper.lockedEntity.yAxis))) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -515,7 +515,7 @@ public class GameCore extends Canvas implements Runnable {
 					TranslateEntityHelper.lockedEntity.choosenY = false;
 				}
 
-				// µ±ÍÏ×§»ÆÉ«²¿·ÖÊ±£¬ÔÚÁ½¸ö·½ÏòÉÏÒÆ¶¯
+				// å½“æ‹–æ‹½é»„è‰²éƒ¨åˆ†æ—¶ï¼Œåœ¨ä¸¤ä¸ªæ–¹å‘ä¸Šç§»åŠ¨
 				if (this.mouseInputHandler.mouse.isPressed()
 						&& this.mouseInputHandler.worldCurPosIsInRect(TranslateEntityHelper.lockedEntity.xyAxis)) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -534,7 +534,7 @@ public class GameCore extends Canvas implements Runnable {
 					TranslateEntityHelper.lockedEntity.choosenXY = false;
 				}
 			} else {
-				// µ±ÍÏ×§xÖáÊ±
+				// å½“æ‹–æ‹½xè½´æ—¶
 				if (this.mouseInputHandler.mouse.isPressed()
 						&& (this.mouseInputHandler.screenCurPosIsInRect(TranslateEntityHelper.lockedEntity.xAxis))) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -551,7 +551,7 @@ public class GameCore extends Canvas implements Runnable {
 					TranslateEntityHelper.lockedEntity.choosenX = false;
 				}
 
-				// µ±ÍÏ×§yÖáÊ±
+				// å½“æ‹–æ‹½yè½´æ—¶
 				if (this.mouseInputHandler.mouse.isPressed()
 						&& (this.mouseInputHandler.screenCurPosIsInRect(TranslateEntityHelper.lockedEntity.yAxis))) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -569,7 +569,7 @@ public class GameCore extends Canvas implements Runnable {
 					TranslateEntityHelper.lockedEntity.choosenY = false;
 				}
 
-				// µ±ÍÏ×§»ÆÉ«²¿·ÖÊ±£¬ÔÚÁ½¸ö·½ÏòÉÏÒÆ¶¯
+				// å½“æ‹–æ‹½é»„è‰²éƒ¨åˆ†æ—¶ï¼Œåœ¨ä¸¤ä¸ªæ–¹å‘ä¸Šç§»åŠ¨
 				if (this.mouseInputHandler.mouse.isPressed()
 						&& this.mouseInputHandler.screenCurPosIsInRect(TranslateEntityHelper.lockedEntity.xyAxis)) {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -588,14 +588,14 @@ public class GameCore extends Canvas implements Runnable {
 			}
 
 			if (TranslateEntityHelper.lockedEntity.choosenX || TranslateEntityHelper.lockedEntity.choosenY || TranslateEntityHelper.lockedEntity.choosenXY) {
-				// µ±ÓĞÒÆ¶¯°ïÖú±»Ñ¡ÖĞÊ±£¬Ó¦Ëø¶¨£¬Ö»ÄÜ½øÈë¸ÃÒÆ¶¯°ïÖú½øĞĞÊÂ¼ş¼àÌı
+				// å½“æœ‰ç§»åŠ¨å¸®åŠ©è¢«é€‰ä¸­æ—¶ï¼Œåº”é”å®šï¼Œåªèƒ½è¿›å…¥è¯¥ç§»åŠ¨å¸®åŠ©è¿›è¡Œäº‹ä»¶ç›‘å¬
 				TranslateEntityHelper.hasLock = true;
 			} else {
 				TranslateEntityHelper.hasLock = false;
 			}
 
 		} else {
-			// ÎŞËøÔò±éÀú
+			// æ— é”åˆ™éå†
 			Iterator<Entry<String, TranslateEntityHelper>> translateEntitiesIterator = TranslateEntityHelper
 					.getTranslateEntitiesHelperIterator();
 			while (translateEntitiesIterator.hasNext()) {
@@ -610,7 +610,7 @@ public class GameCore extends Canvas implements Runnable {
 
 				if (translateEntity.shouldTransScreenPos) {
 
-					// µ±ÍÏ×§xÖáÊ±
+					// å½“æ‹–æ‹½xè½´æ—¶
 					if (this.mouseInputHandler.mouse.isPressed()
 							&& (this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xAxis))) {
 						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -628,7 +628,7 @@ public class GameCore extends Canvas implements Runnable {
 						translateEntity.choosenX = false;
 					}
 
-					// µ±ÍÏ×§yÖáÊ±
+					// å½“æ‹–æ‹½yè½´æ—¶
 					if (this.mouseInputHandler.mouse.isPressed()
 							&& (this.mouseInputHandler.worldCurPosIsInRect(translateEntity.yAxis))) {
 						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -647,7 +647,7 @@ public class GameCore extends Canvas implements Runnable {
 						translateEntity.choosenY = false;
 					}
 
-					// µ±ÍÏ×§»ÆÉ«²¿·ÖÊ±£¬ÔÚÁ½¸ö·½ÏòÉÏÒÆ¶¯
+					// å½“æ‹–æ‹½é»„è‰²éƒ¨åˆ†æ—¶ï¼Œåœ¨ä¸¤ä¸ªæ–¹å‘ä¸Šç§»åŠ¨
 					if (this.mouseInputHandler.mouse.isPressed()
 							&& this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xyAxis)) {
 						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -666,7 +666,7 @@ public class GameCore extends Canvas implements Runnable {
 						translateEntity.choosenXY = false;
 					}
 				} else {
-					// µ±ÍÏ×§xÖáÊ±
+					// å½“æ‹–æ‹½xè½´æ—¶
 					if (this.mouseInputHandler.mouse.isPressed()
 							&& (this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xAxis))) {
 						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -683,7 +683,7 @@ public class GameCore extends Canvas implements Runnable {
 						translateEntity.choosenX = false;
 					}
 
-					// µ±ÍÏ×§yÖáÊ±
+					// å½“æ‹–æ‹½yè½´æ—¶
 					if (this.mouseInputHandler.mouse.isPressed()
 							&& (this.mouseInputHandler.screenCurPosIsInRect(translateEntity.yAxis))) {
 						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -701,7 +701,7 @@ public class GameCore extends Canvas implements Runnable {
 						translateEntity.choosenY = false;
 					}
 
-					// µ±ÍÏ×§»ÆÉ«²¿·ÖÊ±£¬ÔÚÁ½¸ö·½ÏòÉÏÒÆ¶¯
+					// å½“æ‹–æ‹½é»„è‰²éƒ¨åˆ†æ—¶ï¼Œåœ¨ä¸¤ä¸ªæ–¹å‘ä¸Šç§»åŠ¨
 					if (this.mouseInputHandler.mouse.isPressed()
 							&& this.mouseInputHandler.screenCurPosIsInRect(translateEntity.xyAxis)) {
 						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
@@ -720,7 +720,7 @@ public class GameCore extends Canvas implements Runnable {
 				}
 
 				if (translateEntity.choosenX || translateEntity.choosenY || translateEntity.choosenXY) {
-					// µ±ÓĞÒÆ¶¯°ïÖú±»Ñ¡ÖĞÊ±£¬Ó¦Ëø¶¨£¬Ö»ÄÜ½øÈë¸ÃÒÆ¶¯°ïÖú½øĞĞÊÂ¼ş¼àÌı
+					// å½“æœ‰ç§»åŠ¨å¸®åŠ©è¢«é€‰ä¸­æ—¶ï¼Œåº”é”å®šï¼Œåªèƒ½è¿›å…¥è¯¥ç§»åŠ¨å¸®åŠ©è¿›è¡Œäº‹ä»¶ç›‘å¬
 					TranslateEntityHelper.hasLock = true;
 					TranslateEntityHelper.lockedEntity = translateEntity;
 				}
@@ -730,7 +730,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	/**
-	 * ÓÃÓÚµ÷ÕûÅö×²ºĞ
+	 * ç”¨äºè°ƒæ•´ç¢°æ’ç›’
 	 */
 	public synchronized void collisionBoxAjustUpdate() {
 
@@ -749,7 +749,7 @@ public class GameCore extends Canvas implements Runnable {
 				continue;
 			}
 
-			// µ÷½Ú×óÉÏµãµÄÎ»ÖÃ
+			// è°ƒèŠ‚å·¦ä¸Šç‚¹çš„ä½ç½®
 			if (this.mouseInputHandler.mouse.isPressed()
 					&& this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
 					&& collisionBox.isChoosenLeftUp == false
@@ -763,7 +763,7 @@ public class GameCore extends Canvas implements Runnable {
 					&& this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
 					&& collisionBox.isChoosenLeftUp == true) {
 				collisionBox.isChoosenLeftUp = false;
-				Debug.log(Debug.DebugLevel.INFO, name + ":µ÷Õû¹ıºó£¬×óÉÏµã×ø±êÎª£º" + collisionBox.leftUpPoint);
+				Debug.log(Debug.DebugLevel.INFO, name + ":è°ƒæ•´è¿‡åï¼Œå·¦ä¸Šç‚¹åæ ‡ä¸ºï¼š" + collisionBox.leftUpPoint);
 				CollisionBox.pressedTimes = this.mouseInputHandler.mouse.getPressedTimes();
 			}
 
@@ -774,7 +774,7 @@ public class GameCore extends Canvas implements Runnable {
 				}
 			}
 
-			// µ÷½ÚÓÒÏÂµãµÄÎ»ÖÃ
+			// è°ƒèŠ‚å³ä¸‹ç‚¹çš„ä½ç½®
 			if (this.mouseInputHandler.mouse.isPressed()
 					&& this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
 					&& collisionBox.isChoosenRightDown == false
@@ -788,7 +788,7 @@ public class GameCore extends Canvas implements Runnable {
 					&& this.mouseInputHandler.mouse.getPressedTimes() > CollisionBox.pressedTimes
 					&& collisionBox.isChoosenRightDown == true) {
 				collisionBox.isChoosenRightDown = false;
-				Debug.log(Debug.DebugLevel.INFO, name + ":µ÷Õû¹ıºó£¬ÓÒÏÂµã×ø±êÎª£º" + collisionBox.rightDownPoint);
+				Debug.log(Debug.DebugLevel.INFO, name + ":è°ƒæ•´è¿‡åï¼Œå³ä¸‹ç‚¹åæ ‡ä¸ºï¼š" + collisionBox.rightDownPoint);
 				CollisionBox.pressedTimes = this.mouseInputHandler.mouse.getPressedTimes();
 			}
 

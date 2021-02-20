@@ -11,10 +11,10 @@ public class UIManager {
 
 	public static Queue<UIEntity> uiEntities = new LinkedList<UIEntity>();
 
-	static String path = Resources.path + "data/ui.dat"; // 数据文件目录
+	static String path = Resources.path + "data/ui.dat"; // 鏁版嵁鏂囦欢鐩綍
 
 	/**
-	 * 向游戏中添加UI
+	 * 鍚戞父鎴忎腑娣诲姞UI
 	 * 
 	 * @param UIEntity
 	 */

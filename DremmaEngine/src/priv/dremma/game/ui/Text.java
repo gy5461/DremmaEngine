@@ -24,12 +24,12 @@ public class Text extends UIEntity {
 		this.TXTWIDTH = (GameCore.screen.width - xBorderToScreen * 2) / fontSize;
 	}
 
-	// ÖØĞ´draw·½·¨
+	// é‡å†™drawæ–¹æ³•
 	@Override
 	public void draw(Graphics2D g) {
 		g.setFont(font);
 		g.setColor(color);
-		// ½«ÎÄ×ÖäÖÈ¾µ½ÆÁÄ»ÉÏ
+		// å°†æ–‡å­—æ¸²æŸ“åˆ°å±å¹•ä¸Š
 		int contentLen = this.content.length();
 		int xOffset = 0;
 		int yOffset = 0;

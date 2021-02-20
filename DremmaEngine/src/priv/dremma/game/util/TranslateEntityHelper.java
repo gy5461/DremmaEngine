@@ -20,15 +20,15 @@ public class TranslateEntityHelper {
 	public static boolean shouldRender = true;
 	public boolean shouldTransScreenPos;
 
-	// xÖá
+	// xè½´
 	public Rect xAxis;
 	public boolean choosenX;
 
-	// yÖá
+	// yè½´
 	public Rect yAxis;
 	public boolean choosenY;
 
-	// Ë«Öá
+	// åŒè½´
 	public Rect xyAxis;
 	public boolean choosenXY;
 	
@@ -36,7 +36,7 @@ public class TranslateEntityHelper {
 	public static TranslateEntityHelper lockedEntity = null;
 	
 
-	static String path = Resources.path + "data/translateEntities.dat"; // Êı¾İÎÄ¼şÄ¿Â¼
+	static String path = Resources.path + "data/translateEntities.dat"; // æ•°æ®æ–‡ä»¶ç›®å½•
 
 	public TranslateEntityHelper(Entity entity) {
 		this.entity = entity;
@@ -57,9 +57,9 @@ public class TranslateEntityHelper {
 		if (!TranslateEntityHelper.shouldRender) {
 			return;
 		}
-		// »æÖÆ¼ıÍ·
+		// ç»˜åˆ¶ç®­å¤´
 		float length = 50f;
-		float xyScale = 15f; // xyµÄ·½¿é´óĞ¡
+		float xyScale = 15f; // xyçš„æ–¹å—å¤§å°
 
 		Vector2 worldPos = this.entity.position;
 		Vector2 screenPos = worldPos;
@@ -194,7 +194,7 @@ public class TranslateEntityHelper {
 	}
 
 	/**
-	 * ´ÓÎÄ¼şÖĞ¼ÓÔØÒÆ¶¯°ïÖúÊı¾İ
+	 * ä»æ–‡ä»¶ä¸­åŠ è½½ç§»åŠ¨å¸®åŠ©æ•°æ®
 	 */
 	@SuppressWarnings("unchecked")
 	public static void load() {
@@ -207,7 +207,7 @@ public class TranslateEntityHelper {
 			position = (Vector2) objs.peek();
 			objs.remove(position);
 
-			if (name.contains("Ò°¹í")) {
+			if (name.contains("é‡é¬¼")) {
 				continue;
 			}
 
@@ -220,7 +220,7 @@ public class TranslateEntityHelper {
 	}
 
 	/**
-	 * ½«ÒÆ¶¯°ïÖúÊı¾İ´æ½øÎÄ¼ş
+	 * å°†ç§»åŠ¨å¸®åŠ©æ•°æ®å­˜è¿›æ–‡ä»¶
 	 */
 	public static void save() {
 		Queue<Object> objs = new LinkedList<Object>();

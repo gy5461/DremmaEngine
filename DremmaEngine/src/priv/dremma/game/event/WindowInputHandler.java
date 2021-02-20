@@ -7,7 +7,7 @@ import priv.dremma.game.GameCore;
 import priv.dremma.game.util.Debug;
 
 /**
- * ´°ÌåÊÂ¼ş£¨Èç´ò¿ª¹Ø±ÕµÈ£©´¦ÀíÀà
+ * çª—ä½“äº‹ä»¶ï¼ˆå¦‚æ‰“å¼€å…³é—­ç­‰ï¼‰å¤„ç†ç±»
  * @author guoyi
  *
  */
@@ -17,7 +17,7 @@ public class WindowInputHandler implements WindowListener {
 	
 	public WindowInputHandler(GameCore game) {
 		this.game = game;
-		this.game.window.addWindowListener(this);	//¸øÓÎÏ·´°ÌåÌí¼Ó´°Ìå¼àÌıÆ÷
+		this.game.window.addWindowListener(this);	//ç»™æ¸¸æˆçª—ä½“æ·»åŠ çª—ä½“ç›‘å¬å™¨
 	}
 	
 	@Override

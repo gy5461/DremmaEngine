@@ -9,7 +9,7 @@ import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.tiles.TileMap;
 
 /**
- * ×ÊÔ´¼ÓÔØÀà
+ * èµ„æºåŠ è½½ç±»
  * 
  * @author guoyi
  *
@@ -18,12 +18,12 @@ public class Resources {
 
 	public static String path;
 
-	// ×ÊÔ´ÀàĞÍ
+	// èµ„æºç±»å‹
 	public static enum ResourceType {
 		Music, Tile
 	}
 
-	public static HashMap<String, String> res = new HashMap<String, String>(); // ×ÊÔ´±í£¨Ãû³Æ-Â·¾¶£©
+	public static HashMap<String, String> res = new HashMap<String, String>(); // èµ„æºè¡¨ï¼ˆåç§°-è·¯å¾„ï¼‰
 
 	public static void load(ResourceType type, String name, String path) {
 		res.put(name, path);
@@ -35,14 +35,14 @@ public class Resources {
 		case Tile:
 			Image tile = Resources.loadImage(path);
 			if (!TileMap.tilesTable.contains(tile)) {
-				TileMap.tilesTable.add(tile); // ÏòµØ×©±àºÅÓëµØ×©¶ÔÓ¦µÄ±íÖĞÌí¼ÓµØ×©
+				TileMap.tilesTable.add(tile); // å‘åœ°ç –ç¼–å·ä¸åœ°ç –å¯¹åº”çš„è¡¨ä¸­æ·»åŠ åœ°ç –
 			}
 			break;
 		}
 	}
 	
 	/**
-	 * ¼ÓÔØÍ¼Æ¬
+	 * åŠ è½½å›¾ç‰‡
 	 * @param filePath
 	 * @return
 	 */

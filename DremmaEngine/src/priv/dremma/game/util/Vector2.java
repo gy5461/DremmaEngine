@@ -3,7 +3,7 @@ package priv.dremma.game.util;
 import java.io.Serializable;
 
 /**
- * ¶Ô¶şÎ¬ÏòÁ¿µÄ³£ÓÃ·½·¨µÄ·â×°
+ * å¯¹äºŒç»´å‘é‡çš„å¸¸ç”¨æ–¹æ³•çš„å°è£…
  * 
  * @author guoyi
  *
@@ -14,7 +14,7 @@ public class Vector2 implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6749397976961813275L;
-	public float x, y; // ÏòÁ¿(x,y)ÔÚxÖáÓëyÖáÉÏµÄ·ÖÁ¿
+	public float x, y; // å‘é‡(x,y)åœ¨xè½´ä¸yè½´ä¸Šçš„åˆ†é‡
 
 	public static Vector2 zero() {
 		return new Vector2();
@@ -24,13 +24,13 @@ public class Vector2 implements Serializable {
 		return new Vector2(1, 1);
 	}
 
-	// Ä¬ÈÏ¹¹Ôìº¯Êı
+	// é»˜è®¤æ„é€ å‡½æ•°
 	public Vector2() {
 		this.x = 0;
 		this.y = 0;
 	}
 
-	// ´ø²Î¹¹Ôìº¯Êı
+	// å¸¦å‚æ„é€ å‡½æ•°
 	public Vector2(float x, float y) {
 		this.x = x;
 		this.y = y;
@@ -41,89 +41,89 @@ public class Vector2 implements Serializable {
 		this.y = vec2.y;
 	}
 
-	// ·µ»ØÏòÁ¿Ä£³¤
+	// è¿”å›å‘é‡æ¨¡é•¿
 	public float magnitude() {
 		return (float) Math.sqrt(x * x + y * y);
 	}
 
-	// ·µ»ØÏòÁ¿Ä£³¤µÄÆ½·½£¬±Èmagnitude¿ì
+	// è¿”å›å‘é‡æ¨¡é•¿çš„å¹³æ–¹ï¼Œæ¯”magnitudeå¿«
 	public float sqrMagnitude() {
 		return x * x + y * y;
 	}
 
-	// ·µ»Ø±¾ÏòÁ¿µã³ËÁíÒ»¸öÏòÁ¿µÄ½á¹û£ºa¡¤b = |a||b|cos¦È
+	// è¿”å›æœ¬å‘é‡ç‚¹ä¹˜å¦ä¸€ä¸ªå‘é‡çš„ç»“æœï¼šaÂ·b = |a||b|cosÎ¸
 	public float dot(Vector2 other) {
 		return x * other.x + y * other.y;
 	}
 
-	// ½«ÏòÁ¿¹éÒ»»¯
+	// å°†å‘é‡å½’ä¸€åŒ–
 	public Vector2 normalized() {
 		float magnitude = magnitude();
 		return new Vector2(x / magnitude, y / magnitude);
 	}
 
-	// Ğı×ªÏòÁ¿
+	// æ—‹è½¬å‘é‡
 	public Vector2 rotate(float angle) {
-		double radians = Math.toRadians(angle); // ½«½Ç¶È×ª»»Îª»¡¶È
+		double radians = Math.toRadians(angle); // å°†è§’åº¦è½¬æ¢ä¸ºå¼§åº¦
 		double cos = Math.cos(radians);
 		double sin = Math.sin(radians);
 
 		return new Vector2((float) (x * cos - y * sin), (float) (x * sin + y * cos));
 	}
 
-	// ÏòÁ¿Ïà¼Ó
+	// å‘é‡ç›¸åŠ 
 	public Vector2 add(Vector2 other) {
 		return new Vector2(x + other.x, y + other.y);
 	}
 
-	// ÏòÁ¿¼ÓÊı×Ö
+	// å‘é‡åŠ æ•°å­—
 	public Vector2 add(float other) {
 		return new Vector2(x + other, y + other);
 	}
 
-	// ÏòÁ¿Ïà¼õ
+	// å‘é‡ç›¸å‡
 	public Vector2 sub(Vector2 other) {
 		return new Vector2(x - other.x, y - other.y);
 	}
 
-	// ÏòÁ¿¼õÊı×Ö
+	// å‘é‡å‡æ•°å­—
 	public Vector2 sub(float other) {
 		return new Vector2(x - other, y - other);
 	}
 
-	// ÏòÁ¿Ïà³Ë
+	// å‘é‡ç›¸ä¹˜
 	public Vector2 mul(Vector2 other) {
 		return new Vector2(x * other.x, y * other.y);
 	}
 
-	// ÏòÁ¿³ËÊı×Ö
+	// å‘é‡ä¹˜æ•°å­—
 	public Vector2 mul(float other) {
 		return new Vector2(x * other, y * other);
 	}
 
-	// ÏòÁ¿Ïà³ı
+	// å‘é‡ç›¸é™¤
 	public Vector2 div(Vector2 other) {
 		return new Vector2(x / other.x, y / other.y);
 	}
 
-	// ÏòÁ¿³ıÊı×Ö
+	// å‘é‡é™¤æ•°å­—
 	public Vector2 div(float other) {
 		return new Vector2(x / other, y / other);
 	}
 
-	// ÏòÁ¿¾ø¶ÔÖµ
+	// å‘é‡ç»å¯¹å€¼
 	public Vector2 abs() {
 		return new Vector2(Math.abs(x), Math.abs(y));
 	}
 
-	// ÏòÁ¿´òÓ¡¸ñÊ½
+	// å‘é‡æ‰“å°æ ¼å¼
 	@Override
 	public String toString() {
 		return "Vector2 [x=" + x + ", y=" + y + "]";
 	}
 
 	/**
-	 * ÏòÁ¿ÊÇ·ñÏàµÈ
+	 * å‘é‡æ˜¯å¦ç›¸ç­‰
 	 * 
 	 * @param other
 	 * @return
@@ -133,7 +133,7 @@ public class Vector2 implements Serializable {
 	}
 
 	/**
-	 * ÏòÁ¿ÊÇ·ñ´óÓÚother
+	 * å‘é‡æ˜¯å¦å¤§äºother
 	 * 
 	 * @param other
 	 * @return
@@ -143,7 +143,7 @@ public class Vector2 implements Serializable {
 	}
 
 	/**
-	 * ÏòÁ¿ÊÇ·ñ´óÓÚµÈÓÚother
+	 * å‘é‡æ˜¯å¦å¤§äºç­‰äºother
 	 * 
 	 * @param other
 	 * @return
@@ -153,7 +153,7 @@ public class Vector2 implements Serializable {
 	}
 
 	/**
-	 * ÏòÁ¿ÊÇ·ñĞ¡ÓÚother
+	 * å‘é‡æ˜¯å¦å°äºother
 	 * 
 	 * @param other
 	 * @return
@@ -163,7 +163,7 @@ public class Vector2 implements Serializable {
 	}
 
 	/**
-	 * ÏòÁ¿ÊÇ·ñĞ¡ÓÚµÈÓÚother
+	 * å‘é‡æ˜¯å¦å°äºç­‰äºother
 	 * 
 	 * @param other
 	 * @return
@@ -173,7 +173,7 @@ public class Vector2 implements Serializable {
 	}
 
 	/**
-	 * µ±Ç°×ø±êÊÇ·ñÔÚÒ»¸ö¾ØĞÎÄÚ
+	 * å½“å‰åæ ‡æ˜¯å¦åœ¨ä¸€ä¸ªçŸ©å½¢å†…
 	 * 
 	 * @param leftUp
 	 * @param rightDown
@@ -184,11 +184,11 @@ public class Vector2 implements Serializable {
 	}
 
 	/**
-	 * ¶şÎ¬ÏòÁ¿µÄ²åÖµº¯Êı
+	 * äºŒç»´å‘é‡çš„æ’å€¼å‡½æ•°
 	 * 
-	 * @param startPos ¿ªÊ¼Î»ÖÃ
-	 * @param endPos   ½áÊøÎ»ÖÃ
-	 * @param time     ²åÖµÊ±¼ä£¨0.0f¡«1.0f£©
+	 * @param startPos å¼€å§‹ä½ç½®
+	 * @param endPos   ç»“æŸä½ç½®
+	 * @param time     æ’å€¼æ—¶é—´ï¼ˆ0.0fï½1.0fï¼‰
 	 * @return
 	 */
 	public static Vector2 lerp(Vector2 startPos, Vector2 endPos, float time) {

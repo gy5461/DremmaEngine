@@ -4,7 +4,7 @@ import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
 /**
- * ÆÁÄ»Àà
+ * å±å¹•ç±»
  * @author guoyi
  *
  */
@@ -13,7 +13,7 @@ public class Screen {
 	public int width;
 	public int height;
 	
-	public static Vector2 leftUpPoint;		//ÆÁÄ»×óÉÏµã×ø±ê
+	public static Vector2 leftUpPoint;		//å±å¹•å·¦ä¸Šç‚¹åæ ‡
 	
 	public Screen(int width, int height) {
 		this.width = width;
@@ -22,7 +22,7 @@ public class Screen {
 	}
 	
 	public void setleftUpPoint(Vector2 point) {
-		// Ê¹ÉãÏñÍ·Æ½»¬µØ¸úËæ
+		// ä½¿æ‘„åƒå¤´å¹³æ»‘åœ°è·Ÿéš
 		leftUpPoint = Vector2.lerp(leftUpPoint, point, 2.5f*Time.deltaTime);
 	}
 

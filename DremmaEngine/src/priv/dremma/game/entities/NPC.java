@@ -14,7 +14,7 @@ import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
 public class NPC extends Entity {
-	// NPCµÄÕ¾Á¢¶¯»­
+	// NPCçš„ç«™ç«‹åŠ¨ç”»
 	HashMap<Integer, Image> NPCStandUp = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> NPCStandDown = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> NPCStandRight = new HashMap<Integer, Image>();
@@ -25,7 +25,7 @@ public class NPC extends Entity {
 	Animation NPCStandRightAnimation = new Animation();
 	Animation NPCStandLeftAnimation = new Animation();
 
-	// NPCµÄÒÆ¶¯¶¯»­
+	// NPCçš„ç§»åŠ¨åŠ¨ç”»
 	HashMap<Integer, Image> NPCMoveUp = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> NPCMoveDown = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> NPCMoveRight = new HashMap<Integer, Image>();
@@ -36,7 +36,7 @@ public class NPC extends Entity {
 	Animation NPCMoveRightAnimation = new Animation();
 	Animation NPCMoveLeftAnimation = new Animation();
 
-	// FightingNPCµÄ¹¥»÷¶¯»­
+	// FightingNPCçš„æ”»å‡»åŠ¨ç”»
 	HashMap<Integer, Image> NPCDie = new HashMap<Integer, Image>();
 	Animation NPCDieAnimation = new Animation();
 
@@ -47,8 +47,8 @@ public class NPC extends Entity {
 
 	protected float nearDistance = 100f;
 
-	public float standTimer = 0.0f; // Õ¾Á¢¼ÆÊ±
-	float standTime = 1.0f; // Õ¾Á¢Ê±¼ä
+	public float standTimer = 0.0f; // ç«™ç«‹è®¡æ—¶
+	float standTime = 1.0f; // ç«™ç«‹æ—¶é—´
 
 	protected String moveSound;
 
@@ -60,26 +60,26 @@ public class NPC extends Entity {
 	}
 
 	/**
-	 * NPC¸üĞÂ£º´¦ÀíNPCµÄËæ»úÒÆ¶¯
+	 * NPCæ›´æ–°ï¼šå¤„ç†NPCçš„éšæœºç§»åŠ¨
 	 */
 	@Override
 	public synchronized void update() {
 		switch (GameCore.viewAngle) {
 		case ViewAngle2DOT5:
-			// ÈôNPCËÙ¶ÈÎª0£¬²»ĞèÒª¶¯
+			// è‹¥NPCé€Ÿåº¦ä¸º0ï¼Œä¸éœ€è¦åŠ¨
 			if (FloatCompare.isEqual(this.speed, 0f)) {
 				return;
 			}
 
 			if (this.state == Entity.EntityState.STAND) {
-				// Õ¾Á¢Ò»»á¶ù
+				// ç«™ç«‹ä¸€ä¼šå„¿
 				if (this.standTimer < this.standTime) {
 					this.standTimer += Time.deltaTime;
 					return;
 				} else {
 					this.standTimer = 0.0f;
 				}
-				// Ëæ»úÒ»¸ö·½Ïò¿ªÊ¼×ß
+				// éšæœºä¸€ä¸ªæ–¹å‘å¼€å§‹èµ°
 				Random random = new Random();
 				switch (Entity.EntityDirection.values()[random.nextInt(4)]) {
 				case UP:
@@ -116,7 +116,7 @@ public class NPC extends Entity {
 				this.endPos = this.startPos.add(this.moveVector.mul(totalDistance));
 			}
 
-			// ÒÆ¶¯Ê±£¬ÒÆ¶¯Ò»¶Î¾àÀëºóÕ¾Á¢
+			// ç§»åŠ¨æ—¶ï¼Œç§»åŠ¨ä¸€æ®µè·ç¦»åç«™ç«‹
 			if (this.state == Entity.EntityState.MOVE) {
 				AudioManager.getInstance().playLoop(moveSound);
 
@@ -151,20 +151,20 @@ public class NPC extends Entity {
 
 		super.update();
 
-		// ÉèÖÃÅö×²ºĞ×ø±ê
+		// è®¾ç½®ç¢°æ’ç›’åæ ‡
 		CollisionBox.collisionBoxs.get(this.name).leftUpPoint = this.position.sub(new Vector2(33, -17));
 		CollisionBox.collisionBoxs.get(this.name).rightDownPoint = this.position.add(new Vector2(25, 90));
 	}
 
 	/**
-	 * ¼ÓÔØ¶¯»­×ÊÔ´
+	 * åŠ è½½åŠ¨ç”»èµ„æº
 	 */
 	public void loadAnimation() {
 
 	}
 
 	/**
-	 * »ñÈ¡µ±Ç°NPCÊÇ·ñ¾àÀëÍæ¼Ò½ü
+	 * è·å–å½“å‰NPCæ˜¯å¦è·ç¦»ç©å®¶è¿‘
 	 * 
 	 * @return
 	 */

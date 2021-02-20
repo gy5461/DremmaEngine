@@ -23,14 +23,14 @@ public class Animator {
 	}
 
 	/**
-	 * ÉèÖÃ¶¯»­×´Ì¬
+	 * è®¾ç½®åŠ¨ç”»çŠ¶æ€
 	 * 
-	 * @param state       ×ªµ½µÄÄ¿µÄ¶¯»­×´Ì¬
-	 * @param hasExitTime Ä¿µÄ¶¯»­×´Ì¬ÓĞÎŞÍË³öÊ±¼ä
+	 * @param state       è½¬åˆ°çš„ç›®çš„åŠ¨ç”»çŠ¶æ€
+	 * @param hasExitTime ç›®çš„åŠ¨ç”»çŠ¶æ€æœ‰æ— é€€å‡ºæ—¶é—´
 	 */
 	public synchronized void setState(String destState, boolean hasExitTime) {
 		if (this.animations.get(destState) == null) {
-			Debug.log(Debug.DebugLevel.SERVERE, "Ä¿µÄ¶¯»­×´Ì¬" + destState + "²»´æÔÚ");
+			Debug.log(Debug.DebugLevel.SERVERE, "Ä¿ï¿½Ä¶ï¿½ï¿½ï¿½×´Ì¬" + destState + "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 			return;
 		}
 		if (this.state == null) {
@@ -43,7 +43,7 @@ public class Animator {
 		}
 
 		if (this.animations.get(this.state).hasExitTime) {
-			// ÏÈ²¥·ÅÍêÔÙ×ª»»
+			// å…ˆæ’­æ”¾å®Œå†è½¬æ¢
 			Timer timer = new Timer();
 
 			timer.schedule(new TimerTask() {

@@ -12,7 +12,7 @@ import priv.dremma.game.util.Rect;
 import priv.dremma.game.util.Vector2;
 
 /**
- * Êó±êÊäÈë´¦ÀíÀà
+ * é¼ æ ‡è¾“å…¥å¤„ç†ç±»
  * 
  * @author guoyi
  *
@@ -20,11 +20,11 @@ import priv.dremma.game.util.Vector2;
 
 public class MouseInputHandler implements MouseListener {
 	GameCore game;
-	public Vector2 curPos = Vector2.zero(); // Êó±êµ±Ç°Î»ÖÃ
-	private Vector2 lastFramePos = Vector2.zero(); // Êó±êÉÏÒ»Î»ÖÃ
+	public Vector2 curPos = Vector2.zero(); // é¼ æ ‡å½“å‰ä½ç½®
+	private Vector2 lastFramePos = Vector2.zero(); // é¼ æ ‡ä¸Šä¸€ä½ç½®
 
 	public MouseInputHandler(GameCore game) {
-		game.addMouseListener(this); // ¸øÓÎÏ·´°ÌåÌí¼ÓÊó±ê¼àÌıÆ÷
+		game.addMouseListener(this); // ç»™æ¸¸æˆçª—ä½“æ·»åŠ é¼ æ ‡ç›‘å¬å™¨
 		this.game = game;
 	}
 
@@ -58,15 +58,15 @@ public class MouseInputHandler implements MouseListener {
 	}
 
 	/**
-	 * ÄÚ²¿Àà£¬Êó±ê
+	 * å†…éƒ¨ç±»ï¼Œé¼ æ ‡
 	 * 
 	 * @author guoyi
 	 *
 	 */
 	public class Mouse {
-		private int pressedTimes = 0; // Êó±ê°´Ñ¹´ÎÊı
-		private boolean isPressed = false; // Êó±êÊÇ·ñ±»°´
-		private Vector2 location; // Êó±ê°´Ñ¹Î»ÖÃ
+		private int pressedTimes = 0; // é¼ æ ‡æŒ‰å‹æ¬¡æ•°
+		private boolean isPressed = false; // é¼ æ ‡æ˜¯å¦è¢«æŒ‰
+		private Vector2 location; // é¼ æ ‡æŒ‰å‹ä½ç½®
 
 		public int getPressedTimes() {
 			return pressedTimes;
@@ -85,10 +85,10 @@ public class MouseInputHandler implements MouseListener {
 		}
 
 		/**
-		 * ÅĞ¶ÏÊó±ê×ø±êÊÇ·ñÔÚ¾ØĞÎÄÚ ¾ØĞÎ£º
+		 * åˆ¤æ–­é¼ æ ‡åæ ‡æ˜¯å¦åœ¨çŸ©å½¢å†… çŸ©å½¢ï¼š
 		 * 
-		 * @param leftUp    ×óÉÏµã×ø±ê
-		 * @param rightDown ÓÒÏÂµã×ø±ê
+		 * @param leftUp    å·¦ä¸Šç‚¹åæ ‡
+		 * @param rightDown å³ä¸‹ç‚¹åæ ‡
 		 * @return
 		 */
 		public boolean isInRect(Vector2 leftUp, Vector2 rightDown) {
@@ -96,17 +96,17 @@ public class MouseInputHandler implements MouseListener {
 		}
 
 		/**
-		 * ÅĞ¶ÏÊó±ê×ø±êÊÇ·ñÔÚ¾ØĞÎÄÚ ¾ØĞÎ£º
+		 * åˆ¤æ–­é¼ æ ‡åæ ‡æ˜¯å¦åœ¨çŸ©å½¢å†… çŸ©å½¢ï¼š
 		 * 
-		 * @param leftUp    ×óÉÏµã×ø±ê
-		 * @param rightDown ÓÒÏÂµã×ø±ê
+		 * @param leftUp    å·¦ä¸Šç‚¹åæ ‡
+		 * @param rightDown å³ä¸‹ç‚¹åæ ‡
 		 * @return
 		 */
 		public boolean isInRect(Rect rect) {
 			return GUtils.viewPortToWorldPixel(this.location).isInRect(rect.leftUpPoint, rect.rightDownPoint);
 		}
 
-		// ´¥·¢¼ü
+		// è§¦å‘é”®
 		public void toggle(Vector2 location, boolean isPressed) {
 			this.location = location;
 			this.isPressed = isPressed;
@@ -123,29 +123,29 @@ public class MouseInputHandler implements MouseListener {
 
 	public Mouse mouse = new Mouse();
 
-	// Êó±ê°´¼üµ¥»÷£¨°´ÏÂ²¢ÊÍ·Å£©Ê±´¥·¢£¬²âÊÔÊ±¸Ğ¾õ²»¹»ÁéÃô
+	// é¼ æ ‡æŒ‰é”®å•å‡»ï¼ˆæŒ‰ä¸‹å¹¶é‡Šæ”¾ï¼‰æ—¶è§¦å‘ï¼Œæµ‹è¯•æ—¶æ„Ÿè§‰ä¸å¤Ÿçµæ•
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
-	// Êó±ê°´¼ü°´ÏÂÊ±´¥·¢
+	// é¼ æ ‡æŒ‰é”®æŒ‰ä¸‹æ—¶è§¦å‘
 	@Override
 	public void mousePressed(MouseEvent e) {
 		mouse.toggle(new Vector2(e.getX(), e.getY()), true);
 	}
 
-	// Êó±êÊÍ·ÅÊ±´¥·¢
+	// é¼ æ ‡é‡Šæ”¾æ—¶è§¦å‘
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		mouse.toggle(new Vector2(e.getX(), e.getY()), false);
 	}
 
-	// Êó±ê½øÈëÊ±´¥·¢
+	// é¼ æ ‡è¿›å…¥æ—¶è§¦å‘
 	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
-	// Êó±ê´ÓEnter×´Ì¬ÖĞÍË³öÊ±´¥·¢
+	// é¼ æ ‡ä»EnterçŠ¶æ€ä¸­é€€å‡ºæ—¶è§¦å‘
 	@Override
 	public void mouseExited(MouseEvent e) {
 	}

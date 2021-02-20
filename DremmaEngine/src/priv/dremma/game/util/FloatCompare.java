@@ -1,13 +1,13 @@
 package priv.dremma.game.util;
 
 /**
- * ¶ÔÓÚ¸¡µãÊı±È½Ï½øĞĞµÄĞŞÕı
+ * å¯¹äºæµ®ç‚¹æ•°æ¯”è¾ƒè¿›è¡Œçš„ä¿®æ­£
  * @author guoyi
  *
  */
 public class FloatCompare {
 
-	public static final float eps = 1e-8f;	//¾«¶È£¬¾«È·µ½Ğ¡Êıµãºó6Î»
+	public static final float eps = 1e-8f;	//ç²¾åº¦ï¼Œç²¾ç¡®åˆ°å°æ•°ç‚¹å6ä½
 
 	static int sgn(float a) {
 		return a < -1.0f * eps ? -1 : a < eps ? 0 : 1;

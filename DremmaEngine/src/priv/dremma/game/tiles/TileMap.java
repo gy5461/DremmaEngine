@@ -25,27 +25,27 @@ import priv.dremma.game.util.TranslateEntityHelper;
 import priv.dremma.game.util.Vector2;
 
 /**
- * TileMap Àà°üº¬µØ×©µØÍ¼µÄÊı¾İ¡¢ÊµÌå
+ * TileMap ç±»åŒ…å«åœ°ç –åœ°å›¾çš„æ•°æ®ã€å®ä½“
  * 
  * @author guoyi
  *
  */
 public class TileMap {
-	// µØ×©±àºÅÓëµØ×©¶ÔÓ¦µÄ±í£¬¼ÓÔØµØÍ¼Ê±Ê¹ÓÃ
+	// åœ°ç –ç¼–å·ä¸åœ°ç –å¯¹åº”çš„è¡¨ï¼ŒåŠ è½½åœ°å›¾æ—¶ä½¿ç”¨
 	public static ArrayList<Image> tilesTable = new ArrayList<Image>();
 
-	private Image[][] tiles; // µØ×©
+	private Image[][] tiles; // åœ°ç –
 	private Vector2 scale;
 	public static final Vector2 TILE_SIZE = new Vector2(130, 76);
-	public static float modifier = TileMap.TILE_SIZE.y / TileMap.TILE_SIZE.x; // 2.5DÊÓ½ÇÊ±£¬ĞèÒª½øĞĞËÙ¶ÈĞŞÕı²Å²»»á×ßÍá
-	public static HashMap<String, Entity> entities; // ÓÎÏ·ÖĞµÄÆäËûÊµÌå
-	public static Player player; // Ö÷½Ç
-	PriorityQueue<Entity> renderEntities; // äÖÈ¾ÓÅÏÈ¶ÓÁĞ
+	public static float modifier = TileMap.TILE_SIZE.y / TileMap.TILE_SIZE.x; // 2.5Dè§†è§’æ—¶ï¼Œéœ€è¦è¿›è¡Œé€Ÿåº¦ä¿®æ­£æ‰ä¸ä¼šèµ°æ­ª
+	public static HashMap<String, Entity> entities; // æ¸¸æˆä¸­çš„å…¶ä»–å®ä½“
+	public static Player player; // ä¸»è§’
+	PriorityQueue<Entity> renderEntities; // æ¸²æŸ“ä¼˜å…ˆé˜Ÿåˆ—
 
 	public Vector2 worldEndTileCenter = Vector2.zero();
 
 	/**
-	 * Éú³ÉÖ¸¶¨¿í¶ÈÓë¸ß¶ÈµÄTileMap
+	 * ç”ŸæˆæŒ‡å®šå®½åº¦ä¸é«˜åº¦çš„TileMap
 	 * 
 	 * @param width
 	 * @param height
@@ -57,7 +57,7 @@ public class TileMap {
 
 			@Override
 			public int compare(Entity o1, Entity o2) {
-				// ½â¾öÈËÊ÷ÎÊÌâ
+				// è§£å†³äººæ ‘é—®é¢˜
 				return FloatCompare.isLess(o1.getBottom(), o2.getBottom()) ? -1 : 1;
 			}
 
@@ -75,24 +75,24 @@ public class TileMap {
 	}
 
 	/**
-	 * »ñÈ¡TileMapµÄ¿í¶È£¬¼´Ë®Æ½·½ÏòµÄµØ×©¸öÊı
+	 * è·å–TileMapçš„å®½åº¦ï¼Œå³æ°´å¹³æ–¹å‘çš„åœ°ç –ä¸ªæ•°
 	 */
 	public int getWidth() {
 		return tiles.length;
 	}
 
 	/**
-	 * »ñÈ¡TileMapµÄ¸ß¶È£¬¼´´¹Ö±·½ÏòµÄµØ×©¸öÊı
+	 * è·å–TileMapçš„é«˜åº¦ï¼Œå³å‚ç›´æ–¹å‘çš„åœ°ç –ä¸ªæ•°
 	 */
 	public int getHeight() {
 		return tiles[0].length;
 	}
 
 	/**
-	 * È¡µÃÖ¸¶¨Î»ÖÃµÄµØ×©£¬Ô½½çÊ±·µ»Ønull
+	 * å–å¾—æŒ‡å®šä½ç½®çš„åœ°ç –ï¼Œè¶Šç•Œæ—¶è¿”å›null
 	 * 
-	 * @param x µØ×©µÄºá×ø±ê
-	 * @param y µØ×©µÄ×İ×ø±ê
+	 * @param x åœ°ç –çš„æ¨ªåæ ‡
+	 * @param y åœ°ç –çš„çºµåæ ‡
 	 * @return
 	 */
 	public Image getTile(int x, int y) {
@@ -103,7 +103,7 @@ public class TileMap {
 	}
 
 	/**
-	 * ÉèÖÃÖ¸¶¨Î»ÖÃµÄµØ×©
+	 * è®¾ç½®æŒ‡å®šä½ç½®çš„åœ°ç –
 	 * 
 	 * @param x
 	 * @param y
@@ -114,7 +114,7 @@ public class TileMap {
 	}
 
 	/**
-	 * »ñÈ¡ÓÎÏ·Ö÷½Ç¶ÔÏó
+	 * è·å–æ¸¸æˆä¸»è§’å¯¹è±¡
 	 * 
 	 * @return
 	 */
@@ -123,7 +123,7 @@ public class TileMap {
 	}
 
 	/**
-	 * ÉèÖÃÓÎÏ·Ö÷½Ç¶ÔÏó
+	 * è®¾ç½®æ¸¸æˆä¸»è§’å¯¹è±¡
 	 * 
 	 * @param player
 	 */
@@ -132,7 +132,7 @@ public class TileMap {
 	}
 
 	/**
-	 * Ìí¼ÓÊµÌåµ½µØÍ¼ÖĞ
+	 * æ·»åŠ å®ä½“åˆ°åœ°å›¾ä¸­
 	 * 
 	 * @param entity
 	 */
@@ -162,7 +162,7 @@ public class TileMap {
 	}
 
 	/**
-	 * ´ÓµØÍ¼ÖĞÉ¾³ıÊµÌå
+	 * ä»åœ°å›¾ä¸­åˆ é™¤å®ä½“
 	 * 
 	 * @param entity
 	 */
@@ -171,17 +171,17 @@ public class TileMap {
 	}
 
 	/**
-	 * È¡µÃÕâ¸öµØÍ¼ÖĞËùÓĞÊµÌå£¨³ıÖ÷½Ç¶ÔÏóÍâ£©µÄµü´úÆ÷
+	 * å–å¾—è¿™ä¸ªåœ°å›¾ä¸­æ‰€æœ‰å®ä½“ï¼ˆé™¤ä¸»è§’å¯¹è±¡å¤–ï¼‰çš„è¿­ä»£å™¨
 	 */
 	public static Iterator<Entry<String, Entity>> getEntitiesIterator() {
 		return entities.entrySet().iterator();
 	}
 
 	/**
-	 * ¼ÓÔØµØ×©×ÊÔ´
+	 * åŠ è½½åœ°ç –èµ„æº
 	 */
 	public static void loadTiles() {
-		// ¼ÓÔØµØ×©
+		// åŠ è½½åœ°ç –
 		Resources.load(Resources.ResourceType.Tile, "floor0", Resources.path + "images/tiles/floor_0.png");
 		Resources.load(Resources.ResourceType.Tile, "floor1", Resources.path + "images/tiles/floor_1.png");
 		Resources.load(Resources.ResourceType.Tile, "floor2", Resources.path + "images/tiles/floor_2.png");
@@ -190,7 +190,7 @@ public class TileMap {
 	}
 
 	/**
-	 * ¸ù¾İÎÄ¼ş¼ÓÔØµØÍ¼
+	 * æ ¹æ®æ–‡ä»¶åŠ è½½åœ°å›¾
 	 */
 	public static TileMap loadTileMap(String path) {
 		TileMap.loadTiles();
@@ -221,7 +221,7 @@ public class TileMap {
 			height = lines.size();
 			resultMap = new TileMap(width, height);
 			resultMap.setScale(new Vector2(2, 2));
-			// ´ÓÉÏµ½ÏÂ·ÖÎöÎÄ±¾
+			// ä»ä¸Šåˆ°ä¸‹åˆ†ææ–‡æœ¬
 			for (int y = 0; y < height; y++) {
 				String line = (String) lines.get(y);
 				String[] words = GUtils.split(line);
@@ -251,7 +251,7 @@ public class TileMap {
 	}
 
 	/**
-	 * ÏòµØÍ¼ÖĞÌí¼ÓÊµÌå£¨ÈçÊ÷¡¢NPCµÈ£©
+	 * å‘åœ°å›¾ä¸­æ·»åŠ å®ä½“ï¼ˆå¦‚æ ‘ã€NPCç­‰ï¼‰
 	 * 
 	 * @param entity
 	 * @param tileX
@@ -259,7 +259,7 @@ public class TileMap {
 	 */
 	public void addEntity(Entity srcEntity, Vector2 tilePos) {
 		if (srcEntity != null) {
-			// ´ÓÖ÷ÊµÌåÖĞ¸´ÖÆÊµÌå£¨Éî¿½±´£©
+			// ä»ä¸»å®ä½“ä¸­å¤åˆ¶å®ä½“ï¼ˆæ·±æ‹·è´ï¼‰
 			Entity entity = new Entity(srcEntity);
 			entity.position = new Vector2(
 					GUtils.worldTileCenterToWorldPixel(tilePos, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y, this.scale).x,
@@ -273,7 +273,7 @@ public class TileMap {
 	}
 
 	/**
-	 * ¸üĞÂµØÍ¼
+	 * æ›´æ–°åœ°å›¾
 	 */
 	public void update() {
 		TileMap.player.update();
@@ -289,7 +289,7 @@ public class TileMap {
 	}
 
 	/**
-	 * äÖÈ¾µØÍ¼
+	 * æ¸²æŸ“åœ°å›¾
 	 * 
 	 * @param g
 	 */
@@ -306,7 +306,7 @@ public class TileMap {
 
 		GameCore.screen.setleftUpPoint(new Vector2(screenleftUpPointX, screenleftUpPointY));
 
-		// »æÖÆµØÍ¼
+		// ç»˜åˆ¶åœ°å›¾
 		for (int j = 0; j < this.getHeight(); j++) {
 			for (int i = 0; i < this.getWidth(); i++) {
 				if (j % 2 == 1) {
@@ -333,10 +333,10 @@ public class TileMap {
 			}
 		}
 
-		// ÏòÊµÌåäÖÈ¾¶ÓÁĞÖĞÌí¼ÓÓÎÏ·Ö÷½Ç
+		// å‘å®ä½“æ¸²æŸ“é˜Ÿåˆ—ä¸­æ·»åŠ æ¸¸æˆä¸»è§’
 		renderEntities.add(player);
 
-		// ÏòÊµÌåäÖÈ¾¶ÓÁĞÖĞÌí¼ÓÆäËûÊµÌå
+		// å‘å®ä½“æ¸²æŸ“é˜Ÿåˆ—ä¸­æ·»åŠ å…¶ä»–å®ä½“
 		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
 		while (entitiesIterator.hasNext()) {
 			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
@@ -346,7 +346,7 @@ public class TileMap {
 			renderEntities.add(entry.getValue());
 		}
 
-		// äÖÈ¾ÓÅÏÈ¶ÓÁĞ
+		// æ¸²æŸ“ä¼˜å…ˆé˜Ÿåˆ—
 		while (!renderEntities.isEmpty()) {
 			renderEntities.peek().draw(g);
 			renderEntities.remove(renderEntities.peek());

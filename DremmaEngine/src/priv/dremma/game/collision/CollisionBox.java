@@ -25,18 +25,18 @@ import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 
 /**
- * 2D Åö×²ºĞ
+ * 2D ç¢°æ’ç›’
  * 
  * @author guoyi
  *
  */
 public class CollisionBox {
 
-	// ³¡¾°ÖĞËùÓĞµÄÅö×²ºĞ
+	// åœºæ™¯ä¸­æ‰€æœ‰çš„ç¢°æ’ç›’
 	public static HashMap<String, CollisionBox> collisionBoxs = new HashMap<String, CollisionBox>();
 
-	public Vector2 leftUpPoint; // ×óÉÏµã
-	public Vector2 rightDownPoint; // ÓÒÏÂµã
+	public Vector2 leftUpPoint; // å·¦ä¸Šç‚¹
+	public Vector2 rightDownPoint; // å³ä¸‹ç‚¹
 
 	static Image collisionBox = Resources.loadImage(Resources.path + "images/collisionBox.png");
 	static Image border = Resources.loadImage(Resources.path + "images/border.png");
@@ -47,15 +47,15 @@ public class CollisionBox {
 	public boolean isChoosenLeftUp;
 	public boolean isChoosenRightDown;
 
-	public String name = null; // Åö×²ºĞÃû³Æ
+	public String name = null; // ç¢°æ’ç›’åç§°
 
-	static String path = Resources.path + "data/collisionBox.dat"; // Êı¾İÎÄ¼şÄ¿Â¼
+	static String path = Resources.path + "data/collisionBox.dat"; // æ•°æ®æ–‡ä»¶ç›®å½•
 
 	public CollisionBox(Vector2 leftUpPoint, Vector2 rightDownPoint) {
 		this.leftUpPoint = new Vector2(leftUpPoint);
 		this.rightDownPoint = new Vector2(rightDownPoint);
 		this.isChoosenLeftUp = false;
-		this.isTrigger = false; // Ä¬ÈÏ²»Îª´¥·¢Æ÷
+		this.isTrigger = false; // é»˜è®¤ä¸ä¸ºè§¦å‘å™¨
 	}
 
 	public static Iterator<Entry<String, CollisionBox>> getCollisionBoxsIterator() {
@@ -76,7 +76,7 @@ public class CollisionBox {
 	}
 
 	/**
-	 * äÖÈ¾Åö×²ºĞ
+	 * æ¸²æŸ“ç¢°æ’ç›’
 	 * 
 	 * @param g
 	 */
@@ -88,14 +88,14 @@ public class CollisionBox {
 		if (!CollisionBox.shouldRender) {
 			return;
 		}
-		// äÖÈ¾°ëÍ¸Ã÷²¿·Ö
+		// æ¸²æŸ“åŠé€æ˜éƒ¨åˆ†
 		Vector2 collisionBoxScreenPos = GUtils.worldPixelToViewPort(this.leftUpPoint);
 		AffineTransform collisionBoxTransform = new AffineTransform();
 		collisionBoxTransform.translate(collisionBoxScreenPos.x, collisionBoxScreenPos.y);
 		collisionBoxTransform.scale(this.getWidth(), this.getHeight());
 		g.drawImage(collisionBox, collisionBoxTransform, null);
 
-		// äÖÈ¾±ß¿ò
+		// æ¸²æŸ“è¾¹æ¡†
 		int borderWidth = 1;
 		Vector2 borderLeftScreenPos = GUtils.worldPixelToViewPort(this.leftUpPoint);
 		AffineTransform borderLeftTransform = new AffineTransform();
@@ -123,7 +123,7 @@ public class CollisionBox {
 		borderDownTransform.scale(this.getWidth(), borderWidth);
 		g.drawImage(border, borderDownTransform, null);
 
-		// äÖÈ¾Á½½ÇµÄµã
+		// æ¸²æŸ“ä¸¤è§’çš„ç‚¹
 		int pointWidth = 5;
 		Vector2 leftUpPointScreenPos = GUtils
 				.worldPixelToViewPort(new Vector2(this.leftUpPoint.x - pointWidth, this.leftUpPoint.y - pointWidth));
@@ -141,7 +141,7 @@ public class CollisionBox {
 	}
 
 	/**
-	 * Åö×²¼ì²â£º¶ÔÒÆ¶¯µÄÎïÌå½øĞĞÅö×²¼ì²â
+	 * ç¢°æ’æ£€æµ‹ï¼šå¯¹ç§»åŠ¨çš„ç‰©ä½“è¿›è¡Œç¢°æ’æ£€æµ‹
 	 */
 	public static synchronized void collisionDetection() {
 		Iterator<Entry<String, CollisionBox>> collisionBoxsIterator = CollisionBox.getCollisionBoxsIterator();
@@ -166,28 +166,28 @@ public class CollisionBox {
 					if (!otherName.equals(name)) {
 						CollisionBox otherCollisionBox = otherEntry.getValue();
 						if (otherCollisionBox.isTrigger) {
-							// ½øĞĞ´¥·¢¼ì²â
+							// è¿›è¡Œè§¦å‘æ£€æµ‹
 							if (collisionBox.isIntersected(otherCollisionBox) == true) {
-								// ·¢ÉúÁË´¥·¢
+								// å‘ç”Ÿäº†è§¦å‘
 								collisionBox.onTriggerEnter(name, otherName);
 							}
 						} else {
-							// ½øĞĞÅö×²¼ì²â
+							// è¿›è¡Œç¢°æ’æ£€æµ‹
 							Entity otherEntity = TileMap.getEntity(otherName);
 
-							// Èç¹ûotherEntityµÄÅö×²ºĞÊÇ¹¥»÷Åö×²ºĞ
+							// å¦‚æœotherEntityçš„ç¢°æ’ç›’æ˜¯æ”»å‡»ç¢°æ’ç›’
 							if (otherEntity instanceof AttackEntity) {
-								// Ê²Ã´¶¼²»×ö
+								// ä»€ä¹ˆéƒ½ä¸åš
 								continue;
 							}
-							// Èç¹ûentityµÄÅö×²ºĞÊÇ¹¥»÷Åö×²ºĞ
+							// å¦‚æœentityçš„ç¢°æ’ç›’æ˜¯æ”»å‡»ç¢°æ’ç›’
 							if (entity instanceof AttackEntity) {
 								if (!((otherEntity instanceof Player) || (otherEntity instanceof FightingNPC))) {
 									continue;
 								}
 								CollisionBox nextCollisionBox = collisionBox
 										.translate(entity.moveVector.add(entity.retreatVector));
-								// ¹¥»÷Ê±£¬Ó¦¼ì²âÏÂÒ»entityÅö×²ºĞÊÇ·ñÓëotherEntityµÄÏÂÒ»Í¼Æ¬Ïà½»
+								// æ”»å‡»æ—¶ï¼Œåº”æ£€æµ‹ä¸‹ä¸€entityç¢°æ’ç›’æ˜¯å¦ä¸otherEntityçš„ä¸‹ä¸€å›¾ç‰‡ç›¸äº¤
 								CollisionBox otherImageCollisionBox = new CollisionBox(
 										new Vector2(
 												otherEntity.position
@@ -206,7 +206,7 @@ public class CollisionBox {
 									collisionBox.onCollision(name, otherName);
 								}
 							}
-							// Èç¹ûÁíÒ»¸öÊµÌå¾²Ö¹
+							// å¦‚æœå¦ä¸€ä¸ªå®ä½“é™æ­¢
 							else if (otherEntity.moveVector.isEqual(Vector2.zero())) {
 								CollisionBox nextCollisionBox = collisionBox
 										.translate(entity.moveVector.add(entity.retreatVector));
@@ -214,14 +214,14 @@ public class CollisionBox {
 								if (collisionBox.isIntersected(otherCollisionBox) == false
 										&& nextCollisionBox.isIntersected(otherCollisionBox) == true) {
 									Vector2 offset = nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint);
-									// ·¢ÉúÁËÅö×²
+									// å‘ç”Ÿäº†ç¢°æ’
 									entity.position = entity.position.sub(offset);
 									collisionBox.trans(offset.mul(-1));
 
 									collisionBox.onCollision(name, otherName);
 								} else if (collisionBox.isIntersected(otherCollisionBox) == true
 										&& nextCollisionBox.isIntersected(otherCollisionBox) == true) {
-									// ĞŞ¸´´©Ä£
+									// ä¿®å¤ç©¿æ¨¡
 									entity.position = entity.position
 											.sub(entity.moveVector.add(entity.retreatVector).mul(2));
 									collisionBox.trans(entity.moveVector.add(entity.retreatVector).mul(-2f));
@@ -236,34 +236,35 @@ public class CollisionBox {
 	}
 
 	/**
-	 * Åö×²ºĞ×²µ½±ğµÄÅö×²ºĞÊ±µ÷ÓÃ
+	 * ç¢°æ’ç›’æ’åˆ°åˆ«çš„ç¢°æ’ç›’æ—¶è°ƒç”¨
 	 * 
-	 * @param name      ±¾Åö×²ºĞµÄÃû³Æ
-	 * @param otherName ±»×²µ½µÄÅö×²ºĞµÄÃû³Æ
+	 * @param name      æœ¬ç¢°æ’ç›’çš„åç§°
+	 * @param otherName è¢«æ’åˆ°çš„ç¢°æ’ç›’çš„åç§°
 	 */
 	public void onCollision(String name, String otherName) {
-		// Debug.log(Debug.DebugLevel.INFO, name + " ×²ÉÏÁË:" + otherName);
+		// Debug.log(Debug.DebugLevel.INFO, name + " æ’ä¸Šäº†:" + otherName);
 
 		Entity entity = TileMap.getEntity(name);
 		Entity otherEntity = TileMap.getEntity(otherName);
 
-		// ------------------¹¥»÷´¦Àí--------------------
+		// ------------------æ”»å‡»å¤„ç†--------------------
 		if (entity instanceof AttackEntity && ((AttackEntity) entity).willCauseWound) {
 			if (((AttackEntity) entity).attacker instanceof Player) {
 				if (otherEntity instanceof FightingNPC) {
-					// ±»´òµÄÊµÌåÊÇÕ½¶·ĞÍNPC£¬Ôò¸ÃNPCÊÜÉË
-					// »÷ÍË
+					// è¢«æ‰“çš„å®ä½“æ˜¯æˆ˜æ–—å‹NPCï¼Œåˆ™è¯¥NPCå—ä¼¤
+					// å‡»é€€
 					otherEntity.retreat(((AttackEntity) entity).attacker.direction, 100f);
 
-					// ²¥·ÅNPCÊÜÉËÒôĞ§
+					// æ’­æ”¾NPCå—ä¼¤éŸ³æ•ˆ
 					AudioManager.getInstance().playOnce("ghostWoundedSound");
 					((AttackEntity) entity).willCauseWound = false;
+					Debug.log(Debug.DebugLevel.INFO, name + " ä¼¤å®³äº†:" + otherName);
 
-					// ¼õÑª
+					// å‡è¡€
 					if (((FightingNPC) otherEntity).hp > ((Player) ((AttackEntity) entity).attacker).attackHarm) {
 						((FightingNPC) otherEntity).hp -= ((Player) ((AttackEntity) entity).attacker).attackHarm;
 					} else {
-						// NPC otherEntityËÀÍö
+						// NPC otherEntityæ­»äº¡
 						((FightingNPC) otherEntity).hp = 0;
 						((FightingNPC) otherEntity).die();
 						TileMap.player.win();
@@ -271,20 +272,20 @@ public class CollisionBox {
 				}
 			} else if (((AttackEntity) entity).attacker instanceof FightingNPC) {
 				if (otherEntity instanceof Player) {
-					// npc´òÖĞÁËÍæ¼Ò
-					// »÷ÍË
+					// npcæ‰“ä¸­äº†ç©å®¶
+					// å‡»é€€
 					otherEntity.retreat(((AttackEntity) entity).attacker.direction, 50f);
 
-					// ²¥·ÅÍæ¼ÒÊÜÉËÒôĞ§
+					// æ’­æ”¾ç©å®¶å—ä¼¤éŸ³æ•ˆ
 					AudioManager.getInstance().playOnce("playerWoundedSound");
 					((AttackEntity) entity).willCauseWound = false;
-					Debug.log(Debug.DebugLevel.INFO, name + " ÉËº¦ÁË:" + otherName);
+					Debug.log(Debug.DebugLevel.INFO, name + " ä¼¤å®³äº†:" + otherName);
 
-					// ¼õÑª
+					// å‡è¡€
 					if (((Player) otherEntity).hp > ((FightingNPC) ((AttackEntity) entity).attacker).attackHarm) {
 						((Player) otherEntity).hp -= ((FightingNPC) ((AttackEntity) entity).attacker).attackHarm;
 					} else {
-						// NPC otherEntityËÀÍö
+						// NPC otherEntityæ­»äº¡
 						((Player) otherEntity).hp = 0;
 						((Player) otherEntity).die();
 					}
@@ -293,9 +294,9 @@ public class CollisionBox {
 
 		}
 
-		// ------------------NPCÅöµ½ÕÏ°­Îï´¦Àí--------------------
+		// ------------------NPCç¢°åˆ°éšœç¢ç‰©å¤„ç†--------------------
 		if (entity instanceof NPC) {
-			// Åö×²ºóÄæÊ±Õë×ªÏò
+			// ç¢°æ’åé€†æ—¶é’ˆè½¬å‘
 			switch (entity.direction) {
 			case UP:
 				entity.direction = Entity.EntityDirection.LEFT;
@@ -326,17 +327,17 @@ public class CollisionBox {
 	}
 
 	/**
-	 * Åö×²ºĞ´¥·¢±ğµÄ´¥·¢Æ÷Åö×²ºĞÊ±µ÷ÓÃ
+	 * ç¢°æ’ç›’è§¦å‘åˆ«çš„è§¦å‘å™¨ç¢°æ’ç›’æ—¶è°ƒç”¨
 	 * 
-	 * @param name      ±¾Åö×²ºĞµÄÃû³Æ
-	 * @param otherName ±»×²µ½µÄÅö×²ºĞµÄÃû³Æ
+	 * @param name      æœ¬ç¢°æ’ç›’çš„åç§°
+	 * @param otherName è¢«æ’åˆ°çš„ç¢°æ’ç›’çš„åç§°
 	 */
 	public void onTriggerEnter(String name, String otherName) {
-		// Debug.log(Debug.DebugLevel.INFO, name + " ´¥·¢ÁË:" + otherName);
+		// Debug.log(Debug.DebugLevel.INFO, name + " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:" + otherName);
 	}
 
 	/**
-	 * ÅĞ¶ÏÁ½¸öÅö×²ºĞÊÇ·ñÏà½»
+	 * åˆ¤æ–­ä¸¤ä¸ªç¢°æ’ç›’æ˜¯å¦ç›¸äº¤
 	 * 
 	 * @param otherCollisionBox
 	 * @return
@@ -365,7 +366,7 @@ public class CollisionBox {
 	}
 
 	/**
-	 * ¶ÔÅö×²ºĞ½øĞĞÆ½ÒÆ
+	 * å¯¹ç¢°æ’ç›’è¿›è¡Œå¹³ç§»
 	 * 
 	 * @param moveVector
 	 * @return
@@ -376,7 +377,7 @@ public class CollisionBox {
 	}
 
 	/**
-	 * ¶ÔÅö×²ºĞ½øĞĞÆ½ÒÆ
+	 * å¯¹ç¢°æ’ç›’è¿›è¡Œå¹³ç§»
 	 * 
 	 * @param moveVector
 	 * @return
@@ -387,7 +388,7 @@ public class CollisionBox {
 	}
 
 	/**
-	 * ´ÓÎÄ¼şÖĞ¼ÓÔØÅö×²ºĞÊı¾İ
+	 * ä»æ–‡ä»¶ä¸­åŠ è½½ç¢°æ’ç›’æ•°æ®
 	 */
 	@SuppressWarnings("unchecked")
 	public static void load() {
@@ -401,7 +402,7 @@ public class CollisionBox {
 			objs.remove(leftUpPoint);
 			rightDownPoint = (Vector2) objs.peek();
 			objs.remove(rightDownPoint);
-			if (name.contains("Ò°¹í")) {
+			if (name.contains("é‡é¬¼")) {
 				continue;
 			}
 			if (name.contains("mapBorder")) {
@@ -415,7 +416,7 @@ public class CollisionBox {
 	}
 
 	/**
-	 * ½«Åö×²ºĞÊı¾İ´æ½øÎÄ¼ş
+	 * å°†ç¢°æ’ç›’æ•°æ®å­˜è¿›æ–‡ä»¶
 	 */
 	public static void save() {
 		Queue<Object> objs = new LinkedList<Object>();

@@ -20,11 +20,11 @@ import priv.dremma.game.util.Vector2;
 
 public class FightingNPC extends NPC {
 
-	// FightingNPCµÄ¹¥»÷¶¯»­
+	// FightingNPCçš„æ”»å‡»åŠ¨ç”»
 	HashMap<Integer, Image> NPCAttack;
 	Animation NPCAttackAnimation;
 
-	// FightingNPCµÄ¹¥»÷ÊµÌå£¨Ô¶¹¥£©
+	// FightingNPCçš„æ”»å‡»å®ä½“ï¼ˆè¿œæ”»ï¼‰
 	public AttackEntity attackEntity;
 
 	Vector2 attackEndPos = Vector2.zero();
@@ -32,9 +32,9 @@ public class FightingNPC extends NPC {
 	float attackDistance = 400f;
 	float curAttackDistance = 0f;
 
-	public int hp; // ÑªÌõ
-	public int maxHp; // ÂúÑªÁ¿
-	public int attackHarm; // ¹¥»÷Ôì³ÉµÄÉËº¦
+	public int hp; // è¡€æ¡
+	public int maxHp; // æ»¡è¡€é‡
+	public int attackHarm; // æ”»å‡»é€ æˆçš„ä¼¤å®³
 
 	public FightingNPC(float speed) {
 		super(speed);
@@ -61,9 +61,9 @@ public class FightingNPC extends NPC {
 			}
 		}
 
-		if (this.nearPlayer() && this.state != Entity.EntityState.DEAD) { // ÁÙ½üÍæ¼ÒÊ±
+		if (this.nearPlayer() && this.state != Entity.EntityState.DEAD) { // ä¸´è¿‘ç©å®¶æ—¶
 			// Debug.log(Debug.DebugLevel.INFO,this.name + " near player!!");
-			// ·¢¶¯¹¥»÷£¬·¢Éä¹í»ğ
+			// å‘åŠ¨æ”»å‡»ï¼Œå‘å°„é¬¼ç«
 			if (this.attackEntity.visible == false) {
 				this.attackEntity.position = this.position.add(this.moveVector.mul(10f));
 				this.attackEndPos = this.attackEntity.position.add(this.moveVector.mul(this.attackDistance));
@@ -78,7 +78,7 @@ public class FightingNPC extends NPC {
 
 		if (this.attackEntity.visible == true) {
 			Vector2 attackNewPos = Vector2.lerp(this.attackEntity.position, this.attackEndPos, Time.deltaTime);
-			// ¹í»ğÔË¶¯Ò»¶Î¾àÀëºóÏûÊ§
+			// é¬¼ç«è¿åŠ¨ä¸€æ®µè·ç¦»åæ¶ˆå¤±
 			this.curAttackDistance += (attackNewPos.sub(this.attackEntity.position)).magnitude();
 			this.attackEntity.moveVector = attackNewPos.sub(this.attackEntity.position);
 			this.attackEntity.position = attackNewPos;
@@ -98,13 +98,13 @@ public class FightingNPC extends NPC {
 	public void loadAnimation() {
 		this.animator = new Animator();
 
-		float duration = 0.5f / 4.0f; // NPC¶¯»­Ã¿×é4ÕÅ£¬0.5Ãë²¥·Å4´Î
-		float attackDuration = 1.0f / 10.0f; // NPC¶¯»­Ã¿×é10ÕÅ£¬1Ãë²¥·Å10´Î
-		float dieDuration = 8.0f / 64.0f; // NPC¶¯»­Ã¿×é10ÕÅ£¬2Ãë²¥·Å10´Î
+		float duration = 0.5f / 4.0f; // NPCç§»åŠ¨åŠ¨ç”»æ¯ç»„4å¼ ï¼Œ0.5ç§’æ’­æ”¾4æ¬¡
+		float attackDuration = 1.0f / 10.0f; // NPCæ”»å‡»åŠ¨ç”»æ¯ç»„10å¼ ï¼Œ1ç§’æ’­æ”¾10æ¬¡
+		float dieDuration = 8.0f / 64.0f; // NPCåŠ¨ç”»æ¯ç»„64å¼ ï¼Œ8ç§’æ’­æ”¾64æ¬¡
 
 		// Down
 		for (int i = 1; i <= 4; i++) {
-			this.NPCMoveDown.put(i, Resources.loadImage(Resources.path + "images/entities/Ò°¹í/Ò°¹í_" + i + ".png"));
+			this.NPCMoveDown.put(i, Resources.loadImage(Resources.path + "images/entities/é‡é¬¼/é‡é¬¼_" + i + ".png"));
 			this.NPCMoveDownAnimation.addFrame(this.NPCMoveDown.get(i), duration);
 		}
 
@@ -112,7 +112,7 @@ public class FightingNPC extends NPC {
 
 		// Left
 		for (int i = 5; i <= 8; i++) {
-			this.NPCMoveLeft.put(i, Resources.loadImage(Resources.path + "images/entities/Ò°¹í/Ò°¹í_" + i + ".png"));
+			this.NPCMoveLeft.put(i, Resources.loadImage(Resources.path + "images/entities/é‡é¬¼/é‡é¬¼_" + i + ".png"));
 			this.NPCMoveLeftAnimation.addFrame(this.NPCMoveLeft.get(i), duration);
 		}
 
@@ -120,7 +120,7 @@ public class FightingNPC extends NPC {
 
 		// Right
 		for (int i = 9; i <= 12; i++) {
-			this.NPCMoveRight.put(i, Resources.loadImage(Resources.path + "images/entities/Ò°¹í/Ò°¹í_" + i + ".png"));
+			this.NPCMoveRight.put(i, Resources.loadImage(Resources.path + "images/entities/é‡é¬¼/é‡é¬¼_" + i + ".png"));
 			this.NPCMoveRightAnimation.addFrame(this.NPCMoveRight.get(i), duration);
 		}
 
@@ -128,7 +128,7 @@ public class FightingNPC extends NPC {
 
 		// Up
 		for (int i = 13; i <= 16; i++) {
-			this.NPCMoveUp.put(i, Resources.loadImage(Resources.path + "images/entities/Ò°¹í/Ò°¹í_" + i + ".png"));
+			this.NPCMoveUp.put(i, Resources.loadImage(Resources.path + "images/entities/é‡é¬¼/é‡é¬¼_" + i + ".png"));
 			this.NPCMoveUpAnimation.addFrame(this.NPCMoveUp.get(i), duration);
 		}
 
@@ -139,7 +139,7 @@ public class FightingNPC extends NPC {
 		this.NPCAttack = new HashMap<Integer, Image>();
 		this.NPCAttackAnimation = new Animation();
 
-		attackEntity.name = "Ò°¹ínpcAttack";
+		attackEntity.name = "é‡é¬¼npcAttack";
 		this.attackEntity.position = new Vector2(-100, -100);
 		attackEntity.setScale(new Vector2(3f, 3f));
 		this.attackEntity.visible = false;
@@ -152,21 +152,21 @@ public class FightingNPC extends NPC {
 
 		attackEntity.animator = new Animator();
 		for (int i = 1; i <= 10; i++) {
-			this.NPCAttack.put(i, Resources.loadImage(Resources.path + "images/entities/Ò°¹í/¹í»ğ/¹í»ğ_" + i + ".png"));
+			this.NPCAttack.put(i, Resources.loadImage(Resources.path + "images/entities/é‡é¬¼/é¬¼ç«/é¬¼ç«_" + i + ".png"));
 			this.NPCAttackAnimation.addFrame(this.NPCAttack.get(i), attackDuration);
 		}
 
 		attackEntity.animator.addAnimation("npcAttack", this.NPCAttackAnimation);
 		attackEntity.animator.setState("npcAttack", false);
 
-		// ËÀÍö
+		// æ­»äº¡
 		for (int i = 0; i <= 63; i++) {
-			this.NPCDie.put(i, Resources.loadImage(Resources.path + "images/entities/Ò°¹í/ËÀÍö/ËÀÍö_" + i + ".png"));
+			this.NPCDie.put(i, Resources.loadImage(Resources.path + "images/entities/é‡é¬¼/æ­»äº¡/æ­»äº¡_" + i + ".png"));
 			this.NPCDieAnimation.addFrame(this.NPCDie.get(i), dieDuration);
 		}
 		this.animator.addAnimation("npcDie", this.NPCDieAnimation);
 
-		// ³õÊ¼»¯¶¯»­×´Ì¬
+		// åˆå§‹åŒ–åŠ¨ç”»çŠ¶æ€Ì¬
 		switch (this.direction) {
 		case DOWN:
 			this.animator.setState("npcMoveDown", false);
@@ -193,7 +193,7 @@ public class FightingNPC extends NPC {
 		AudioManager.getInstance().playOnce("ghostDieSound");
 		this.animator.setState("npcDie", false);
 
-		// 1ÃëºóNPCÏûÊ§
+		// 1ç§’åNPCæ¶ˆå¤±
 		Timer timer = new Timer();
 
 		timer.schedule(new TimerTask() {
@@ -215,14 +215,14 @@ public class FightingNPC extends NPC {
 		Vector2 npcScreenPos = GUtils.worldPixelToViewPort(this.position.sub(
 				new Vector2(this.getWidth() * this.getScale().x / 2, this.getHeight() * this.getScale().y / 2 + 20)));
 
-		// »­ÑªÌõ£¨ºÚµ×ºìÉ«£©
-		// ÑªÌõµ×
+		// ç”»è¡€æ¡ï¼ˆé»‘åº•çº¢è‰²ï¼‰
+		// è¡€æ¡åº•
 		AffineTransform npcHpBarBase = new AffineTransform();
 		npcHpBarBase.translate(npcScreenPos.x, npcScreenPos.y);
 		npcHpBarBase.scale(this.getWidth() * this.getScale().x, 10);
-		g.drawImage(Resources.loadImage(Resources.path + "images/ÑªÌõµ×.png"), npcHpBarBase, null);
+		g.drawImage(Resources.loadImage(Resources.path + "images/è¡€æ¡åº•.png"), npcHpBarBase, null);
 
-		// ÑªÌõ
+		// è¡€æ¡
 		AffineTransform npcHpBar = new AffineTransform();
 		npcHpBar.translate(npcScreenPos.x, npcScreenPos.y);
 		npcHpBar.scale(this.getWidth() * this.getScale().x * this.hp * 1.0f / this.maxHp, 10);

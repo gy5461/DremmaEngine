@@ -34,7 +34,7 @@ public class Rect {
 	}
 
 	public void draw(Graphics2D g) {
-		// äÖÈ¾°ëÍ¸Ã÷²¿·Ö
+		// æ¸²æŸ“åŠé€æ˜éƒ¨åˆ†
 		Vector2 collisionBoxScreenPos = this.leftUpPoint;
 		if (this.shouldTransScreenPos) {
 			collisionBoxScreenPos = GUtils.worldPixelToViewPort(collisionBoxScreenPos);
@@ -44,7 +44,7 @@ public class Rect {
 		collisionBoxTransform.scale(this.getWidth(), this.getHeight());
 		g.drawImage(collisionBox, collisionBoxTransform, null);
 
-		// äÖÈ¾±ß¿ò
+		// æ¸²æŸ“è¾¹æ¡†
 		int borderWidth = 1;
 		Vector2 borderLeftScreenPos = this.leftUpPoint;
 		if (this.shouldTransScreenPos) {

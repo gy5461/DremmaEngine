@@ -2,7 +2,7 @@ package priv.dremma.game.util;
 
 import priv.dremma.game.GameCore;
 /**
- * µ÷ÊÔÀà
+ * è°ƒè¯•æ”¯æŒç±»
  * @author guoyi
  *
  */
@@ -15,15 +15,15 @@ public class Debug {
 		switch (level) {
 		default:
 		case INFO:
-			// ´òÓ¡ÂÌÉ«ĞÅÏ¢
+			// æ‰“å°ç»¿è‰²ä¿¡æ¯
 			System.out.println("\u001b[1;32m[" + GameCore.name + "][INFO]" + msg+"\u001b[0m");
 			break;
 		case WARNING:
-			// ´òÓ¡»ÆÉ«¾¯¸æ
+			// æ‰“å°é»„è‰²è­¦å‘Š
 			System.out.println("\u001b[1;33m[" + GameCore.name + "][WARNIGN]" + msg+"\u001b[0m");
 			break;
 		case SERVERE:
-			// ´òÓ¡ºìÉ«ÑÏÖØ¾¯¸æ
+			// æ‰“å°çº¢è‰²ä¸¥é‡è­¦å‘Š
 			System.out.println("\u001b[1;31m[" + GameCore.name + "][SERVERE]" + msg+"\u001b[0m");
 			break;
 		}

@@ -15,16 +15,16 @@ public class Entity {
 
 	public Animator animator;
 
-	public Vector2 position; // Î»ÖÃ
+	public Vector2 position; // ä½ç½®
 
 	public float speed;
-	public Vector2 moveVector; // ËÙ¶È
-	private Vector2 scale; // Ëõ·Å
+	public Vector2 moveVector; // é€Ÿåº¦
+	private Vector2 scale; // ç¼©æ”¾
 	public String name;
 
-	public boolean visible = true; // ÊÇ·ñ¿É¼û
-	public boolean detectCollision = true; // ÊÇ·ñ¼ì²âÅö×²
-
+	public boolean visible = true; // æ˜¯å¦å¯è§
+	public boolean detectCollision = true; // æ˜¯å¦æ£€æµ‹ç¢°æ’
+	
 	private float destRestreatDistance = 0f;
 	private float curRestreatDistance = 0f;
 	public Vector2 retreatVector = Vector2.zero();
@@ -72,7 +72,7 @@ public class Entity {
 	}
 
 	/**
-	 * ¸ù¾İanim¹¹ÔìEntity
+	 * æ ¹æ®animæ„é€ Entity
 	 * 
 	 * @param anim
 	 */
@@ -102,7 +102,7 @@ public class Entity {
 	}
 	
 	/**
-	 * Èç¹ûÊÇ¾²Ì¬ÎïÌå£¬Ö±½Óµ÷ÓÃ±¾·½·¨ÉèÖÃÍ¼Æ¬
+	 * å¦‚æœæ˜¯é™æ€ç‰©ä½“ï¼Œç›´æ¥è°ƒç”¨æœ¬æ–¹æ³•è®¾ç½®å›¾ç‰‡
 	 * @param image
 	 */
 	public void setStaticImage(Image image) {
@@ -111,14 +111,14 @@ public class Entity {
 	}
 
 	/**
-	 * ¸üĞÂEntity
+	 * æ›´æ–°Entity
 	 */
 	public void update() {
 		if(this.isStatic) {
 			return;
 		}
 		
-		// ºóÍË´¦Àí
+		// åé€€å¤„ç†
 		if (this.curRestreatDistance < this.destRestreatDistance) {
 			this.position = this.position.add(this.retreatVector);
 			CollisionBox.collisionBoxs.get(this.name).trans(this.retreatVector);
@@ -137,7 +137,7 @@ public class Entity {
 	}
 
 	/**
-	 * »ñÈ¡Entityµ±Ç°Í¼Ïñ¿í¶È
+	 * è·å–Entityå½“å‰å›¾åƒå®½åº¦
 	 * 
 	 * @return
 	 */
@@ -146,7 +146,7 @@ public class Entity {
 	}
 
 	/**
-	 * »ñÈ¡Entityµ±Ç°Í¼Ïñ¸ß¶È
+	 * è·å–Entityå½“å‰å›¾åƒé«˜åº¦
 	 * 
 	 * @return
 	 */
@@ -155,7 +155,7 @@ public class Entity {
 	}
 
 	/**
-	 * »ñÈ¡Entityµ±Ç°Í¼Ïñ
+	 * è·å–Entityå½“å‰å›¾åƒ
 	 * 
 	 * @return
 	 */
@@ -167,7 +167,7 @@ public class Entity {
 	}
 
 	/**
-	 * »ñÈ¡ÊµÌåµ×²¿×İ×ø±ê
+	 * è·å–å®ä½“åº•éƒ¨çºµåæ ‡
 	 * 
 	 * @return
 	 */
@@ -176,7 +176,7 @@ public class Entity {
 	}
 
 	/**
-	 * »æÖÆentity
+	 * ç»˜åˆ¶entity
 	 * 
 	 * @param g
 	 */
@@ -195,7 +195,7 @@ public class Entity {
 	}
 
 	/**
-	 * EntityÏòÖ¸¶¨·½ÏòºóÍËÖ¸¶¨¾àÀë
+	 * Entityå‘æŒ‡å®šæ–¹å‘åé€€æŒ‡å®šè·ç¦»
 	 * 
 	 * @param direction
 	 * @param distance
