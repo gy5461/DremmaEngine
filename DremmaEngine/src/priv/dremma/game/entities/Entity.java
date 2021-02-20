@@ -33,7 +33,7 @@ public class Entity {
 	public boolean isStatic = false;
 
 	public static enum EntityState {
-		STAND, MOVE, ATTACK, DEAD;
+		STAND, MOVE, ATTACK, DEAD, WIN;
 	}
 
 	public static enum EntityDirection {

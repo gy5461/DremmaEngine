@@ -92,6 +92,8 @@ public class GameCore extends Canvas implements Runnable {
 		
 		Resources.load(Resources.ResourceType.Music, "ghostDieSound", Resources.path + "music/¹íËÀÍö.wav");
 		Resources.load(Resources.ResourceType.Music, "playerDieSound", Resources.path + "music/Ö÷½ÇËÀÍö.wav");
+		Resources.load(Resources.ResourceType.Music, "playerWinSound", Resources.path + "music/Ö÷½ÇÊ¤Àû.wav");
+		Resources.load(Resources.ResourceType.Music, "playerClapSound", Resources.path + "music/clap.wav");
 
 		Resources.load(Resources.ResourceType.Music, "ghostWoundedSound", Resources.path + "music/¹íÊÜÉË.wav");
 		AudioManager.getInstance().setVolumn("ghostWoundedSound", 100);
@@ -127,7 +129,6 @@ public class GameCore extends Canvas implements Runnable {
 		tree2Entity.name = "tree2";
 		tree2Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(tree2Entity, new Vector2(4, 8));
-		Debug.log(Debug.DebugLevel.INFO, "" + tree2Entity.getBottom());
 
 		// archiving
 		Entity archivingEntity = new Entity();
@@ -303,7 +304,7 @@ public class GameCore extends Canvas implements Runnable {
 
 		// ---------------------ÅäÖÃ-----------------------
 		CollisionBox.shouldRender = false; // ²»äÖÈ¾Åö×²ºĞ
-		// TranslateEntityHelper.shouldRender = false; // ²»äÖÈ¾ÒÆ¶¯ÍÏ×§°ïÖú
+		TranslateEntityHelper.shouldRender = false; // ²»äÖÈ¾ÒÆ¶¯ÍÏ×§°ïÖú
 	}
 
 	public void onUpdate() {

@@ -266,6 +266,7 @@ public class CollisionBox {
 						// NPC otherEntityÀ¿Õˆ
 						((FightingNPC) otherEntity).hp = 0;
 						((FightingNPC) otherEntity).die();
+						TileMap.player.win();
 					}
 				}
 			} else if (((AttackEntity) entity).attacker instanceof FightingNPC) {
@@ -404,6 +405,9 @@ public class CollisionBox {
 				continue;
 			}
 			if (name.contains("mapBorder")) {
+				continue;
+			}
+			if(name.contains("Attack")) {
 				continue;
 			}
 			CollisionBox.collisionBoxs.get(name).setPos(leftUpPoint, rightDownPoint);

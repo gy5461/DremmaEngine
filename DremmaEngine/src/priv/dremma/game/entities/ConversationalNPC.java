@@ -34,6 +34,8 @@ public class ConversationalNPC extends NPC {
 		this.conversation.add(this.name + "：传说这里有一只游荡的野鬼，它身上围绕着鬼火，神出鬼没、杀人无数。");
 		this.conversation.add(this.name + "：少侠，我希望你可以为民除害，拯救苍生！！");
 		this.conversation.add(TileMap.player.name + "：" + "原来如此，多谢老者。侠之大者、为国为民，我定不辱使命！");
+		this.conversation.add(this.name + "：果真后生可谓，我这里有一本武林秘籍《九阳神功》，希望可以助你一臂之力！！");
+		this.conversation.add(TileMap.player.name + "：多谢老者。");
 
 		// 最后一句
 		this.conversation.add(this.name + "：浮生偷得半日闲。(๑‾ ꇴ ‾๑)");
@@ -85,6 +87,7 @@ public class ConversationalNPC extends NPC {
 					this.conversation.poll();
 					if (this.conversation.size() == 1) {
 						this.closeConversation();
+						TileMap.player.attackHarm += 5;
 					}
 				} else {
 					this.closeConversation();

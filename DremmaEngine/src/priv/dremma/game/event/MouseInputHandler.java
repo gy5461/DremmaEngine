@@ -41,14 +41,18 @@ public class MouseInputHandler implements MouseListener {
 	public Vector2 getCurPos() {
 		PointerInfo pinfo = MouseInfo.getPointerInfo();
 		curPos = new Vector2(pinfo.getLocation().x, pinfo.getLocation().y);
-		curPos = curPos.sub(new Vector2(game.window.getLocation().x, game.window.getLocation().y + 24));
+		if (game.isApplet) {
+			curPos = curPos.sub(new Vector2(game.getLocation().x, game.getLocation().y + 48));
+		} else {
+			curPos = curPos.sub(new Vector2(game.window.getLocation().x, game.window.getLocation().y + 24));
+		}
 		return curPos;
 	}
 
 	public boolean worldCurPosIsInRect(Rect rect) {
 		return GUtils.viewPortToWorldPixel(curPos).isInRect(rect.leftUpPoint, rect.rightDownPoint);
 	}
-	
+
 	public boolean screenCurPosIsInRect(Rect rect) {
 		return curPos.isInRect(rect.leftUpPoint, rect.rightDownPoint);
 	}

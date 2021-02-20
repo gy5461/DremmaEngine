@@ -4,6 +4,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import priv.dremma.game.anim.Animation;
 import priv.dremma.game.anim.Animator;
@@ -39,9 +41,9 @@ public class FightingNPC extends NPC {
 		this.moveSound = "ghostFloatSound";
 		this.nearDistance = 300f;
 
-		this.hp = 100;
+		this.hp = 20;
 		this.maxHp = hp;
-		this.attackHarm = 10;
+		this.attackHarm = 1;
 	}
 
 	@Override
@@ -98,6 +100,7 @@ public class FightingNPC extends NPC {
 
 		float duration = 0.5f / 4.0f; // NPC动画每组4张，0.5秒播放4次
 		float attackDuration = 1.0f / 10.0f; // NPC动画每组10张，1秒播放10次
+		float dieDuration = 2.0f / 10.0f; // NPC动画每组10张，2秒播放10次
 
 		// Down
 		for (int i = 1; i <= 4; i++) {
@@ -156,6 +159,13 @@ public class FightingNPC extends NPC {
 		attackEntity.animator.addAnimation("npcAttack", this.NPCAttackAnimation);
 		attackEntity.animator.setState("npcAttack", false);
 
+		// 死亡
+		for (int i = 10; i >= 1; i--) {
+			this.NPCDie.put(i, Resources.loadImage(Resources.path + "images/entities/野鬼/鬼火/鬼火_" + i + ".png"));
+			this.NPCDieAnimation.addFrame(this.NPCAttack.get(i), dieDuration);
+		}
+		this.animator.addAnimation("npcDie", this.NPCDieAnimation);
+
 		// 初始化动画状态
 		switch (this.direction) {
 		case DOWN:
@@ -173,23 +183,39 @@ public class FightingNPC extends NPC {
 		}
 	}
 
-	public void die() {
-		this.visible = false;
+	public synchronized void die() {
 		this.detectCollision = false;
 		this.state = Entity.EntityState.DEAD;
 
 		AudioManager.getInstance().stopPlay(this.moveSound);
 		AudioManager.getInstance().stopPlay("ghostWoundedSound");
-		
+
 		AudioManager.getInstance().playOnce("ghostDieSound");
+		this.animator.setState("npcDie", false);
+		this.setScale(Vector2.one().mul(4));
+
+		// 1秒后NPC消失
+		Timer timer = new Timer();
+
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				visible = false;
+			}
+		}, 2000);
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
 		super.draw(g);
 
+		if (this.state == Entity.EntityState.DEAD) {
+			return;
+		}
+		
 		Vector2 npcScreenPos = GUtils.worldPixelToViewPort(this.position.sub(
 				new Vector2(this.getWidth() * this.getScale().x / 2, this.getHeight() * this.getScale().y / 2 + 20)));
+
 		// 画血条（黑底红色）
 		// 血条底
 		AffineTransform npcHpBarBase = new AffineTransform();

@@ -36,11 +36,15 @@ public class NPC extends Entity {
 	Animation NPCMoveRightAnimation = new Animation();
 	Animation NPCMoveLeftAnimation = new Animation();
 
+	// FightingNPC的攻击动画
+	HashMap<Integer, Image> NPCDie = new HashMap<Integer, Image>();
+	Animation NPCDieAnimation = new Animation();
+
 	public Vector2 startPos = Vector2.zero();
 	public Vector2 endPos = Vector2.zero();
 	public float totalDistance = 300f;
 	public float curDistance = 0f;
-	
+
 	protected float nearDistance = 100f;
 
 	public float standTimer = 0.0f; // 站立计时
@@ -171,7 +175,7 @@ public class NPC extends Entity {
 		}
 		return false;
 	}
-	
+
 	protected float getDistance2Player() {
 		return this.position.sub(TileMap.player.position).magnitude();
 	}

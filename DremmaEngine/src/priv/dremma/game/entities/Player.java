@@ -64,6 +64,17 @@ public class Player extends Entity {
 	HashMap<Integer, Image> playerDie = new HashMap<Integer, Image>();
 	Animation playerDieAnimation = new Animation();
 
+	// 胜利动画：拍手
+	HashMap<Integer, Image> playerClapUp = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerClapDown = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerClapRight = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerClapLeft = new HashMap<Integer, Image>();
+
+	Animation playerClapUpAnimation = new Animation();
+	Animation playerClapDownAnimation = new Animation();
+	Animation playerClapRightAnimation = new Animation();
+	Animation playerClapLeftAnimation = new Animation();
+
 	Vector2 lastMoveVector = Vector2.zero(); // 上一个moveVector
 
 	public static final float ATTACK_LERP = 135f; // 攻击动作插值距离
@@ -82,16 +93,16 @@ public class Player extends Entity {
 		this.name = "剑侠客";
 		this.speed = speed;
 
-		this.hp = 10;
+		this.hp = 5;
 		this.maxHp = hp;
-		this.attackHarm = 20;
+		this.attackHarm = 1;
 		CollisionBox.collisionBoxs.put(this.name,
 				new CollisionBox(this.position.sub(new Vector2(33, -17)), this.position.add(new Vector2(25, 90))));
 		this.loadAnimation();
 	}
 
 	public synchronized void update() {
-		if (this.state != Entity.EntityState.DEAD) {
+		if (this.state != Entity.EntityState.DEAD && this.state != Entity.EntityState.WIN) {
 
 			switch (GameCore.viewAngle) {
 			case ViewAngle2DOT5:
@@ -477,6 +488,32 @@ public class Player extends Entity {
 			}
 		}
 
+		if (this.state == Entity.EntityState.WIN) {
+			// 播放拍手动画
+			switch (this.direction) {
+			case DOWN:
+				this.animator.setState("playerClapDown", true);
+				break;
+			case LEFT:
+				this.animator.setState("playerClapLeft", true);
+				break;
+			case RIGHT:
+				this.animator.setState("playerClapRight", true);
+				break;
+			case UP:
+				this.animator.setState("playerClapUp", true);
+				break;
+			}
+		}
+
+		if (this.state == Entity.EntityState.DEAD) {
+			// 播放死亡动画
+			this.animator.setState("playerDie", true);
+			if (!(this.animator.getState() != null && this.animator.getState().contains("playerAttack"))) {
+				this.setScale(new Vector2(0.5f, 0.5f));
+			}
+		}
+
 		super.update();
 
 		// 设置碰撞盒坐标
@@ -494,8 +531,9 @@ public class Player extends Entity {
 		float duration = 1.0f / 8.0f; // 人物动画每组8张，一秒播放8次
 
 		float attackDuration = 1.0f / 10.0f; // 攻击动画每组10张，一秒播放10次
-		
-		float dieDuration = 2.0f / 10.0f; // 死亡动画每组10张，一秒播放10次
+
+		float dieDuration = 2.0f / 10.0f; // 死亡动画每组10张，二秒播放10次
+		float clapDuration = 1.0f / 11.0f; // 拍手动画每组11张，一秒播放11次
 
 		switch (GameCore.viewAngle) {
 		case ViewAngle2DOT5:
@@ -587,6 +625,35 @@ public class Player extends Entity {
 			}
 			this.animator.addAnimation("playerDie", this.playerDieAnimation);
 
+			// 胜利动画
+			for (int i = 1; i <= 11; i++) {
+				this.playerClapDown.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_clap/player_clap_" + i + ".png"));
+				this.playerClapDownAnimation.addFrame(this.playerClapDown.get(i), clapDuration);
+			}
+			this.animator.addAnimation("playerClapDown", this.playerClapDownAnimation);
+
+			for (int i = 12; i <= 22; i++) {
+				this.playerClapLeft.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_clap/player_clap_" + i + ".png"));
+				this.playerClapLeftAnimation.addFrame(this.playerClapLeft.get(i), clapDuration);
+			}
+			this.animator.addAnimation("playerClapLeft", this.playerClapLeftAnimation);
+
+			for (int i = 23; i <= 33; i++) {
+				this.playerClapUp.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_clap/player_clap_" + i + ".png"));
+				this.playerClapUpAnimation.addFrame(this.playerClapUp.get(i), clapDuration);
+			}
+			this.animator.addAnimation("playerClapUp", this.playerClapUpAnimation);
+
+			for (int i = 34; i <= 44; i++) {
+				this.playerClapRight.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_clap/player_clap_" + i + ".png"));
+				this.playerClapRightAnimation.addFrame(this.playerClapRight.get(i), clapDuration);
+			}
+			this.animator.addAnimation("playerClapRight", this.playerClapRightAnimation);
+
 			// 初始化动画状态
 			switch (this.state) {
 			case STAND:
@@ -638,6 +705,8 @@ public class Player extends Entity {
 				}
 				break;
 			case DEAD:
+				break;
+			case WIN:
 				break;
 			}
 			break;
@@ -699,7 +768,7 @@ public class Player extends Entity {
 		}
 	}
 
-	public void die() {
+	public synchronized void die() {
 		this.detectCollision = false;
 		this.state = Entity.EntityState.DEAD;
 		AudioManager.getInstance().stopPlay("runSound");
@@ -707,13 +776,22 @@ public class Player extends Entity {
 		AudioManager.getInstance().stopPlay("playerWoundedSound");
 		// 播放死亡音效
 		AudioManager.getInstance().playLoop("playerDieSound");
-		
-		// 播放死亡动画
-		this.setScale(new Vector2(0.5f,0.5f));
-		this.animator.setState("playerDie", false);
-
 		// 游戏结束，关闭背景音乐
 		AudioManager.getInstance().stopPlay("backgroundSound");
+	}
+
+	public synchronized void win() {
+		this.detectCollision = false;
+		this.state = Entity.EntityState.WIN;
+		AudioManager.getInstance().stopPlay("runSound");
+		AudioManager.getInstance().stopPlay("attackSound");
+		AudioManager.getInstance().stopPlay("playerWoundedSound");
+		// 游戏结束，关闭背景音乐
+		AudioManager.getInstance().stopPlay("backgroundSound");
+		// 播放烟花音效
+		AudioManager.getInstance().playLoop("playerWinSound");
+		AudioManager.getInstance().playLoop("playerClapSound");
+
 	}
 
 	@Override
