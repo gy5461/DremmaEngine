@@ -25,7 +25,7 @@ public class ConversationalNPC extends NPC {
 
 	public Queue<String> conversation = new LinkedList<String>();
 
-	public String idleChat = null;
+	public String idleChat = "";
 
 	public ConversationalNPC(KeyInputHandler keyInputHandler, float speed, String name) {
 		super(speed);
@@ -110,6 +110,8 @@ public class ConversationalNPC extends NPC {
 			((Text) UIManager.getUIEntity("firstText")).color = Color.white;
 			if (!this.conversation.isEmpty()) {
 				this.setTalkContent(this.conversation.peek());
+			} else {
+				this.setTalkContent(this.idleChat);
 			}
 
 			// 在谈话时，玩家按Enter键进行翻页
@@ -120,7 +122,6 @@ public class ConversationalNPC extends NPC {
 					this.conversation.poll();
 					if (this.conversation.size() == 0) {
 						this.closeConversation();
-						this.setTalkContent(this.idleChat);
 						TileMap.player.attackHarm += 5; // 给游戏主角神功
 					}
 				} else {
