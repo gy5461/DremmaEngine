@@ -15,9 +15,7 @@ import java.util.PriorityQueue;
 import java.util.Map.Entry;
 
 import priv.dremma.game.GameCore;
-import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.entities.Entity;
-import priv.dremma.game.entities.Player;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Resources;
@@ -39,7 +37,7 @@ public class TileMap {
 	public static final Vector2 TILE_SIZE = new Vector2(130, 76);
 	public static float modifier = TileMap.TILE_SIZE.y / TileMap.TILE_SIZE.x; // 2.5D视角时，需要进行速度修正才不会走歪
 	public static HashMap<String, Entity> entities; // 游戏中的其他实体
-	public static Player player; // 主角
+	public static Entity player; // 主角
 	PriorityQueue<Entity> renderEntities; // 渲染优先队列
 
 	public Vector2 worldEndTileCenter = Vector2.zero();
@@ -118,7 +116,7 @@ public class TileMap {
 	 * 
 	 * @return
 	 */
-	public Player getPlayer() {
+	public Entity getPlayer() {
 		return player;
 	}
 
@@ -127,7 +125,7 @@ public class TileMap {
 	 * 
 	 * @param player
 	 */
-	public void setPlayer(Player player) {
+	public void setPlayer(Entity player) {
 		TileMap.player = player;
 	}
 
@@ -244,9 +242,6 @@ public class TileMap {
 		if (srcNPC != null) {
 			srcNPC.position = pos;
 			TileMap.addEntity(srcNPC.name, srcNPC);
-
-			CollisionBox.collisionBoxs.put(srcNPC.name, new CollisionBox(srcNPC.position.sub(Vector2.one().mul(50)),
-					srcNPC.position.add(Vector2.one().mul(50))));
 		}
 	}
 
@@ -267,8 +262,6 @@ public class TileMap {
 							this.scale).y);
 
 			TileMap.addEntity(entity.name, entity);
-			CollisionBox.collisionBoxs.put(entity.name, new CollisionBox(entity.position.sub(Vector2.one().mul(50)),
-					entity.position.add(Vector2.one().mul(50))));
 		}
 	}
 
@@ -281,7 +274,7 @@ public class TileMap {
 		Iterator<Entry<String, Entity>> entitiesIterator = TileMap.getEntitiesIterator();
 		while (entitiesIterator.hasNext()) {
 			HashMap.Entry<String, Entity> entry = (HashMap.Entry<String, Entity>) entitiesIterator.next();
-			if (entry.getKey().contains("player")) {
+			if (!entry.getValue().visible) {
 				continue;
 			}
 			entry.getValue().update();

@@ -24,11 +24,11 @@ public class Entity {
 
 	public boolean visible = true; // 是否可见
 	public boolean detectCollision = true; // 是否检测碰撞
-	
+
 	private float destRestreatDistance = 0f;
 	private float curRestreatDistance = 0f;
 	public Vector2 retreatVector = Vector2.zero();
-	
+
 	private Image staticImage = null;
 	public boolean isStatic = false;
 
@@ -66,7 +66,7 @@ public class Entity {
 
 		this.visible = e.visible;
 		this.detectCollision = e.detectCollision;
-		
+
 		this.staticImage = e.staticImage;
 		this.isStatic = e.isStatic;
 	}
@@ -100,9 +100,10 @@ public class Entity {
 	public Vector2 getScale() {
 		return this.scale;
 	}
-	
+
 	/**
 	 * 如果是静态物体，直接调用本方法设置图片
+	 * 
 	 * @param image
 	 */
 	public void setStaticImage(Image image) {
@@ -114,10 +115,10 @@ public class Entity {
 	 * 更新Entity
 	 */
 	public void update() {
-		if(this.isStatic) {
+		if (this.isStatic) {
 			return;
 		}
-		
+
 		// 后退处理
 		if (this.curRestreatDistance < this.destRestreatDistance) {
 			this.position = this.position.add(this.retreatVector);
@@ -142,6 +143,9 @@ public class Entity {
 	 * @return
 	 */
 	public int getWidth() {
+		if (this.getImage() == null) {
+			return 0;
+		}
 		return this.getImage().getWidth(null);
 	}
 
@@ -151,6 +155,9 @@ public class Entity {
 	 * @return
 	 */
 	public int getHeight() {
+		if (this.getImage() == null) {
+			return 0;
+		}
 		return this.getImage().getHeight(null);
 	}
 
@@ -160,8 +167,17 @@ public class Entity {
 	 * @return
 	 */
 	public Image getImage() {
-		if(this.isStatic) {
+		if (this.isStatic) {
 			return this.staticImage;
+		}
+		if (animator == null) {
+			return null;
+		}
+		if (animator.getState() == null) {
+			return null;
+		}
+		if (animator.getAnimation(animator.getState()) == null) {
+			return null;
 		}
 		return animator.getAnimation(animator.getState()).getImage();
 	}

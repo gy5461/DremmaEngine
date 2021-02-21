@@ -9,15 +9,23 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Map.Entry;
 
+import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.ui.UIEntity;
 
+/**
+ * 2D移动帮助
+ * @author guoyi
+ *
+ */
 public class TranslateEntityHelper {
 	public static HashMap<String, TranslateEntityHelper> translateEntities = new HashMap<String, TranslateEntityHelper>();
-
+	// 不进行数据加载的移动帮助实体名称子串队列
+	public static Queue<String> notLoadNameSubStrings = new LinkedList<String>();
+	
 	public Entity entity;
 
-	public static boolean shouldRender = true;
+	public static boolean shouldRender = false;
 	public boolean shouldTransScreenPos;
 
 	// x轴
@@ -31,10 +39,9 @@ public class TranslateEntityHelper {
 	// 双轴
 	public Rect xyAxis;
 	public boolean choosenXY;
-	
+
 	public static boolean hasLock = false;
 	public static TranslateEntityHelper lockedEntity = null;
-	
 
 	static String path = Resources.path + "data/translateEntities.dat"; // 数据文件目录
 
@@ -207,12 +214,14 @@ public class TranslateEntityHelper {
 			position = (Vector2) objs.peek();
 			objs.remove(position);
 
-			if (name.contains("野鬼")) {
-				continue;
+			boolean willLoad = true; // 是否加载到游戏
+			for (String s : CollisionBox.notLoadNameSubStrings) {
+				if (name.contains(s)) {
+					willLoad = false;
+				}
 			}
-
-			if (name.contains("Attack")) {
-				continue;
+			if (!willLoad) {
+				continue; // 加载下一个
 			}
 
 			TranslateEntityHelper.translateEntities.get(name).entity.position = position;
