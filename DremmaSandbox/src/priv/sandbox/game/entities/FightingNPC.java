@@ -86,7 +86,7 @@ public class FightingNPC extends NPC {
 
 			SandboxCollisionBox.collisionBoxs.get(this.attackEntity.name).setPos(
 					new Vector2(this.attackEntity.position.sub(30f)), new Vector2(this.attackEntity.position.add(30f)));
-			if (FloatCompare.isBiggerOrEqual(this.curAttackDistance, this.attackDistance)) {
+			if (this.attackEntity.moveVector.isEqual(Vector2.zero()) || FloatCompare.isBiggerOrEqual(this.curAttackDistance, this.attackDistance)) {
 				this.curAttackDistance = 0f;
 				this.attackEntity.visible = false;
 				this.attackEntity.detectCollision = false;
