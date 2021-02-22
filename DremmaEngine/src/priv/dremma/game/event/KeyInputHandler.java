@@ -2,6 +2,10 @@ package priv.dremma.game.event;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import priv.dremma.game.GameCore;
 import priv.dremma.game.util.Debug;
@@ -30,6 +34,20 @@ public class KeyInputHandler implements KeyListener {
 		private boolean isPressed = false; // 是否被按
 		public int keyCode;
 
+		private ArrayList<Integer> keyCodes = new ArrayList<Integer>();
+
+		public Key() {
+
+		}
+
+		public Key(ArrayList<Integer> keyCodes) {
+			this.keyCodes = keyCodes;
+		}
+
+		public ArrayList<Integer> getKeyCodes() {
+			return this.keyCodes;
+		}
+
 		public int getPressedTimes() {
 			return pressedTimes;
 		}
@@ -54,15 +72,24 @@ public class KeyInputHandler implements KeyListener {
 		}
 	}
 
-	// 上下左右虚拟方向键
-	public Key up = new Key();
-	public Key down = new Key();
-	public Key left = new Key();
-	public Key right = new Key();
-	public Key attack = new Key();
-	public Key talk = new Key();
-	public Key enter = new Key();
 	public Key key = new Key();
+
+	// 虚拟键
+	private HashMap<String, Key> virtualKeys = new HashMap<String, Key>();
+
+	public void setVirtualKey(String name, ArrayList<Integer> keyCodes) {
+		this.virtualKeys.put(name, new Key(keyCodes));
+	}
+
+	/**
+	 * 通过虚拟键名称获取虚拟键
+	 * 
+	 * @param name 虚拟键名称
+	 * @return
+	 */
+	public Key getVirtualKey(String name) {
+		return this.virtualKeys.get(name);
+	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -83,36 +110,19 @@ public class KeyInputHandler implements KeyListener {
 
 	public void toggleKey(int keyCode, boolean isPressed) {
 		boolean flag = false;
-		if (keyCode == KeyEvent.VK_W || keyCode == KeyEvent.VK_UP) {
-			flag = true;
-			up.toggle(keyCode, isPressed);
-		}
-		if (keyCode == KeyEvent.VK_S || keyCode == KeyEvent.VK_DOWN) {
-			flag = true;
-			down.toggle(keyCode, isPressed);
-		}
-		if (keyCode == KeyEvent.VK_A || keyCode == KeyEvent.VK_LEFT) {
-			flag = true;
-			left.toggle(keyCode, isPressed);
-		}
-		if (keyCode == KeyEvent.VK_D || keyCode == KeyEvent.VK_RIGHT) {
-			flag = true;
-			right.toggle(keyCode, isPressed);
-		}
-		if (keyCode == KeyEvent.VK_J) {
-			flag = true;
-			attack.toggle(keyCode, isPressed);
-		}
-		if (keyCode == KeyEvent.VK_T) {
-			flag = true;
-			talk.toggle(keyCode, isPressed);
-		}
-		if (keyCode == KeyEvent.VK_ENTER) {
-			flag = true;
-			enter.toggle(keyCode, isPressed);
+
+		Iterator<Entry<String, Key>> virtualKeysIterator = this.virtualKeys.entrySet().iterator();
+		while (virtualKeysIterator.hasNext()) {
+			HashMap.Entry<String, Key> entry = (HashMap.Entry<String, Key>) virtualKeysIterator.next();
+			for (Integer code : entry.getValue().getKeyCodes()) {
+				if (code == keyCode) {
+					flag = true;
+					entry.getValue().toggle(keyCode, isPressed);
+				}
+			}
 		}
 		if (!flag) {
-			key.toggle(keyCode, isPressed);
+			key.toggle(keyCode, isPressed);	// 触发其他键（未设置键）
 		}
 	}
 

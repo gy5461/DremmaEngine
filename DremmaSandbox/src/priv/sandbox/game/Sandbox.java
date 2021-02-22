@@ -1,5 +1,8 @@
 package priv.sandbox.game;
 
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+
 import priv.dremma.game.GameCore;
 import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.entities.Entity;
@@ -18,26 +21,62 @@ import priv.sandbox.game.entities.Player;
 @SuppressWarnings("serial")
 public class Sandbox extends GameCore {
 	private Player player;
-	
+
 	@Override
 	public void onStart() {
 		this.setName("SandBox");
-		
+
+		Sandbox.scale = 3;
 		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // 设置2D游戏视角
+
+		// --------------设置游戏按键----------------
+		ArrayList<Integer> upKeyCodes = new ArrayList<Integer>();
+		upKeyCodes.add(KeyEvent.VK_W);
+		upKeyCodes.add(KeyEvent.VK_UP);
+		this.keyInputHandler.setVirtualKey("up", upKeyCodes);
+
+		ArrayList<Integer> downKeyCodes = new ArrayList<Integer>();
+		downKeyCodes.add(KeyEvent.VK_S);
+		downKeyCodes.add(KeyEvent.VK_DOWN);
+		this.keyInputHandler.setVirtualKey("down", downKeyCodes);
+
+		ArrayList<Integer> leftKeyCodes = new ArrayList<Integer>();
+		leftKeyCodes.add(KeyEvent.VK_A);
+		leftKeyCodes.add(KeyEvent.VK_LEFT);
+		this.keyInputHandler.setVirtualKey("left", leftKeyCodes);
+
+		ArrayList<Integer> rightKeyCodes = new ArrayList<Integer>();
+		rightKeyCodes.add(KeyEvent.VK_D);
+		rightKeyCodes.add(KeyEvent.VK_RIGHT);
+		this.keyInputHandler.setVirtualKey("right", rightKeyCodes);
+
+		ArrayList<Integer> attackKeyCodes = new ArrayList<Integer>();
+		attackKeyCodes.add(KeyEvent.VK_J);
+		this.keyInputHandler.setVirtualKey("attack", attackKeyCodes);
+
+		ArrayList<Integer> talkKeyCodes = new ArrayList<Integer>();
+		talkKeyCodes.add(KeyEvent.VK_T);
+		this.keyInputHandler.setVirtualKey("talk", talkKeyCodes);
+
+		ArrayList<Integer> enterKeyCodes = new ArrayList<Integer>();
+		enterKeyCodes.add(KeyEvent.VK_ENTER);
+		this.keyInputHandler.setVirtualKey("enter", enterKeyCodes);
+
+		// 设置游戏主角
 		player = new Player(this.keyInputHandler, 60f);
 
 		player.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.height / 2f);
 
 		player.setScale(new Vector2(2f, 2f));
 
-		// 加载音乐
+		// --------------加载音乐----------------
 		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");
 		AudioManager.getInstance().playLoop("backgroundSound");
 
 		Resources.load(Resources.ResourceType.Music, "runSound", Resources.path + "music/run.wav");
 		Resources.load(Resources.ResourceType.Music, "attackSound", Resources.path + "music/attack.wav");
 		Resources.load(Resources.ResourceType.Music, "ghostFloatSound", Resources.path + "music/鬼漂浮声.wav");
-		
+
 		Resources.load(Resources.ResourceType.Music, "ghostDieSound", Resources.path + "music/鬼死亡.wav");
 		Resources.load(Resources.ResourceType.Music, "playerDieSound", Resources.path + "music/主角死亡.wav");
 		Resources.load(Resources.ResourceType.Music, "playerWinSound", Resources.path + "music/主角胜利.wav");
@@ -62,22 +101,22 @@ public class Sandbox extends GameCore {
 		tree1Entity.name = "tree1_1";
 		map.addEntity(tree1Entity, new Vector2(2, 5));
 
-		SandboxCollisionBox.collisionBoxs.put(tree1Entity.name, new SandboxCollisionBox(tree1Entity.position.sub(Vector2.one().mul(50)),
-				tree1Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(tree1Entity.name, new SandboxCollisionBox(
+				tree1Entity.position.sub(Vector2.one().mul(50)), tree1Entity.position.add(Vector2.one().mul(50))));
 
 		tree1Entity.name = "tree1_2";
 		tree1Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(tree1Entity, new Vector2(4, 5));
 
-		SandboxCollisionBox.collisionBoxs.put(tree1Entity.name, new SandboxCollisionBox(tree1Entity.position.sub(Vector2.one().mul(50)),
-				tree1Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(tree1Entity.name, new SandboxCollisionBox(
+				tree1Entity.position.sub(Vector2.one().mul(50)), tree1Entity.position.add(Vector2.one().mul(50))));
 
 		tree1Entity.name = "tree1_3";
 		tree1Entity.setScale(new Vector2(1f, 1f));
 		map.addEntity(tree1Entity, new Vector2(3, 11));
 
-		SandboxCollisionBox.collisionBoxs.put(tree1Entity.name, new SandboxCollisionBox(tree1Entity.position.sub(Vector2.one().mul(50)),
-				tree1Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(tree1Entity.name, new SandboxCollisionBox(
+				tree1Entity.position.sub(Vector2.one().mul(50)), tree1Entity.position.add(Vector2.one().mul(50))));
 
 		// tree2
 		Entity tree2Entity = new Entity();
@@ -87,8 +126,8 @@ public class Sandbox extends GameCore {
 		tree2Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(tree2Entity, new Vector2(4, 8));
 
-		SandboxCollisionBox.collisionBoxs.put(tree2Entity.name, new SandboxCollisionBox(tree2Entity.position.sub(Vector2.one().mul(50)),
-				tree2Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(tree2Entity.name, new SandboxCollisionBox(
+				tree2Entity.position.sub(Vector2.one().mul(50)), tree2Entity.position.add(Vector2.one().mul(50))));
 
 		// archiving
 		Entity archivingEntity = new Entity();
@@ -97,10 +136,11 @@ public class Sandbox extends GameCore {
 		archivingEntity.name = "archiving";
 		archivingEntity.setScale(new Vector2(0.2f, 0.2f));
 		map.addEntity(archivingEntity, new Vector2(3, 6));
-		SandboxCollisionBox.collisionBoxs.put(archivingEntity.name, new SandboxCollisionBox(archivingEntity.position.sub(Vector2.one().mul(50)),
-				archivingEntity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(archivingEntity.name,
+				new SandboxCollisionBox(archivingEntity.position.sub(Vector2.one().mul(50)),
+						archivingEntity.position.add(Vector2.one().mul(50))));
 		SandboxCollisionBox.collisionBoxs.get("archiving").isTrigger = true; // 触发盒子
-		
+
 		// chair1
 		Entity chair1Entity = new Entity();
 		chair1Entity.setStaticImage(Resources.loadImage(Resources.path + "images/entities/chair1.png"));
@@ -109,8 +149,8 @@ public class Sandbox extends GameCore {
 		chair1Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair1Entity, new Vector2(4, 8));
 
-		SandboxCollisionBox.collisionBoxs.put(chair1Entity.name, new SandboxCollisionBox(chair1Entity.position.sub(Vector2.one().mul(50)),
-				chair1Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(chair1Entity.name, new SandboxCollisionBox(
+				chair1Entity.position.sub(Vector2.one().mul(50)), chair1Entity.position.add(Vector2.one().mul(50))));
 
 		// chair2
 		Entity chair2Entity = new Entity();
@@ -120,8 +160,8 @@ public class Sandbox extends GameCore {
 		chair2Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair2Entity, new Vector2(4, 5));
 
-		SandboxCollisionBox.collisionBoxs.put(chair2Entity.name, new SandboxCollisionBox(chair2Entity.position.sub(Vector2.one().mul(50)),
-				chair2Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(chair2Entity.name, new SandboxCollisionBox(
+				chair2Entity.position.sub(Vector2.one().mul(50)), chair2Entity.position.add(Vector2.one().mul(50))));
 
 		// chair3
 		Entity chair3Entity = new Entity();
@@ -131,8 +171,8 @@ public class Sandbox extends GameCore {
 		chair3Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair3Entity, new Vector2(4, 11));
 
-		SandboxCollisionBox.collisionBoxs.put(chair3Entity.name, new SandboxCollisionBox(chair3Entity.position.sub(Vector2.one().mul(50)),
-				chair3Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(chair3Entity.name, new SandboxCollisionBox(
+				chair3Entity.position.sub(Vector2.one().mul(50)), chair3Entity.position.add(Vector2.one().mul(50))));
 
 		// chair4
 		Entity chair4Entity = new Entity();
@@ -142,8 +182,8 @@ public class Sandbox extends GameCore {
 		chair4Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair4Entity, new Vector2(5, 5));
 
-		SandboxCollisionBox.collisionBoxs.put(chair4Entity.name, new SandboxCollisionBox(chair4Entity.position.sub(Vector2.one().mul(50)),
-				chair4Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(chair4Entity.name, new SandboxCollisionBox(
+				chair4Entity.position.sub(Vector2.one().mul(50)), chair4Entity.position.add(Vector2.one().mul(50))));
 
 		// desk
 		Entity deskEntity = new Entity();
@@ -153,8 +193,8 @@ public class Sandbox extends GameCore {
 		deskEntity.setScale(new Vector2(2f, 2f));
 		map.addEntity(deskEntity, new Vector2(5, 8));
 
-		SandboxCollisionBox.collisionBoxs.put(deskEntity.name, new SandboxCollisionBox(deskEntity.position.sub(Vector2.one().mul(50)),
-				deskEntity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(deskEntity.name, new SandboxCollisionBox(
+				deskEntity.position.sub(Vector2.one().mul(50)), deskEntity.position.add(Vector2.one().mul(50))));
 
 		// --------------场景中的NPC----------------
 
@@ -162,18 +202,18 @@ public class Sandbox extends GameCore {
 		ConversationalNPC talkNPC = new ConversationalNPC(this.keyInputHandler, 0, "南极仙翁");
 		talkNPC.setScale(new Vector2(2f, 2f));
 		map.addNPC(talkNPC, new Vector2(1043, 275));
-		
-		SandboxCollisionBox.collisionBoxs.put(talkNPC.name, new SandboxCollisionBox(talkNPC.position.sub(Vector2.one().mul(50)),
-				talkNPC.position.add(Vector2.one().mul(50))));
+
+		SandboxCollisionBox.collisionBoxs.put(talkNPC.name, new SandboxCollisionBox(
+				talkNPC.position.sub(Vector2.one().mul(50)), talkNPC.position.add(Vector2.one().mul(50))));
 
 		// 野鬼（打斗NPC）
 		FightingNPC fightingNPC = new FightingNPC(30f);
 		fightingNPC.name = "野鬼";
 		fightingNPC.setScale(new Vector2(2f, 2f));
 		map.addNPC(fightingNPC, new Vector2(800, 600));
-		
-		SandboxCollisionBox.collisionBoxs.put(fightingNPC.name, new SandboxCollisionBox(fightingNPC.position.sub(Vector2.one().mul(50)),
-				fightingNPC.position.add(Vector2.one().mul(50))));
+
+		SandboxCollisionBox.collisionBoxs.put(fightingNPC.name, new SandboxCollisionBox(
+				fightingNPC.position.sub(Vector2.one().mul(50)), fightingNPC.position.add(Vector2.one().mul(50))));
 
 		// --------------场景中的边界----------------
 
@@ -183,8 +223,8 @@ public class Sandbox extends GameCore {
 		mapBorderUp.name = "mapBorderUp";
 		mapBorderUp.visible = false;
 		TileMap.addEntity("mapBorderUp", mapBorderUp);
-		SandboxCollisionBox.collisionBoxs.put("mapBorderUp",
-				new SandboxCollisionBox(new Vector2(0, -2 - borderThickness), new Vector2(map.worldEndTileCenter.x, -1)));
+		SandboxCollisionBox.collisionBoxs.put("mapBorderUp", new SandboxCollisionBox(
+				new Vector2(0, -2 - borderThickness), new Vector2(map.worldEndTileCenter.x, -1)));
 
 		// 为地图边界添加碰撞盒 Down
 		Entity mapBorderDown = new Entity();
@@ -200,16 +240,17 @@ public class Sandbox extends GameCore {
 		mapBorderLeft.name = "mapBorderLeft";
 		mapBorderLeft.visible = false;
 		TileMap.addEntity("mapBorderLeft", mapBorderLeft);
-		SandboxCollisionBox.collisionBoxs.put("mapBorderLeft",
-				new SandboxCollisionBox(new Vector2(-2 - borderThickness, 0), new Vector2(-1, map.worldEndTileCenter.y)));
+		SandboxCollisionBox.collisionBoxs.put("mapBorderLeft", new SandboxCollisionBox(
+				new Vector2(-2 - borderThickness, 0), new Vector2(-1, map.worldEndTileCenter.y)));
 
 		// 为地图边界添加碰撞盒 Right
 		Entity mapBorderRight = new Entity();
 		mapBorderRight.name = "mapBorderRight";
 		mapBorderRight.visible = false;
 		TileMap.addEntity("mapBorderRight", mapBorderRight);
-		SandboxCollisionBox.collisionBoxs.put("mapBorderRight", new SandboxCollisionBox(new Vector2(map.worldEndTileCenter.x + 1, 0),
-				new Vector2(map.worldEndTileCenter.x + 2 + borderThickness, map.worldEndTileCenter.y)));
+		SandboxCollisionBox.collisionBoxs.put("mapBorderRight",
+				new SandboxCollisionBox(new Vector2(map.worldEndTileCenter.x + 1, 0),
+						new Vector2(map.worldEndTileCenter.x + 2 + borderThickness, map.worldEndTileCenter.y)));
 
 		// --------------UI----------------
 		// 对话框
@@ -279,12 +320,40 @@ public class Sandbox extends GameCore {
 		playerHpProfile.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
 
 		UIManager.addUI(playerHpProfile);
+
+		// fightingNPC血条底部
+		UIEntity fightingNPCHpBarBase = new UIEntity();
+		fightingNPCHpBarBase.mode = UIEntity.UIMode.WORLD;
+		fightingNPCHpBarBase.setStaticImage(Resources.loadImage(Resources.path + "images/血条底.png"));
+		fightingNPCHpBarBase.name = "fightingNPCHpBarBase";
+		fightingNPCHpBarBase.visible = true;
+		fightingNPCHpBarBase.setScale(new Vector2(fightingNPC.getWidth() * fightingNPC.getScale().x, 10));
+		Vector2 fightingNPCHpBarPos = new Vector2(
+				fightingNPC.position.sub(new Vector2(fightingNPC.getWidth() * fightingNPC.getScale().x / 2,
+						fightingNPC.getHeight() * fightingNPC.getScale().y / 2 + 20)));
+		fightingNPCHpBarBase.position = new Vector2(fightingNPCHpBarPos.x - fightingNPC.getWidth() * fightingNPC.getScale().x / 2,
+				fightingNPCHpBarPos.y);
+
+		UIManager.addUI(fightingNPCHpBarBase);
+
+		// fightingNPC血条
+		UIEntity fightingNPCHpBar = new UIEntity();
+		fightingNPCHpBar.mode = UIEntity.UIMode.WORLD;
+		fightingNPCHpBar.setStaticImage(Resources.loadImage(Resources.path + "images/xArrow.png"));
+		fightingNPCHpBar.name = "fightingNPCHpBar";
+		fightingNPCHpBar.visible = true;
+		fightingNPCHpBar.setScale(new Vector2(fightingNPC.getWidth() * fightingNPC.getScale().x, 10));
+		fightingNPCHpBar.algin = UIEntity.UIAlign.LEFT;
+		fightingNPCHpBar.position = fightingNPCHpBarPos;
+
+		UIManager.addUI(fightingNPCHpBar);
+
 		// --------------加载数据----------------
-		
+
 		SandboxCollisionBox.notLoadNameSubStrings.add("野鬼");
 		SandboxCollisionBox.notLoadNameSubStrings.add("mapBorder");
 		SandboxCollisionBox.notLoadNameSubStrings.add("Attack");
-		
+
 		TranslateEntityHelper.notLoadNameSubStrings.add("野鬼");
 		TranslateEntityHelper.notLoadNameSubStrings.add("Attack");
 
@@ -295,14 +364,10 @@ public class Sandbox extends GameCore {
 		// ---------------------配置-----------------------
 //		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
 //		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
+
 	}
 
 	@Override
 	public void onUpdate() {
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
 	}
 }

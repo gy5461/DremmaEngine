@@ -86,7 +86,7 @@ public class GameCore extends Canvas implements Runnable {
 		mouseInputHandler = new MouseInputHandler(this);
 
 		screen = new Screen(GameCore.width * GameCore.scale, GameCore.height * GameCore.scale);
-
+		
 		onStart();
 	}
 

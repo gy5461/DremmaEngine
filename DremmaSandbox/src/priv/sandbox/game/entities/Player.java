@@ -148,9 +148,9 @@ public class Player extends Entity {
 				}
 
 				// 处理攻击
-				if (this.keyInputHandler.attack.isPressed()
-						&& this.pressAttackTimes < this.keyInputHandler.attack.getPressedTimes()) {
-					this.pressAttackTimes = this.keyInputHandler.attack.getPressedTimes();
+				if (this.keyInputHandler.getVirtualKey("attack").isPressed()
+						&& this.pressAttackTimes < this.keyInputHandler.getVirtualKey("attack").getPressedTimes()) {
+					this.pressAttackTimes = this.keyInputHandler.getVirtualKey("attack").getPressedTimes();
 
 					AudioManager.getInstance().stopPlay("runSound");
 					AudioManager.getInstance().playLoop("attackSound");
@@ -346,25 +346,25 @@ public class Player extends Entity {
 				// 处理移动
 				if (this.state == Entity.EntityState.STAND) {
 					// AudioManager.getInstance().stopPlay("ghostWoundedSound");
-					if (this.keyInputHandler.up.isPressed()) {
+					if (this.keyInputHandler.getVirtualKey("up").isPressed()) {
 						this.animator.setState("playerRunUp", false);
 						this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier))
 								.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
 						this.direction = Entity.EntityDirection.UP;
 						this.state = Entity.EntityState.MOVE;
-					} else if (this.keyInputHandler.down.isPressed()) {
+					} else if (this.keyInputHandler.getVirtualKey("down").isPressed()) {
 						this.animator.setState("playerRunDown", false);
 						this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier))
 								.mul(new Vector2(1, 1)).mul(Time.deltaTime);
 						this.direction = Entity.EntityDirection.DOWN;
 						this.state = Entity.EntityState.MOVE;
-					} else if (this.keyInputHandler.left.isPressed()) {
+					} else if (this.keyInputHandler.getVirtualKey("left").isPressed()) {
 						this.animator.setState("playerRunLeft", false);
 						this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier))
 								.mul(new Vector2(-1, 1)).mul(Time.deltaTime);
 						this.direction = Entity.EntityDirection.LEFT;
 						this.state = Entity.EntityState.MOVE;
-					} else if (this.keyInputHandler.right.isPressed()) {
+					} else if (this.keyInputHandler.getVirtualKey("right").isPressed()) {
 						this.animator.setState("playerRunRight", false);
 						this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier))
 								.mul(new Vector2(1, -1)).mul(Time.deltaTime);
@@ -425,25 +425,25 @@ public class Player extends Entity {
 
 				// 处理移动
 				if (this.state == Entity.EntityState.STAND) {
-					if (this.keyInputHandler.up.isPressed()) {
+					if (this.keyInputHandler.getVirtualKey("up").isPressed()) {
 						this.animator.setState("playerRunUp", false);
 						this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(0, -1))
 								.mul(Time.deltaTime);
 						this.direction = Entity.EntityDirection.UP;
 						this.state = Entity.EntityState.MOVE;
-					} else if (this.keyInputHandler.down.isPressed()) {
+					} else if (this.keyInputHandler.getVirtualKey("down").isPressed()) {
 						this.animator.setState("playerRunDown", false);
 						this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(0, 1))
 								.mul(Time.deltaTime);
 						this.direction = Entity.EntityDirection.DOWN;
 						this.state = Entity.EntityState.MOVE;
-					} else if (this.keyInputHandler.left.isPressed()) {
+					} else if (this.keyInputHandler.getVirtualKey("left").isPressed()) {
 						this.animator.setState("playerRunLeft", false);
 						this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(-1, 0))
 								.mul(Time.deltaTime);
 						this.direction = Entity.EntityDirection.LEFT;
 						this.state = Entity.EntityState.MOVE;
-					} else if (this.keyInputHandler.right.isPressed()) {
+					} else if (this.keyInputHandler.getVirtualKey("right").isPressed()) {
 						this.animator.setState("playerRunRight", false);
 						this.moveVector = (new Vector2(this.speed, this.speed)).mul(new Vector2(1, 0))
 								.mul(Time.deltaTime);

@@ -76,18 +76,18 @@ public class ConversationalNPC extends NPC {
 	public synchronized void update() {
 		super.update();
 		if (this.nearPlayer()) {
-			if (!this.isTalking && this.keyInputHandler.talk.isPressed()
-					&& this.pressTalkTime < this.keyInputHandler.talk.getPressedTimes()) {
-				this.pressTalkTime = this.keyInputHandler.talk.getPressedTimes();
+			if (!this.isTalking && this.keyInputHandler.getVirtualKey("talk").isPressed()
+					&& this.pressTalkTime < this.keyInputHandler.getVirtualKey("talk").getPressedTimes()) {
+				this.pressTalkTime = this.keyInputHandler.getVirtualKey("talk").getPressedTimes();
 				this.isTalking = true;
 			}
 		}
 
-		if (this.isTalking && this.keyInputHandler.talk.isPressed()
-				&& this.pressTalkTime < this.keyInputHandler.talk.getPressedTimes()) {
+		if (this.isTalking && this.keyInputHandler.getVirtualKey("talk").isPressed()
+				&& this.pressTalkTime < this.keyInputHandler.getVirtualKey("talk").getPressedTimes()) {
 			// 关闭对话
 			this.closeConversation();
-			this.pressTalkTime = this.keyInputHandler.talk.getPressedTimes();
+			this.pressTalkTime = this.keyInputHandler.getVirtualKey("talk").getPressedTimes();
 		}
 		
 		if (this.isTalking) {
@@ -104,8 +104,8 @@ public class ConversationalNPC extends NPC {
 			}
 
 			// 在谈话时，玩家按Enter键进行翻页
-			if (this.keyInputHandler.enter.isPressed()
-					&& this.pressEnterTime < this.keyInputHandler.enter.getPressedTimes()) {
+			if (this.keyInputHandler.getVirtualKey("enter").isPressed()
+					&& this.pressEnterTime < this.keyInputHandler.getVirtualKey("enter").getPressedTimes()) {
 				// 处理交流队列，进行翻页
 				if (this.conversation.size() > 0) {
 					this.conversation.poll();
@@ -117,7 +117,7 @@ public class ConversationalNPC extends NPC {
 					this.closeConversation();
 				}
 
-				this.pressEnterTime = this.keyInputHandler.enter.getPressedTimes();
+				this.pressEnterTime = this.keyInputHandler.getVirtualKey("enter").getPressedTimes();
 			}
 
 		}

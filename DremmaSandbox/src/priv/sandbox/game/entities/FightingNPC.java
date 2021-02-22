@@ -1,8 +1,6 @@
 package priv.sandbox.game.entities;
 
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -13,8 +11,8 @@ import priv.dremma.game.audio.AudioManager;
 import priv.dremma.game.entities.AttackEntity;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.tiles.TileMap;
+import priv.dremma.game.ui.UIManager;
 import priv.dremma.game.util.FloatCompare;
-import priv.dremma.game.util.GUtils;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
@@ -51,6 +49,7 @@ public class FightingNPC extends NPC {
 
 	@Override
 	public synchronized void update() {
+		
 		// Debug.log(Debug.DebugLevel.INFO,
 		// ""+AudioManager.getInstance().getVolumn("ghostFloatSound"));
 		if (this.state == Entity.EntityState.MOVE) {
@@ -95,6 +94,23 @@ public class FightingNPC extends NPC {
 		}
 
 		super.update();
+		
+		if (this.state == Entity.EntityState.DEAD) {
+			UIManager.removeUI(UIManager.getUIEntity("fightingNPCHpBarBase"));
+			UIManager.removeUI(UIManager.getUIEntity("fightingNPCHpBar"));
+			return;
+		}
+
+		UIManager.getUIEntity("fightingNPCHpBar").position = this.position.sub(
+				new Vector2(this.getWidth() * this.getScale().x / 2, this.getHeight() * this.getScale().y / 2 + 20));
+		
+		UIManager.getUIEntity("fightingNPCHpBar")
+				.setScale(new Vector2(this.getWidth() * this.getScale().x * this.hp * 1.0f / this.maxHp, 10));
+
+		UIManager.getUIEntity("fightingNPCHpBarBase").position = new Vector2(
+				UIManager.getUIEntity("fightingNPCHpBar").position.x + this.getWidth() * this.getScale().x / 2,
+				UIManager.getUIEntity("fightingNPCHpBar").position.y);
+		UIManager.getUIEntity("fightingNPCHpBarBase").setScale(new Vector2(this.getWidth() * this.getScale().x, 10));
 	}
 
 	public void loadAnimation() {
@@ -205,30 +221,4 @@ public class FightingNPC extends NPC {
 		}, 8000);
 	}
 
-	@Override
-	public void draw(Graphics2D g) {
-		super.draw(g);
-
-		if (this.state == Entity.EntityState.DEAD) {
-			return;
-		}
-
-		Vector2 npcScreenPos = GUtils.worldPixelToViewPort(this.position.sub(
-				new Vector2(this.getWidth() * this.getScale().x / 2, this.getHeight() * this.getScale().y / 2 + 20)));
-
-		// 画血条（黑底红色）
-		// 血条底
-		AffineTransform npcHpBarBase = new AffineTransform();
-		npcHpBarBase.translate(npcScreenPos.x, npcScreenPos.y);
-		npcHpBarBase.scale(this.getWidth() * this.getScale().x, 10);
-		g.drawImage(Resources.loadImage(Resources.path + "images/血条底.png"), npcHpBarBase, null);
-
-		// 血条
-		AffineTransform npcHpBar = new AffineTransform();
-		npcHpBar.translate(npcScreenPos.x, npcScreenPos.y);
-		npcHpBar.scale(this.getWidth() * this.getScale().x * this.hp * 1.0f / this.maxHp, 10);
-		g.drawImage(Resources.loadImage(Resources.path + "images/xArrow.png"), npcHpBar, null);
-	}
-
 }
-

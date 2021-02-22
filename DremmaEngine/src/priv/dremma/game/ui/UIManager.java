@@ -26,6 +26,23 @@ public class UIManager {
 		}
 	}
 
+	/**
+	 * 删除游戏中的UI
+	 * 
+	 * @param UIEntity
+	 */
+	public static void removeUI(UIEntity UIEntity) {
+		if (UIManager.uiEntities.contains(UIEntity)) {
+			UIManager.uiEntities.remove(UIEntity);
+		} else {
+			return;
+		}
+
+		if (TranslateEntityHelper.translateEntities.containsKey(UIEntity.name)) {
+			TranslateEntityHelper.translateEntities.remove(UIEntity.name);
+		}
+	}
+
 	public static UIEntity getUIEntity(String name) {
 		for (UIEntity ue : UIManager.uiEntities) {
 			if (ue.name.equals(name)) {
