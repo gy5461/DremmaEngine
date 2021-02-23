@@ -18,7 +18,6 @@ import priv.dremma.game.GameCore;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
-import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.TranslateEntityHelper;
 import priv.dremma.game.util.Vector2;
 
@@ -30,7 +29,7 @@ import priv.dremma.game.util.Vector2;
  */
 public class TileMap {
 	// 地砖编号与地砖对应的表，加载地图时使用
-	public static ArrayList<Image> tilesTable = new ArrayList<Image>();
+	public static HashMap<String, Image> tilesTable = new HashMap<String, Image>();
 
 	private Image[][] tiles; // 地砖
 	private Vector2 scale;
@@ -176,23 +175,9 @@ public class TileMap {
 	}
 
 	/**
-	 * 加载地砖资源
-	 */
-	public static void loadTiles() {
-		// 加载地砖
-		Resources.load(Resources.ResourceType.Tile, "floor0", Resources.path + "images/tiles/floor_0.png");
-		Resources.load(Resources.ResourceType.Tile, "floor1", Resources.path + "images/tiles/floor_1.png");
-		Resources.load(Resources.ResourceType.Tile, "floor2", Resources.path + "images/tiles/floor_2.png");
-		Resources.load(Resources.ResourceType.Tile, "floor3", Resources.path + "images/tiles/floor_3.png");
-		Resources.load(Resources.ResourceType.Tile, "floor4", Resources.path + "images/tiles/floor_4.png");
-	}
-
-	/**
 	 * 根据文件加载地图
 	 */
 	public static TileMap loadTileMap(String path) {
-		TileMap.loadTiles();
-
 		ArrayList<String> lines = new ArrayList<String>();
 		int width = 0;
 		int height = 0;
@@ -224,7 +209,7 @@ public class TileMap {
 				String line = (String) lines.get(y);
 				String[] words = GUtils.split(line);
 				for (int x = 0; x < words.length; x++) {
-					resultMap.setTile(x, y, TileMap.tilesTable.get(Integer.valueOf(words[x])));
+					resultMap.setTile(x, y, TileMap.tilesTable.get(words[x]));
 				}
 			}
 			resultMap.worldEndTileCenter = GUtils.worldTileCenterToWorldPixel(

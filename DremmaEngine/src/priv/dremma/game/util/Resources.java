@@ -34,8 +34,8 @@ public class Resources {
 			break;
 		case Tile:
 			Image tile = Resources.loadImage(path);
-			if (!TileMap.tilesTable.contains(tile)) {
-				TileMap.tilesTable.add(tile); // 向地砖编号与地砖对应的表中添加地砖
+			if (!TileMap.tilesTable.containsKey(name)) {
+				TileMap.tilesTable.put(name, tile); // 向地砖编号与地砖对应的表中添加地砖
 			}
 			break;
 		}

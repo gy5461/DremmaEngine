@@ -87,8 +87,16 @@ public class Sandbox extends GameCore {
 		Resources.load(Resources.ResourceType.Music, "playerWoundedSound", Resources.path + "music/主角受伤.wav");
 		AudioManager.getInstance().setVolumn("playerWoundedSound", 100);
 
-		// 从文件中加载地图
-		map = TileMap.loadTileMap(Resources.path + "maps/map2.txt");
+		// --------------加载地图------------------
+		// 加载基础地砖
+		Resources.load(Resources.ResourceType.Tile, "0", Resources.path + "images/tiles/floor_0.png");
+		Resources.load(Resources.ResourceType.Tile, "1", Resources.path + "images/tiles/floor_1.png");
+		Resources.load(Resources.ResourceType.Tile, "2", Resources.path + "images/tiles/floor_2.png");
+		Resources.load(Resources.ResourceType.Tile, "3", Resources.path + "images/tiles/floor_3.png");
+		Resources.load(Resources.ResourceType.Tile, "4", Resources.path + "images/tiles/floor_4.png");
+		
+		// 根据基础地砖从文件中加载地图
+		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
 		map.setPlayer(player);
 
 		// --------------场景中的物体----------------
@@ -331,8 +339,8 @@ public class Sandbox extends GameCore {
 		Vector2 fightingNPCHpBarPos = new Vector2(
 				fightingNPC.position.sub(new Vector2(fightingNPC.getWidth() * fightingNPC.getScale().x / 2,
 						fightingNPC.getHeight() * fightingNPC.getScale().y / 2 + 20)));
-		fightingNPCHpBarBase.position = new Vector2(fightingNPCHpBarPos.x - fightingNPC.getWidth() * fightingNPC.getScale().x / 2,
-				fightingNPCHpBarPos.y);
+		fightingNPCHpBarBase.position = new Vector2(
+				fightingNPCHpBarPos.x - fightingNPC.getWidth() * fightingNPC.getScale().x / 2, fightingNPCHpBarPos.y);
 
 		UIManager.addUI(fightingNPCHpBarBase);
 

@@ -51,6 +51,9 @@ public class ConversationalNPC extends NPC {
 						reader.close();
 						break;
 					}
+					if (line.startsWith("#")) {
+						continue;	// 注释部分跳过
+					}
 					if (line.startsWith("(Idle)")) {
 						String[] idle = GUtils.split(line);
 						for (int i = 1; i < idle.length; i++) {
