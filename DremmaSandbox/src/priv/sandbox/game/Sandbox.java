@@ -75,6 +75,7 @@ public class Sandbox extends GameCore {
 
 		Resources.load(Resources.ResourceType.Music, "runSound", Resources.path + "music/run.wav");
 		Resources.load(Resources.ResourceType.Music, "attackSound", Resources.path + "music/attack.wav");
+		Resources.load(Resources.ResourceType.Music, "attackWithBowSound", Resources.path + "music/射箭声.wav");
 		Resources.load(Resources.ResourceType.Music, "ghostFloatSound", Resources.path + "music/鬼漂浮声.wav");
 
 		Resources.load(Resources.ResourceType.Music, "ghostDieSound", Resources.path + "music/鬼死亡.wav");

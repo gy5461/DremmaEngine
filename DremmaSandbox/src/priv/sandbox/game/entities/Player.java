@@ -105,7 +105,8 @@ public class Player extends Entity {
 
 	Vector2 lastMoveVector = Vector2.zero(); // 上一个moveVector
 
-	public static final float ATTACK_LERP = 135f; // 攻击动作插值距离
+	public float attackDistance = 135f; // 攻击动作插值距离
+
 	public static final float ATTACK_OFFSETX = 130f; // 为了得到合适大小的攻击碰撞盒x方向的偏移量
 	public static final float ATTACK_OFFSETY = 115f; // 为了得到合适大小的攻击碰撞盒y方向的偏移量
 
@@ -115,7 +116,9 @@ public class Player extends Entity {
 	public int maxHp; // 满血量
 	public int attackHarm; // 攻击造成的伤害
 
-	public boolean equipmented = true;
+	public boolean equipmentedBow = true;	// 是否装备弓箭
+
+	Entity arrow = null;
 
 	public Player(KeyInputHandler keyInputHandler, float speed) {
 		super();
@@ -131,6 +134,14 @@ public class Player extends Entity {
 		SandboxCollisionBox.collisionBoxs.put(this.name, new SandboxCollisionBox(
 				this.position.sub(new Vector2(33, -17)), this.position.add(new Vector2(25, 90))));
 		this.loadAnimation();
+
+		if (this.equipmentedBow) {
+			this.attackDistance = 270f;
+			arrow = new Entity();
+			arrow.setStaticImage(Resources.loadImage(Resources.path + "images/entities/arrow.png"));
+			this.arrow.setScale(new Vector2(0.17f, 0.17f));
+			arrow.detectCollision = false;
+		}
 	}
 
 	public synchronized void update() {
@@ -149,36 +160,49 @@ public class Player extends Entity {
 				}
 
 				if (this.state == Entity.EntityState.ATTACK) {
+					// 如果装备了弓箭，则显示射出的箭
 					if (this.animator.getState().contains("Up")) {
 						// 插值，从(0, 0)到(-ATTACK_LERP, -ATTACK_LERP * TileMap.modifier)
 						Vector2 transValue = Vector2.lerp(Vector2.zero(),
-								new Vector2(-ATTACK_LERP, -ATTACK_LERP * TileMap.modifier), Time.deltaTime);
+								new Vector2(-attackDistance, -attackDistance * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackUp").moveVector = transValue;
 						SandboxCollisionBox.collisionBoxs.get("playerAttackUp").trans(transValue);
+						if (this.equipmentedBow) {
+							this.arrow.position = this.arrow.position.add(transValue);
+						}
 					}
 
 					if (this.animator.getState().contains("Down")) {
 						// 插值，从(0, 0)到(ATTACK_LERP, ATTACK_LERP * TileMap.modifier)
 						Vector2 transValue = Vector2.lerp(Vector2.zero(),
-								new Vector2(ATTACK_LERP, ATTACK_LERP * TileMap.modifier), Time.deltaTime);
+								new Vector2(attackDistance, attackDistance * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackDown").moveVector = transValue;
 						SandboxCollisionBox.collisionBoxs.get("playerAttackDown").trans(transValue);
+						if (this.equipmentedBow) {
+							this.arrow.position = this.arrow.position.add(transValue);
+						}
 					}
 
 					if (this.animator.getState().contains("Left")) {
 						// 插值，从(0, 0)到(-ATTACK_LERP, ATTACK_LERP * TileMap.modifier)
 						Vector2 transValue = Vector2.lerp(Vector2.zero(),
-								new Vector2(-ATTACK_LERP, ATTACK_LERP * TileMap.modifier), Time.deltaTime);
+								new Vector2(-attackDistance, attackDistance * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackLeft").moveVector = transValue;
 						SandboxCollisionBox.collisionBoxs.get("playerAttackLeft").trans(transValue);
+						if (this.equipmentedBow) {
+							this.arrow.position = this.arrow.position.add(transValue);
+						}
 					}
 
 					if (this.animator.getState().contains("Right")) {
 						// 插值，从(0, 0)到(ATTACK_LERP, -ATTACK_LERP * TileMap.modifier)
 						Vector2 transValue = Vector2.lerp(Vector2.zero(),
-								new Vector2(ATTACK_LERP, -ATTACK_LERP * TileMap.modifier), Time.deltaTime);
+								new Vector2(attackDistance, -attackDistance * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackRight").moveVector = transValue;
 						SandboxCollisionBox.collisionBoxs.get("playerAttackRight").trans(transValue);
+						if (this.equipmentedBow) {
+							this.arrow.position = this.arrow.position.add(transValue);
+						}
 					}
 				}
 
@@ -188,12 +212,16 @@ public class Player extends Entity {
 					this.pressAttackTimes = this.keyInputHandler.getVirtualKey("attack").getPressedTimes();
 
 					AudioManager.getInstance().stopPlay("runSound");
-					AudioManager.getInstance().playLoop("attackSound");
+					if (this.equipmentedBow) {
+						AudioManager.getInstance().playOnce("attackWithBowSound");
+					} else {
+						AudioManager.getInstance().playLoop("attackSound");
+					}
 
 					switch (this.direction) {
 					case UP:
 
-						if (this.equipmented) {
+						if (this.equipmentedBow) {
 							this.animator.setState("playerAttackUpWithBow", true);
 							this.animator.setState("playerStandUpWithBow", false);
 						} else {
@@ -205,6 +233,7 @@ public class Player extends Entity {
 						AttackEntity playerAttackUpAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackUp")) {
 							playerAttackUpAttackEntity = new AttackEntity(this);
+							playerAttackUpAttackEntity.setStaticImage(this.getImage());
 							playerAttackUpAttackEntity.name = "playerAttackUpAttackEntity";
 							playerAttackUpAttackEntity.position = new Vector2(this.position);
 							playerAttackUpAttackEntity.setScale(this.getScale());
@@ -233,14 +262,21 @@ public class Player extends Entity {
 												TileMap.entities.get("playerAttackUp").getHeight()
 														* TileMap.entities.get("playerAttackUp").getScale().y / 2
 														- ATTACK_OFFSETY))
-										.add(new Vector2(-ATTACK_LERP, -ATTACK_LERP * TileMap.modifier)))) {
+										.add(new Vector2(-attackDistance, -attackDistance * TileMap.modifier)))) {
 							SandboxCollisionBox.collisionBoxs.get("playerAttackUp")
-									.trans(new Vector2(ATTACK_LERP, ATTACK_LERP * TileMap.modifier));
+									.trans(new Vector2(attackDistance, attackDistance * TileMap.modifier));
+						}
+
+						if (this.equipmentedBow) {
+							this.arrow.position = SandboxCollisionBox.collisionBoxs.get("playerAttackUp").rightDownPoint
+									.add(new Vector2(120, 52));
+							this.arrow.rotation = 210;
+							TileMap.addEntity("playerAttackArrow", this.arrow);
 						}
 
 						break;
 					case DOWN:
-						if (this.equipmented) {
+						if (this.equipmentedBow) {
 							this.animator.setState("playerAttackDownWithBow", true);
 							this.animator.setState("playerStandDownWithBow", false);
 						} else {
@@ -252,6 +288,7 @@ public class Player extends Entity {
 						AttackEntity playerAttackDownAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackDown")) {
 							playerAttackDownAttackEntity = new AttackEntity(this);
+							playerAttackDownAttackEntity.setStaticImage(this.getImage());
 							playerAttackDownAttackEntity.name = "playerAttackDownAttackEntity";
 							playerAttackDownAttackEntity.position = new Vector2(this.position);
 							playerAttackDownAttackEntity.setScale(this.getScale());
@@ -274,14 +311,21 @@ public class Player extends Entity {
 
 						if (SandboxCollisionBox.collisionBoxs.get("playerAttackDown").leftUpPoint
 								.isBiggerOrEqual(TileMap.entities.get("playerAttackDown").position
-										.add(new Vector2(ATTACK_LERP, ATTACK_LERP * TileMap.modifier)))) {
+										.add(new Vector2(attackDistance, attackDistance * TileMap.modifier)))) {
 							SandboxCollisionBox.collisionBoxs.get("playerAttackDown")
-									.trans(new Vector2(-ATTACK_LERP, -ATTACK_LERP * TileMap.modifier));
+									.trans(new Vector2(-attackDistance, -attackDistance * TileMap.modifier));
+						}
+
+						if (this.equipmentedBow) {
+							this.arrow.position = SandboxCollisionBox.collisionBoxs
+									.get("playerAttackDown").rightDownPoint.add(new Vector2(-40, -60));
+							this.arrow.rotation = 30;
+							TileMap.addEntity("playerAttackArrow", this.arrow);
 						}
 
 						break;
 					case LEFT:
-						if (this.equipmented) {
+						if (this.equipmentedBow) {
 							this.animator.setState("playerAttackLeftWithBow", true);
 							this.animator.setState("playerStandLeftWithBow", false);
 						} else {
@@ -293,6 +337,7 @@ public class Player extends Entity {
 						AttackEntity playerAttackLeftAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackLeft")) {
 							playerAttackLeftAttackEntity = new AttackEntity(this);
+							playerAttackLeftAttackEntity.setStaticImage(this.getImage());
 							playerAttackLeftAttackEntity.name = "playerAttackLeftAttackEntity";
 							playerAttackLeftAttackEntity.position = new Vector2(this.position);
 							playerAttackLeftAttackEntity.setScale(this.getScale());
@@ -317,20 +362,27 @@ public class Player extends Entity {
 						Vector2 endPointLeft = TileMap.entities.get("playerAttackLeft").position.sub(new Vector2(
 								TileMap.entities.get("playerAttackLeft").getWidth()
 										* TileMap.entities.get("playerAttackLeft").getScale().x / 2 - ATTACK_OFFSETX,
-								0)).add(new Vector2(-ATTACK_LERP, ATTACK_LERP * TileMap.modifier));
+								0)).add(new Vector2(-attackDistance, attackDistance * TileMap.modifier));
 						if (FloatCompare.isLessOrEqual(
 								SandboxCollisionBox.collisionBoxs.get("playerAttackLeft").leftUpPoint.x, endPointLeft.x)
 								&& FloatCompare.isBiggerOrEqual(
 										SandboxCollisionBox.collisionBoxs.get("playerAttackLeft").leftUpPoint.y,
 										endPointLeft.y)) {
 							SandboxCollisionBox.collisionBoxs.get("playerAttackLeft")
-									.trans(new Vector2(ATTACK_LERP, -ATTACK_LERP * TileMap.modifier));
+									.trans(new Vector2(attackDistance, -attackDistance * TileMap.modifier));
+						}
+
+						if (this.equipmentedBow) {
+							this.arrow.position = SandboxCollisionBox.collisionBoxs
+									.get("playerAttackLeft").rightDownPoint.add(new Vector2(120, -48));
+							this.arrow.rotation = 150;
+							TileMap.addEntity("playerAttackArrow", this.arrow);
 						}
 
 						break;
 					case RIGHT:
 
-						if (this.equipmented) {
+						if (this.equipmentedBow) {
 							this.animator.setState("playerAttackRightWithBow", true);
 							this.animator.setState("playerStandRightWithBow", false);
 						} else {
@@ -342,6 +394,7 @@ public class Player extends Entity {
 						AttackEntity playerAttackRightAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackRight")) {
 							playerAttackRightAttackEntity = new AttackEntity(this);
+							playerAttackRightAttackEntity.setStaticImage(this.getImage());
 							playerAttackRightAttackEntity.name = "playerAttackRightAttackEntity";
 							playerAttackRightAttackEntity.position = new Vector2(this.position);
 							playerAttackRightAttackEntity.setScale(this.getScale());
@@ -367,7 +420,7 @@ public class Player extends Entity {
 										TileMap.entities.get("playerAttackRight").getHeight()
 												* TileMap.entities.get("playerAttackRight").getScale().y / 2
 												- ATTACK_OFFSETY))
-								.add(new Vector2(ATTACK_LERP, -ATTACK_LERP * TileMap.modifier));
+								.add(new Vector2(attackDistance, -attackDistance * TileMap.modifier));
 						if (FloatCompare.isBiggerOrEqual(
 								SandboxCollisionBox.collisionBoxs.get("playerAttackRight").leftUpPoint.x,
 								endPointRight.x)
@@ -375,7 +428,14 @@ public class Player extends Entity {
 										SandboxCollisionBox.collisionBoxs.get("playerAttackRight").leftUpPoint.y,
 										endPointRight.y)) {
 							SandboxCollisionBox.collisionBoxs.get("playerAttackRight")
-									.trans(new Vector2(-ATTACK_LERP, ATTACK_LERP * TileMap.modifier));
+									.trans(new Vector2(-attackDistance, attackDistance * TileMap.modifier));
+						}
+
+						if (this.equipmentedBow) {
+							this.arrow.position = SandboxCollisionBox.collisionBoxs
+									.get("playerAttackRight").rightDownPoint.add(new Vector2(-50, 38));
+							this.arrow.rotation = -30;
+							TileMap.addEntity("playerAttackArrow", this.arrow);
 						}
 
 						break;
@@ -388,7 +448,7 @@ public class Player extends Entity {
 					// AudioManager.getInstance().stopPlay("ghostWoundedSound");
 					if (this.keyInputHandler.getVirtualKey("up").isPressed()) {
 
-						if (this.equipmented) {
+						if (this.equipmentedBow) {
 							this.animator.setState("playerRunUpWithBow", false);
 						} else {
 							this.animator.setState("playerRunUp", false);
@@ -399,7 +459,7 @@ public class Player extends Entity {
 						this.state = Entity.EntityState.MOVE;
 					} else if (this.keyInputHandler.getVirtualKey("down").isPressed()) {
 
-						if (this.equipmented) {
+						if (this.equipmentedBow) {
 							this.animator.setState("playerRunDownWithBow", false);
 						} else {
 							this.animator.setState("playerRunDown", false);
@@ -410,7 +470,7 @@ public class Player extends Entity {
 						this.state = Entity.EntityState.MOVE;
 					} else if (this.keyInputHandler.getVirtualKey("left").isPressed()) {
 
-						if (this.equipmented) {
+						if (this.equipmentedBow) {
 							this.animator.setState("playerRunLeftWithBow", false);
 						} else {
 							this.animator.setState("playerRunLeft", false);
@@ -421,7 +481,7 @@ public class Player extends Entity {
 						this.state = Entity.EntityState.MOVE;
 					} else if (this.keyInputHandler.getVirtualKey("right").isPressed()) {
 
-						if (this.equipmented) {
+						if (this.equipmentedBow) {
 							this.animator.setState("playerRunRightWithBow", false);
 						} else {
 							this.animator.setState("playerRunRight", false);
@@ -443,31 +503,35 @@ public class Player extends Entity {
 					TileMap.entities.remove("playerAttackDown");
 					TileMap.entities.remove("playerAttackLeft");
 					TileMap.entities.remove("playerAttackRight");
+					if (this.equipmentedBow) {
+						TileMap.entities.remove("playerAttackArrow");
+					}
 
 					switch (this.direction) {
 					case UP:
-						if (this.equipmented) {
+						if (this.equipmentedBow) {
 							this.animator.setState("playerStandUpWithBow", false);
 						} else {
 							this.animator.setState("playerStandUp", false);
 						}
 						break;
 					case DOWN:
-						if (this.equipmented) {
+						if (this.equipmentedBow) {
 							this.animator.setState("playerStandDownWithBow", false);
 						} else {
 							this.animator.setState("playerStandDown", false);
 						}
 						break;
 					case LEFT:
-						if (this.equipmented) {
+						if (this.equipmentedBow) {
 							this.animator.setState("playerStandLeftWithBow", false);
 						} else {
 							this.animator.setState("playerStandLeft", false);
 						}
 						break;
 					case RIGHT:
-						if (this.equipmented) {
+
+						if (this.equipmentedBow) {
 							this.animator.setState("playerStandRightWithBow", false);
 						} else {
 							this.animator.setState("playerStandRight", false);
@@ -475,7 +539,11 @@ public class Player extends Entity {
 						break;
 					}
 					AudioManager.getInstance().stopPlay("runSound");
-					AudioManager.getInstance().stopPlay("attackSound");
+					if (this.equipmentedBow) {
+						AudioManager.getInstance().stopPlay("attackWithBowSound");
+					} else {
+						AudioManager.getInstance().stopPlay("attackSound");
+					}
 					this.moveVector = Vector2.zero();
 
 				} else if (this.state == Entity.EntityState.MOVE) {
@@ -487,8 +555,15 @@ public class Player extends Entity {
 					TileMap.entities.remove("playerAttackDown");
 					TileMap.entities.remove("playerAttackLeft");
 					TileMap.entities.remove("playerAttackRight");
+					if (this.equipmentedBow) {
+						TileMap.entities.remove("playerAttackArrow");
+					}
 
-					AudioManager.getInstance().stopPlay("attackSound");
+					if (this.equipmentedBow) {
+						AudioManager.getInstance().stopPlay("attackWithBowSound");
+					} else {
+						AudioManager.getInstance().stopPlay("attackSound");
+					}
 					AudioManager.getInstance().playLoop("runSound");
 
 					this.position = this.position.add(this.moveVector);
@@ -559,6 +634,17 @@ public class Player extends Entity {
 		}
 
 		if (this.state == Entity.EntityState.WIN) {
+			SandboxCollisionBox.collisionBoxs.remove("playerAttackUp");
+			SandboxCollisionBox.collisionBoxs.remove("playerAttackDown");
+			SandboxCollisionBox.collisionBoxs.remove("playerAttackLeft");
+			SandboxCollisionBox.collisionBoxs.remove("playerAttackRight");
+			TileMap.entities.remove("playerAttackUp");
+			TileMap.entities.remove("playerAttackDown");
+			TileMap.entities.remove("playerAttackLeft");
+			TileMap.entities.remove("playerAttackRight");
+			if (this.equipmentedBow) {
+				TileMap.entities.remove("playerAttackArrow");
+			}
 			// 播放拍手动画
 			switch (this.direction) {
 			case DOWN:
@@ -577,6 +663,17 @@ public class Player extends Entity {
 		}
 
 		if (this.state == Entity.EntityState.DEAD) {
+			SandboxCollisionBox.collisionBoxs.remove("playerAttackUp");
+			SandboxCollisionBox.collisionBoxs.remove("playerAttackDown");
+			SandboxCollisionBox.collisionBoxs.remove("playerAttackLeft");
+			SandboxCollisionBox.collisionBoxs.remove("playerAttackRight");
+			TileMap.entities.remove("playerAttackUp");
+			TileMap.entities.remove("playerAttackDown");
+			TileMap.entities.remove("playerAttackLeft");
+			TileMap.entities.remove("playerAttackRight");
+			if (this.equipmentedBow) {
+				TileMap.entities.remove("playerAttackArrow");
+			}
 			// 播放死亡动画
 			this.animator.setState("playerDie", true);
 			if (!(this.animator.getState() != null && this.animator.getState().contains("playerAttack"))) {
@@ -906,7 +1003,11 @@ public class Player extends Entity {
 		this.detectCollision = false;
 		this.state = Entity.EntityState.DEAD;
 		AudioManager.getInstance().stopPlay("runSound");
-		AudioManager.getInstance().stopPlay("attackSound");
+		if (this.equipmentedBow) {
+			AudioManager.getInstance().stopPlay("attackWithBowSound");
+		} else {
+			AudioManager.getInstance().stopPlay("attackSound");
+		}
 		AudioManager.getInstance().stopPlay("playerWoundedSound");
 		// 播放死亡音效
 		AudioManager.getInstance().playLoop("playerDieSound");
@@ -918,7 +1019,11 @@ public class Player extends Entity {
 		this.detectCollision = false;
 		this.state = Entity.EntityState.WIN;
 		AudioManager.getInstance().stopPlay("runSound");
-		AudioManager.getInstance().stopPlay("attackSound");
+		if (this.equipmentedBow) {
+			AudioManager.getInstance().stopPlay("attackWithBowSound");
+		} else {
+			AudioManager.getInstance().stopPlay("attackSound");
+		}
 		AudioManager.getInstance().stopPlay("playerWoundedSound");
 		// 游戏结束，关闭背景音乐
 		AudioManager.getInstance().stopPlay("backgroundSound");

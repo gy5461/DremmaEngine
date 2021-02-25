@@ -16,6 +16,7 @@ public class Entity {
 	public Animator animator;
 
 	public Vector2 position; // 位置
+	public float rotation = 0;	// 顺时针旋转角度
 
 	public float speed;
 	public Vector2 moveVector; // 速度
@@ -206,7 +207,9 @@ public class Entity {
 		AffineTransform transform = new AffineTransform();
 		transform.translate(screenPos.x - this.getWidth() * this.scale.x / 2f,
 				screenPos.y - this.getHeight() * this.scale.y / 2f);
+		transform.rotate(Math.toRadians(this.rotation));
 		transform.scale(this.scale.x, this.scale.y);
+		
 		g.drawImage(this.getImage(), transform, null);
 	}
 
