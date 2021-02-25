@@ -19,7 +19,7 @@ import priv.dremma.game.util.Vector2;
 import priv.sandbox.game.collision.SandboxCollisionBox;
 
 public class Player extends Entity {
-	
+
 	protected KeyInputHandler keyInputHandler;
 
 	// 站立动画
@@ -33,6 +33,17 @@ public class Player extends Entity {
 	Animation playerStandRightAnimation = new Animation();
 	Animation playerStandLeftAnimation = new Animation();
 
+	// 带弓站立动画
+	HashMap<Integer, Image> playerStandUpWithBow = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerStandDownWithBow = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerStandRightWithBow = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerStandLeftWithBow = new HashMap<Integer, Image>();
+
+	Animation playerStandUpWithBowAnimation = new Animation();
+	Animation playerStandDownWithBowAnimation = new Animation();
+	Animation playerStandRightWithBowAnimation = new Animation();
+	Animation playerStandLeftWithBowAnimation = new Animation();
+
 	// 跑步动画
 	HashMap<Integer, Image> playerRunUp = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> playerRunDown = new HashMap<Integer, Image>();
@@ -44,6 +55,17 @@ public class Player extends Entity {
 	Animation playerRunRightAnimation = new Animation();
 	Animation playerRunLeftAnimation = new Animation();
 
+	// 带弓跑步动画
+	HashMap<Integer, Image> playerRunUpWithBow = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerRunDownWithBow = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerRunRightWithBow = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerRunLeftWithBow = new HashMap<Integer, Image>();
+
+	Animation playerRunUpWithBowAnimation = new Animation();
+	Animation playerRunDownWithBowAnimation = new Animation();
+	Animation playerRunRightWithBowAnimation = new Animation();
+	Animation playerRunLeftWithBowAnimation = new Animation();
+
 	// 攻击动画（近战）
 	HashMap<Integer, Image> playerAttackUp = new HashMap<Integer, Image>();
 	HashMap<Integer, Image> playerAttackDown = new HashMap<Integer, Image>();
@@ -54,6 +76,17 @@ public class Player extends Entity {
 	Animation playerAttackDownAnimation = new Animation();
 	Animation playerAttackRightAnimation = new Animation();
 	Animation playerAttackLeftAnimation = new Animation();
+
+	// 攻击动画（弯弓射箭，远攻）
+	HashMap<Integer, Image> playerAttackUpWithBow = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerAttackDownWithBow = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerAttackRightWithBow = new HashMap<Integer, Image>();
+	HashMap<Integer, Image> playerAttackLeftWithBow = new HashMap<Integer, Image>();
+
+	Animation playerAttackUpWithBowAnimation = new Animation();
+	Animation playerAttackDownWithBowAnimation = new Animation();
+	Animation playerAttackRightWithBowAnimation = new Animation();
+	Animation playerAttackLeftWithBowAnimation = new Animation();
 
 	// 死亡动画：抬棺
 	HashMap<Integer, Image> playerDie = new HashMap<Integer, Image>();
@@ -82,13 +115,15 @@ public class Player extends Entity {
 	public int maxHp; // 满血量
 	public int attackHarm; // 攻击造成的伤害
 
+	public boolean equipmented = true;
+
 	public Player(KeyInputHandler keyInputHandler, float speed) {
 		super();
 
 		this.keyInputHandler = keyInputHandler;
 		this.name = "剑侠客";
 		this.speed = speed;
-		
+
 		this.maxHp = 5;
 		this.hp = maxHp;
 		this.attackHarm = 1;
@@ -157,17 +192,19 @@ public class Player extends Entity {
 
 					switch (this.direction) {
 					case UP:
-						this.animator.setState("playerAttackUp", true);
-						this.animator.setState("playerStandUp", false);
+
+						if (this.equipmented) {
+							this.animator.setState("playerAttackUpWithBow", true);
+							this.animator.setState("playerStandUpWithBow", false);
+						} else {
+							this.animator.setState("playerAttackUp", true);
+							this.animator.setState("playerStandUp", false);
+						}
 
 						// 近战碰撞盒 Up
-						Animator playerAttackUpAnimator = null;
 						AttackEntity playerAttackUpAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackUp")) {
-							playerAttackUpAnimator = new Animator();
-							playerAttackUpAnimator.addAnimation("playerAttackUp", this.playerAttackUpAnimation);
-							playerAttackUpAttackEntity = new AttackEntity(playerAttackUpAnimator, this);
-							playerAttackUpAttackEntity.animator.setState("playerAttackUp", true);
+							playerAttackUpAttackEntity = new AttackEntity(this);
 							playerAttackUpAttackEntity.name = "playerAttackUpAttackEntity";
 							playerAttackUpAttackEntity.position = new Vector2(this.position);
 							playerAttackUpAttackEntity.setScale(this.getScale());
@@ -203,17 +240,18 @@ public class Player extends Entity {
 
 						break;
 					case DOWN:
-						this.animator.setState("playerAttackDown", true);
-						this.animator.setState("playerStandDown", false);
+						if (this.equipmented) {
+							this.animator.setState("playerAttackDownWithBow", true);
+							this.animator.setState("playerStandDownWithBow", false);
+						} else {
+							this.animator.setState("playerAttackDown", true);
+							this.animator.setState("playerStandDown", false);
+						}
 
 						// 近战碰撞盒 Down
-						Animator playerAttackDownAnimator = null;
 						AttackEntity playerAttackDownAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackDown")) {
-							playerAttackDownAnimator = new Animator();
-							playerAttackDownAnimator.addAnimation("playerAttackDown", this.playerAttackDownAnimation);
-							playerAttackDownAttackEntity = new AttackEntity(playerAttackDownAnimator, this);
-							playerAttackDownAttackEntity.animator.setState("playerAttackDown", true);
+							playerAttackDownAttackEntity = new AttackEntity(this);
 							playerAttackDownAttackEntity.name = "playerAttackDownAttackEntity";
 							playerAttackDownAttackEntity.position = new Vector2(this.position);
 							playerAttackDownAttackEntity.setScale(this.getScale());
@@ -243,17 +281,18 @@ public class Player extends Entity {
 
 						break;
 					case LEFT:
-						this.animator.setState("playerAttackLeft", true);
-						this.animator.setState("playerStandLeft", false);
+						if (this.equipmented) {
+							this.animator.setState("playerAttackLeftWithBow", true);
+							this.animator.setState("playerStandLeftWithBow", false);
+						} else {
+							this.animator.setState("playerAttackLeft", true);
+							this.animator.setState("playerStandLeft", false);
+						}
 
 						// 近战碰撞盒 Left
-						Animator playerAttackLeftAnimator = null;
 						AttackEntity playerAttackLeftAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackLeft")) {
-							playerAttackLeftAnimator = new Animator();
-							playerAttackLeftAnimator.addAnimation("playerAttackLeft", this.playerAttackLeftAnimation);
-							playerAttackLeftAttackEntity = new AttackEntity(playerAttackLeftAnimator, this);
-							playerAttackLeftAttackEntity.animator.setState("playerAttackLeft", true);
+							playerAttackLeftAttackEntity = new AttackEntity(this);
 							playerAttackLeftAttackEntity.name = "playerAttackLeftAttackEntity";
 							playerAttackLeftAttackEntity.position = new Vector2(this.position);
 							playerAttackLeftAttackEntity.setScale(this.getScale());
@@ -290,18 +329,19 @@ public class Player extends Entity {
 
 						break;
 					case RIGHT:
-						this.animator.setState("playerAttackRight", true);
-						this.animator.setState("playerStandRight", false);
+
+						if (this.equipmented) {
+							this.animator.setState("playerAttackRightWithBow", true);
+							this.animator.setState("playerStandRightWithBow", false);
+						} else {
+							this.animator.setState("playerAttackRight", true);
+							this.animator.setState("playerStandRight", false);
+						}
 
 						// 近战碰撞盒 Right
-						Animator playerAttackRightAnimator = null;
 						AttackEntity playerAttackRightAttackEntity = null;
 						if (!TileMap.entities.containsKey("playerAttackRight")) {
-							playerAttackRightAnimator = new Animator();
-							playerAttackRightAnimator.addAnimation("playerAttackRight",
-									this.playerAttackRightAnimation);
-							playerAttackRightAttackEntity = new AttackEntity(playerAttackRightAnimator, this);
-							playerAttackRightAttackEntity.animator.setState("playerAttackRight", true);
+							playerAttackRightAttackEntity = new AttackEntity(this);
 							playerAttackRightAttackEntity.name = "playerAttackRightAttackEntity";
 							playerAttackRightAttackEntity.position = new Vector2(this.position);
 							playerAttackRightAttackEntity.setScale(this.getScale());
@@ -347,25 +387,45 @@ public class Player extends Entity {
 				if (this.state == Entity.EntityState.STAND) {
 					// AudioManager.getInstance().stopPlay("ghostWoundedSound");
 					if (this.keyInputHandler.getVirtualKey("up").isPressed()) {
-						this.animator.setState("playerRunUp", false);
+
+						if (this.equipmented) {
+							this.animator.setState("playerRunUpWithBow", false);
+						} else {
+							this.animator.setState("playerRunUp", false);
+						}
 						this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier))
 								.mul(new Vector2(-1, -1)).mul(Time.deltaTime);
 						this.direction = Entity.EntityDirection.UP;
 						this.state = Entity.EntityState.MOVE;
 					} else if (this.keyInputHandler.getVirtualKey("down").isPressed()) {
-						this.animator.setState("playerRunDown", false);
+
+						if (this.equipmented) {
+							this.animator.setState("playerRunDownWithBow", false);
+						} else {
+							this.animator.setState("playerRunDown", false);
+						}
 						this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier))
 								.mul(new Vector2(1, 1)).mul(Time.deltaTime);
 						this.direction = Entity.EntityDirection.DOWN;
 						this.state = Entity.EntityState.MOVE;
 					} else if (this.keyInputHandler.getVirtualKey("left").isPressed()) {
-						this.animator.setState("playerRunLeft", false);
+
+						if (this.equipmented) {
+							this.animator.setState("playerRunLeftWithBow", false);
+						} else {
+							this.animator.setState("playerRunLeft", false);
+						}
 						this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier))
 								.mul(new Vector2(-1, 1)).mul(Time.deltaTime);
 						this.direction = Entity.EntityDirection.LEFT;
 						this.state = Entity.EntityState.MOVE;
 					} else if (this.keyInputHandler.getVirtualKey("right").isPressed()) {
-						this.animator.setState("playerRunRight", false);
+
+						if (this.equipmented) {
+							this.animator.setState("playerRunRightWithBow", false);
+						} else {
+							this.animator.setState("playerRunRight", false);
+						}
 						this.moveVector = (new Vector2(this.speed, this.speed * TileMap.modifier))
 								.mul(new Vector2(1, -1)).mul(Time.deltaTime);
 						this.direction = Entity.EntityDirection.RIGHT;
@@ -386,16 +446,32 @@ public class Player extends Entity {
 
 					switch (this.direction) {
 					case UP:
-						this.animator.setState("playerStandUp", false);
+						if (this.equipmented) {
+							this.animator.setState("playerStandUpWithBow", false);
+						} else {
+							this.animator.setState("playerStandUp", false);
+						}
 						break;
 					case DOWN:
-						this.animator.setState("playerStandDown", false);
+						if (this.equipmented) {
+							this.animator.setState("playerStandDownWithBow", false);
+						} else {
+							this.animator.setState("playerStandDown", false);
+						}
 						break;
 					case LEFT:
-						this.animator.setState("playerStandLeft", false);
+						if (this.equipmented) {
+							this.animator.setState("playerStandLeftWithBow", false);
+						} else {
+							this.animator.setState("playerStandLeft", false);
+						}
 						break;
 					case RIGHT:
-						this.animator.setState("playerStandRight", false);
+						if (this.equipmented) {
+							this.animator.setState("playerStandRightWithBow", false);
+						} else {
+							this.animator.setState("playerStandRight", false);
+						}
 						break;
 					}
 					AudioManager.getInstance().stopPlay("runSound");
@@ -525,6 +601,7 @@ public class Player extends Entity {
 		float duration = 1.0f / 8.0f; // 人物动画每组8张，一秒播放8次
 
 		float attackDuration = 1.0f / 10.0f; // 攻击动画每组10张，一秒播放10次
+		float attackWithBowDuration = 1.0f / 4.0f; // 拉弓动画每组4张，0.5秒播放4次
 
 		float dieDuration = 2.0f / 10.0f; // 死亡动画每组10张，二秒播放10次
 		float clapDuration = 1.0f / 11.0f; // 拍手动画每组11张，一秒播放11次
@@ -536,13 +613,21 @@ public class Player extends Entity {
 				playerStandUp.put(i, Resources
 						.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
+				playerStandUpWithBow.put(i, Resources.loadImage(
+						Resources.path + "images/animations/player_stand_with_bow/player_stand_" + i + ".png"));
+				playerStandUpWithBowAnimation.addFrame(playerStandUpWithBow.get(i), duration);
 
 				playerRunUp.put(i,
 						Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunUpAnimation.addFrame(playerRunUp.get(i), duration);
+				playerRunUpWithBow.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_run_with_bow/player_run_" + i + ".png"));
+				playerRunUpWithBowAnimation.addFrame(playerRunUpWithBow.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandUp", playerStandUpAnimation);
+			this.animator.addAnimation("playerStandUpWithBow", playerStandUpWithBowAnimation);
 			this.animator.addAnimation("playerRunUp", playerRunUpAnimation);
+			this.animator.addAnimation("playerRunUpWithBow", playerRunUpWithBowAnimation);
 
 			for (int i = 21; i <= 30; i++) {
 				this.playerAttackUp.put(i, Resources
@@ -551,18 +636,33 @@ public class Player extends Entity {
 			}
 			this.animator.addAnimation("playerAttackUp", this.playerAttackUpAnimation);
 
+			for (int i = 9; i <= 12; i++) {
+				this.playerAttackUpWithBow.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_bent_bow/player_bent_bow_" + i + ".png"));
+				this.playerAttackUpWithBowAnimation.addFrame(this.playerAttackUpWithBow.get(i), attackWithBowDuration);
+			}
+			this.animator.addAnimation("playerAttackUpWithBow", this.playerAttackUpWithBowAnimation);
+
 			// down
 			for (int i = 40; i <= 47; i++) {
 				playerStandDown.put(i, Resources
 						.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandDownAnimation.addFrame(playerStandDown.get(i), duration);
+				playerStandDownWithBow.put(i, Resources.loadImage(
+						Resources.path + "images/animations/player_stand_with_bow/player_stand_" + i + ".png"));
+				playerStandDownWithBowAnimation.addFrame(playerStandDownWithBow.get(i), duration);
 
 				playerRunDown.put(i,
 						Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunDownAnimation.addFrame(playerRunDown.get(i), duration);
+				playerRunDownWithBow.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_run_with_bow/player_run_" + i + ".png"));
+				playerRunDownWithBowAnimation.addFrame(playerRunDownWithBow.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandDown", playerStandDownAnimation);
+			this.animator.addAnimation("playerStandDownWithBow", playerStandDownWithBowAnimation);
 			this.animator.addAnimation("playerRunDown", playerRunDownAnimation);
+			this.animator.addAnimation("playerRunDownWithBow", playerRunDownWithBowAnimation);
 
 			for (int i = 1; i <= 10; i++) {
 				this.playerAttackDown.put(i, Resources
@@ -571,18 +671,34 @@ public class Player extends Entity {
 			}
 			this.animator.addAnimation("playerAttackDown", this.playerAttackDownAnimation);
 
+			for (int i = 1; i <= 4; i++) {
+				this.playerAttackDownWithBow.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_bent_bow/player_bent_bow_" + i + ".png"));
+				this.playerAttackDownWithBowAnimation.addFrame(this.playerAttackDownWithBow.get(i),
+						attackWithBowDuration);
+			}
+			this.animator.addAnimation("playerAttackDownWithBow", this.playerAttackDownWithBowAnimation);
+
 			// right
 			for (int i = 56; i <= 63; i++) {
 				playerStandRight.put(i, Resources
 						.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandRightAnimation.addFrame(playerStandRight.get(i), duration);
+				playerStandRightWithBow.put(i, Resources.loadImage(
+						Resources.path + "images/animations/player_stand_with_bow/player_stand_" + i + ".png"));
+				playerStandRightWithBowAnimation.addFrame(playerStandRightWithBow.get(i), duration);
 
 				playerRunRight.put(i,
 						Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunRightAnimation.addFrame(playerRunRight.get(i), duration);
+				playerRunRightWithBow.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_run_with_bow/player_run_" + i + ".png"));
+				playerRunRightWithBowAnimation.addFrame(playerRunRightWithBow.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandRight", playerStandRightAnimation);
+			this.animator.addAnimation("playerStandRightWithBow", playerStandRightWithBowAnimation);
 			this.animator.addAnimation("playerRunRight", playerRunRightAnimation);
+			this.animator.addAnimation("playerRunRightWithBow", playerRunRightWithBowAnimation);
 
 			for (int i = 31; i <= 40; i++) {
 				this.playerAttackRight.put(i, Resources
@@ -591,18 +707,34 @@ public class Player extends Entity {
 			}
 			this.animator.addAnimation("playerAttackRight", this.playerAttackRightAnimation);
 
+			for (int i = 13; i <= 16; i++) {
+				this.playerAttackRightWithBow.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_bent_bow/player_bent_bow_" + i + ".png"));
+				this.playerAttackRightWithBowAnimation.addFrame(this.playerAttackRightWithBow.get(i),
+						attackWithBowDuration);
+			}
+			this.animator.addAnimation("playerAttackRightWithBow", this.playerAttackRightWithBowAnimation);
+
 			// left
 			for (int i = 32; i <= 39; i++) {
 				playerStandLeft.put(i, Resources
 						.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
 				playerStandLeftAnimation.addFrame(playerStandLeft.get(i), duration);
+				playerStandLeftWithBow.put(i, Resources.loadImage(
+						Resources.path + "images/animations/player_stand_with_bow/player_stand_" + i + ".png"));
+				playerStandLeftWithBowAnimation.addFrame(playerStandLeftWithBow.get(i), duration);
 
 				playerRunLeft.put(i,
 						Resources.loadImage(Resources.path + "images/animations/player_run/player_run_" + i + ".png"));
 				playerRunLeftAnimation.addFrame(playerRunLeft.get(i), duration);
+				playerRunLeftWithBow.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_run_with_bow/player_run_" + i + ".png"));
+				playerRunLeftWithBowAnimation.addFrame(playerRunLeftWithBow.get(i), duration);
 			}
 			this.animator.addAnimation("playerStandLeft", playerStandLeftAnimation);
+			this.animator.addAnimation("playerStandLeftWithBow", playerStandLeftWithBowAnimation);
 			this.animator.addAnimation("playerRunLeft", playerRunLeftAnimation);
+			this.animator.addAnimation("playerRunLeftWithBow", playerRunLeftWithBowAnimation);
 
 			for (int i = 11; i <= 20; i++) {
 				this.playerAttackLeft.put(i, Resources
@@ -610,6 +742,14 @@ public class Player extends Entity {
 				this.playerAttackLeftAnimation.addFrame(this.playerAttackLeft.get(i), attackDuration);
 			}
 			this.animator.addAnimation("playerAttackLeft", this.playerAttackLeftAnimation);
+
+			for (int i = 5; i <= 8; i++) {
+				this.playerAttackLeftWithBow.put(i, Resources
+						.loadImage(Resources.path + "images/animations/player_bent_bow/player_bent_bow_" + i + ".png"));
+				this.playerAttackLeftWithBowAnimation.addFrame(this.playerAttackLeftWithBow.get(i),
+						attackWithBowDuration);
+			}
+			this.animator.addAnimation("playerAttackLeftWithBow", this.playerAttackLeftWithBowAnimation);
 
 			// 死亡动画
 			for (int i = 1; i <= 10; i++) {
