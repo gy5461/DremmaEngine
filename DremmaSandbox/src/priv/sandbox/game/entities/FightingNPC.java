@@ -12,6 +12,7 @@ import priv.dremma.game.entities.AttackEntity;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.ui.UIManager;
+import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
@@ -27,8 +28,6 @@ public class FightingNPC extends NPC {
 	// FightingNPC的攻击实体（远攻）
 	public AttackEntity attackEntity;
 
-	Vector2 attackEndPos = Vector2.zero();
-
 	float attackDistance = 400f;
 	float curAttackDistance = 0f;
 
@@ -39,7 +38,7 @@ public class FightingNPC extends NPC {
 	public FightingNPC(float speed) {
 		super(speed);
 		this.moveSound = "ghostFloatSound";
-		this.nearDistance = 300f;
+		this.nearDistance = this.attackDistance;
 
 		this.maxHp = 20;
 		this.hp = maxHp;
@@ -49,7 +48,26 @@ public class FightingNPC extends NPC {
 
 	@Override
 	public synchronized void update() {
-		
+		super.update();
+		if (this.state == Entity.EntityState.DEAD) {
+			UIManager.removeUI(UIManager.getUIEntity("fightingNPCHpBarBase"));
+			UIManager.removeUI(UIManager.getUIEntity("fightingNPCHpBar"));
+			TileMap.entities.remove(this.attackEntity.name);
+			SandboxCollisionBox.collisionBoxs.remove(this.attackEntity.name);
+			return;
+		}
+
+		UIManager.getUIEntity("fightingNPCHpBar").position = this.position.sub(
+				new Vector2(this.getWidth() * this.getScale().x / 2, this.getHeight() * this.getScale().y / 2 + 20));
+
+		UIManager.getUIEntity("fightingNPCHpBar")
+				.setScale(new Vector2(this.getWidth() * this.getScale().x * this.hp * 1.0f / this.maxHp, 10));
+
+		UIManager.getUIEntity("fightingNPCHpBarBase").position = new Vector2(
+				UIManager.getUIEntity("fightingNPCHpBar").position.x + this.getWidth() * this.getScale().x / 2,
+				UIManager.getUIEntity("fightingNPCHpBar").position.y);
+		UIManager.getUIEntity("fightingNPCHpBarBase").setScale(new Vector2(this.getWidth() * this.getScale().x, 10));
+
 		// Debug.log(Debug.DebugLevel.INFO,
 		// ""+AudioManager.getInstance().getVolumn("ghostFloatSound"));
 		if (this.state == Entity.EntityState.MOVE) {
@@ -62,55 +80,49 @@ public class FightingNPC extends NPC {
 			}
 		}
 
-		if (this.nearPlayer() && this.state != Entity.EntityState.DEAD) { // 临近玩家时
-			// Debug.log(Debug.DebugLevel.INFO,this.name + " near player!!");
+		if (this.nearPlayer()) { // 临近玩家时
 			// 发动攻击，发射鬼火
-			if (this.attackEntity.visible == false) {
-				this.attackEntity.position = this.position.add(this.moveVector.mul(10f));
-				this.attackEndPos = this.attackEntity.position.add(this.moveVector.mul(this.attackDistance));
-				this.attackEntity.visible = true;
-				this.attackEntity.detectCollision = true;
+			if (!TileMap.entities.containsKey(this.attackEntity.name)) {
+				this.attackEntity.position = this.position;
 				this.attackEntity.direction = this.direction;
-
 				this.attackEntity.willCauseWound = true;
-				return;
-			}
-		}
-
-		if (this.attackEntity.visible == true) {
-			Vector2 attackNewPos = Vector2.lerp(this.attackEntity.position, this.attackEndPos, Time.deltaTime);
-			// 鬼火运动一段距离后消失
-			this.curAttackDistance += (attackNewPos.sub(this.attackEntity.position)).magnitude();
-			this.attackEntity.moveVector = attackNewPos.sub(this.attackEntity.position);
-			this.attackEntity.position = attackNewPos;
-
-			SandboxCollisionBox.collisionBoxs.get(this.attackEntity.name).setPos(
-					new Vector2(this.attackEntity.position.sub(30f)), new Vector2(this.attackEntity.position.add(30f)));
-			if (this.attackEntity.moveVector.isEqual(Vector2.zero()) || FloatCompare.isBiggerOrEqual(this.curAttackDistance, this.attackDistance)) {
+				TileMap.addEntity(this.attackEntity.name, this.attackEntity);
+				SandboxCollisionBox.collisionBoxs.put(this.attackEntity.name,
+						new SandboxCollisionBox(new Vector2(this.attackEntity.position.sub(30f)),
+								new Vector2(this.attackEntity.position.add(30f))));
 				this.curAttackDistance = 0f;
-				this.attackEntity.visible = false;
-				this.attackEntity.detectCollision = false;
 			}
 		}
 
-		super.update();
-		
-		if (this.state == Entity.EntityState.DEAD) {
-			UIManager.removeUI(UIManager.getUIEntity("fightingNPCHpBarBase"));
-			UIManager.removeUI(UIManager.getUIEntity("fightingNPCHpBar"));
-			return;
+		if (TileMap.entities.containsKey(this.attackEntity.name)) {
+			Vector2 transValue = Vector2.lerp(Vector2.zero(),
+					new Vector2(this.attackDistance, this.attackDistance * TileMap.modifier), 0.5f * Time.deltaTime);
+			switch (this.attackEntity.direction) {
+			case DOWN:
+				transValue = transValue.mul(new Vector2(1, 1));
+				break;
+			case LEFT:
+				transValue = transValue.mul(new Vector2(-1, 1));
+				break;
+			case RIGHT:
+				transValue = transValue.mul(new Vector2(1, -1));
+				break;
+			case UP:
+				transValue = transValue.mul(new Vector2(-1, -1));
+				break;
+			}
+			TileMap.entities.get(this.attackEntity.name).moveVector = transValue;
+			TileMap.entities
+					.get(this.attackEntity.name).position = TileMap.entities.get(this.attackEntity.name).position
+							.add(transValue);
+			SandboxCollisionBox.collisionBoxs.get(this.attackEntity.name).trans(transValue);
+			Debug.log(Debug.DebugLevel.INFO, "" + transValue);
+			this.curAttackDistance += transValue.magnitude();
+			if (FloatCompare.isBiggerOrEqual(this.curAttackDistance, this.attackDistance)) {
+				TileMap.entities.remove(this.attackEntity.name);
+				SandboxCollisionBox.collisionBoxs.remove(this.attackEntity.name);
+			}
 		}
-
-		UIManager.getUIEntity("fightingNPCHpBar").position = this.position.sub(
-				new Vector2(this.getWidth() * this.getScale().x / 2, this.getHeight() * this.getScale().y / 2 + 20));
-		
-		UIManager.getUIEntity("fightingNPCHpBar")
-				.setScale(new Vector2(this.getWidth() * this.getScale().x * this.hp * 1.0f / this.maxHp, 10));
-
-		UIManager.getUIEntity("fightingNPCHpBarBase").position = new Vector2(
-				UIManager.getUIEntity("fightingNPCHpBar").position.x + this.getWidth() * this.getScale().x / 2,
-				UIManager.getUIEntity("fightingNPCHpBar").position.y);
-		UIManager.getUIEntity("fightingNPCHpBarBase").setScale(new Vector2(this.getWidth() * this.getScale().x, 10));
 	}
 
 	public void loadAnimation() {
@@ -160,8 +172,6 @@ public class FightingNPC extends NPC {
 		this.attackEntity.name = "野鬼npcAttack";
 		this.attackEntity.position = new Vector2(500, 400);
 		this.attackEntity.setScale(new Vector2(3f, 3f));
-		this.attackEntity.visible = false;
-		this.attackEntity.detectCollision = false;
 
 		attackEntity.animator = new Animator();
 		for (int i = 1; i <= 10; i++) {
@@ -170,11 +180,6 @@ public class FightingNPC extends NPC {
 		}
 		attackEntity.animator.addAnimation("npcAttack", this.NPCAttackAnimation);
 		attackEntity.animator.setState("npcAttack", false);
-
-		TileMap.addEntity(this.attackEntity.name, this.attackEntity);
-		SandboxCollisionBox.collisionBoxs.put(this.attackEntity.name, new SandboxCollisionBox(
-				new Vector2(this.attackEntity.position.sub(30f)), new Vector2(this.attackEntity.position.add(30f))));
-		SandboxCollisionBox.collisionBoxs.get(this.attackEntity.name).name = this.attackEntity.name;
 
 		// 死亡
 		for (int i = 0; i <= 63; i++) {

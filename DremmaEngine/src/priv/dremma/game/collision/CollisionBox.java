@@ -43,8 +43,6 @@ public class CollisionBox {
 	public boolean isChoosenLeftUp;
 	public boolean isChoosenRightDown;
 
-	public String name = null; // 碰撞盒名称
-
 	static String path = Resources.path + "data/collisionBox.dat"; // 数据文件目录
 
 	public CollisionBox(Vector2 leftUpPoint, Vector2 rightDownPoint) {
@@ -77,10 +75,6 @@ public class CollisionBox {
 	 * @param g
 	 */
 	public void draw(Graphics2D g) {
-		if (this.name != null && TileMap.getEntity(this.name).detectCollision == false) {
-			return;
-		}
-
 		if (!CollisionBox.shouldRender) {
 			return;
 		}

@@ -105,7 +105,7 @@ public class Player extends Entity {
 
 	Vector2 lastMoveVector = Vector2.zero(); // 上一个moveVector
 
-	public float attackDistance = 135f; // 攻击动作插值距离
+	public float attackDistance; // 攻击动作插值距离
 
 	public static final float ATTACK_OFFSETX = 130f; // 为了得到合适大小的攻击碰撞盒x方向的偏移量
 	public static final float ATTACK_OFFSETY = 115f; // 为了得到合适大小的攻击碰撞盒y方向的偏移量
@@ -116,7 +116,7 @@ public class Player extends Entity {
 	public int maxHp; // 满血量
 	public int attackHarm; // 攻击造成的伤害
 
-	public boolean equipmentedBow = true;	// 是否装备弓箭
+	private boolean equipmentedBow = false; // 是否装备弓箭
 
 	Entity arrow = null;
 
@@ -135,13 +135,38 @@ public class Player extends Entity {
 				this.position.sub(new Vector2(33, -17)), this.position.add(new Vector2(25, 90))));
 		this.loadAnimation();
 
+		arrow = new Entity();
+		arrow.setStaticImage(Resources.loadImage(Resources.path + "images/entities/arrow.png"));
+		this.arrow.setScale(new Vector2(0.17f, 0.17f));
+		arrow.detectCollision = false;
+
 		if (this.equipmentedBow) {
 			this.attackDistance = 270f;
-			arrow = new Entity();
-			arrow.setStaticImage(Resources.loadImage(Resources.path + "images/entities/arrow.png"));
-			this.arrow.setScale(new Vector2(0.17f, 0.17f));
-			arrow.detectCollision = false;
+		} else {
+			this.attackDistance = 135f;
 		}
+	}
+
+	/**
+	 * 设置玩家装备上武器
+	 * 
+	 * @param equipmented
+	 */
+	public void setEquipWeapon(boolean equipmented) {
+		this.equipmentedBow = equipmented;
+		if (this.equipmentedBow == false) {
+			this.attackDistance = 135f;
+		} else {
+			this.attackDistance = 270f;
+		}
+	}
+	
+	/**
+	 * 获取玩家的武器装备状态
+	 * @return
+	 */
+	public boolean isEquipmentedBow() {
+		return this.equipmentedBow;
 	}
 
 	public synchronized void update() {

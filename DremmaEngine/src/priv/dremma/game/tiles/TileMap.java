@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Map.Entry;
 
 import priv.dremma.game.GameCore;
@@ -38,6 +40,7 @@ public class TileMap {
 	public static HashMap<String, Entity> entities; // 游戏中的其他实体
 	public static Entity player; // 主角
 	PriorityQueue<Entity> renderEntities; // 渲染优先队列
+	Queue<Entity> updateEntities; // 更新队列
 
 	public Vector2 worldEndTileCenter = Vector2.zero();
 
@@ -59,6 +62,7 @@ public class TileMap {
 			}
 
 		});
+		this.updateEntities = new LinkedList<Entity>();
 		this.scale = Vector2.one();
 	}
 
@@ -262,7 +266,11 @@ public class TileMap {
 			if (!entry.getValue().visible) {
 				continue;
 			}
-			entry.getValue().update();
+			this.updateEntities.add(entry.getValue());
+		}
+		while(!this.updateEntities.isEmpty()) {
+			this.updateEntities.peek().update();
+			this.updateEntities.poll();
 		}
 	}
 
