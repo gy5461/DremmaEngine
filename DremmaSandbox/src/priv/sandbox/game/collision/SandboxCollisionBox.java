@@ -7,6 +7,7 @@ import priv.dremma.game.entities.Entity;
 import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Time;
+import priv.dremma.game.util.TranslateEntityHelper;
 import priv.dremma.game.util.Vector2;
 import priv.sandbox.game.entities.FightingNPC;
 import priv.sandbox.game.entities.NPC;
@@ -126,6 +127,7 @@ public class SandboxCollisionBox extends CollisionBox {
 			 // 弓从场景中消失
 			 TileMap.entities.remove("bow");
 			 SandboxCollisionBox.collisionBoxs.remove("bow");
+			 TranslateEntityHelper.translateEntities.remove("bow");
 			 // 弓进入背包
 		 }
 	}

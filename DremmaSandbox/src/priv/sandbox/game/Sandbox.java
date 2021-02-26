@@ -160,10 +160,9 @@ public class Sandbox extends GameCore {
 		bowEntity.rotation = 60;
 		bowEntity.name = "bow";
 		bowEntity.setScale(new Vector2(0.125f, 0.125f));
-		map.addEntity(bowEntity, new Vector2(4, 8));
+		map.addEntity(bowEntity, new Vector2(5, 13));
 		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("bow").name,
-				new SandboxCollisionBox(TileMap.getEntity("bow").position.sub(Vector2.one().mul(50)),
-						TileMap.getEntity("bow").position.add(Vector2.one().mul(50))));
+				new SandboxCollisionBox(new Vector2(750.56506f, 781.72107f), new Vector2(887.56506f, 871.72107f)));
 		SandboxCollisionBox.collisionBoxs.get("bow").isTrigger = true; // 触发盒子
 
 		// chair1
@@ -387,9 +386,11 @@ public class Sandbox extends GameCore {
 		SandboxCollisionBox.notLoadNameSubStrings.add("野鬼");
 		SandboxCollisionBox.notLoadNameSubStrings.add("mapBorder");
 		SandboxCollisionBox.notLoadNameSubStrings.add("Attack");
+		SandboxCollisionBox.notLoadNameSubStrings.add("bow");
 
 		TranslateEntityHelper.notLoadNameSubStrings.add("野鬼");
 		TranslateEntityHelper.notLoadNameSubStrings.add("Attack");
+		TranslateEntityHelper.notLoadNameSubStrings.add("bow");
 
 		SandboxCollisionBox.load(); // 从数据文件中加载碰撞盒数据
 		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
