@@ -110,6 +110,7 @@ public class SandboxCollisionBox extends CollisionBox {
 			((NPC) entity).endPos = ((NPC) entity).startPos.add(entity.moveVector.mul(((NPC) entity).totalDistance));
 			entity.retreatVector = Vector2.zero();
 		}
+		
 	}
 
 	/**
@@ -119,6 +120,13 @@ public class SandboxCollisionBox extends CollisionBox {
 	 * @param otherEntity 被撞到的实体
 	 */
 	public void onTriggerEnter(Entity entity, Entity otherEntity) {
-		// Debug.log(Debug.DebugLevel.INFO, entity.name + " 触发了:" + otherEntity.name);
+		 //Debug.log(Debug.DebugLevel.INFO, entity.name + " 触发了:" + otherEntity.name);
+		 // ------------------玩家触发地上的弓时--------------------
+		 if(entity.name.equals(TileMap.player.name) && otherEntity.name.equals("bow")) {
+			 // 弓从场景中消失
+			 TileMap.entities.remove("bow");
+			 SandboxCollisionBox.collisionBoxs.remove("bow");
+			 // 弓进入背包
+		 }
 	}
 }

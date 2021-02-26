@@ -15,6 +15,7 @@ import priv.dremma.game.ui.UIEntity;
 
 /**
  * 2D移动帮助
+ * 
  * @author guoyi
  *
  */
@@ -22,7 +23,7 @@ public class TranslateEntityHelper {
 	public static HashMap<String, TranslateEntityHelper> translateEntities = new HashMap<String, TranslateEntityHelper>();
 	// 不进行数据加载的移动帮助实体名称子串队列
 	public static Queue<String> notLoadNameSubStrings = new LinkedList<String>();
-	
+
 	public Entity entity;
 
 	public static boolean shouldRender = false;
@@ -50,7 +51,19 @@ public class TranslateEntityHelper {
 		this.choosenX = false;
 		this.choosenY = false;
 		this.choosenXY = false;
-		this.shouldTransScreenPos = entity instanceof UIEntity ? false : true;
+		if (entity instanceof UIEntity) {
+			switch(((UIEntity) entity).mode) {
+			case SCREEN:
+				this.shouldTransScreenPos = false;
+				break;
+			case WORLD:
+				this.shouldTransScreenPos = true;
+				break;
+			}
+		} else {
+			this.shouldTransScreenPos = true;
+		}
+
 	}
 
 	public static Iterator<Entry<String, TranslateEntityHelper>> getTranslateEntitiesHelperIterator() {

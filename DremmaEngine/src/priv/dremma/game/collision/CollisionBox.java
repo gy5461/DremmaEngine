@@ -134,22 +134,36 @@ public class CollisionBox {
 	 * 碰撞检测：对移动的物体进行碰撞检测
 	 */
 	public static synchronized void collisionDetection() {
+		HashMap<String, CollisionBox> tmpCollisionBoxs = new HashMap<String, CollisionBox>();
 		Iterator<Entry<String, CollisionBox>> collisionBoxsIterator = CollisionBox.getCollisionBoxsIterator();
 		while (collisionBoxsIterator.hasNext()) {
 			HashMap.Entry<String, CollisionBox> entry = (HashMap.Entry<String, CollisionBox>) collisionBoxsIterator
 					.next();
+			tmpCollisionBoxs.put(entry.getKey(), entry.getValue());
+		}
+
+		Iterator<Entry<String, CollisionBox>> tmpCollisionBoxsIterator = tmpCollisionBoxs.entrySet().iterator();
+		while (tmpCollisionBoxsIterator.hasNext()) {
+			HashMap.Entry<String, CollisionBox> entry = (HashMap.Entry<String, CollisionBox>) tmpCollisionBoxsIterator
+					.next();
 			String name = entry.getKey();
 			CollisionBox collisionBox = entry.getValue();
 			Entity entity = TileMap.getEntity(name);
+			if (entity == null) {
+				continue;
+			}
 			if (entity.detectCollision == false) {
 				continue;
 			}
 			if (!entity.moveVector.add(entity.retreatVector).isEqual(Vector2.zero())) {
-				Iterator<Entry<String, CollisionBox>> otherIterator = CollisionBox.getCollisionBoxsIterator();
+				Iterator<Entry<String, CollisionBox>> otherIterator = tmpCollisionBoxs.entrySet().iterator();
 				while (otherIterator.hasNext()) {
 					HashMap.Entry<String, CollisionBox> otherEntry = (HashMap.Entry<String, CollisionBox>) otherIterator
 							.next();
 					String otherName = otherEntry.getKey();
+					if (TileMap.getEntity(otherName) == null) {
+						continue;
+					}
 					if (TileMap.getEntity(otherName).detectCollision == false) {
 						continue;
 					}
@@ -171,7 +185,7 @@ public class CollisionBox {
 							}
 							// 如果entity的碰撞盒是攻击碰撞盒
 							if (entity instanceof AttackEntity) {
-								if (otherEntity.getImage() == null) {	// 确保对有图片的实体进行碰撞检测，攻击型实体的碰撞检测是与图片进行的，不是碰撞盒
+								if (otherEntity.getImage() == null) { // 确保对有图片的实体进行碰撞检测，攻击型实体的碰撞检测是与图片进行的，不是碰撞盒
 									continue;
 								}
 								CollisionBox nextCollisionBox = collisionBox

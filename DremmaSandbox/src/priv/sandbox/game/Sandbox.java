@@ -95,7 +95,7 @@ public class Sandbox extends GameCore {
 		Resources.load(Resources.ResourceType.Tile, "2", Resources.path + "images/tiles/floor_2.png");
 		Resources.load(Resources.ResourceType.Tile, "3", Resources.path + "images/tiles/floor_3.png");
 		Resources.load(Resources.ResourceType.Tile, "4", Resources.path + "images/tiles/floor_4.png");
-		
+
 		// 根据基础地砖从文件中加载地图
 		map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
 		map.setPlayer(player);
@@ -110,22 +110,25 @@ public class Sandbox extends GameCore {
 		tree1Entity.name = "tree1_1";
 		map.addEntity(tree1Entity, new Vector2(2, 5));
 
-		SandboxCollisionBox.collisionBoxs.put(tree1Entity.name, new SandboxCollisionBox(
-				tree1Entity.position.sub(Vector2.one().mul(50)), tree1Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("tree1_1").name,
+				new SandboxCollisionBox(TileMap.getEntity("tree1_1").position.sub(Vector2.one().mul(50)),
+						TileMap.getEntity("tree1_1").position.add(Vector2.one().mul(50))));
 
 		tree1Entity.name = "tree1_2";
 		tree1Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(tree1Entity, new Vector2(4, 5));
 
-		SandboxCollisionBox.collisionBoxs.put(tree1Entity.name, new SandboxCollisionBox(
-				tree1Entity.position.sub(Vector2.one().mul(50)), tree1Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("tree1_2").name,
+				new SandboxCollisionBox(TileMap.getEntity("tree1_2").position.sub(Vector2.one().mul(50)),
+						TileMap.getEntity("tree1_2").position.add(Vector2.one().mul(50))));
 
 		tree1Entity.name = "tree1_3";
 		tree1Entity.setScale(new Vector2(1f, 1f));
 		map.addEntity(tree1Entity, new Vector2(3, 11));
 
-		SandboxCollisionBox.collisionBoxs.put(tree1Entity.name, new SandboxCollisionBox(
-				tree1Entity.position.sub(Vector2.one().mul(50)), tree1Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("tree1_3").name,
+				new SandboxCollisionBox(TileMap.getEntity("tree1_3").position.sub(Vector2.one().mul(50)),
+						TileMap.getEntity("tree1_3").position.add(Vector2.one().mul(50))));
 
 		// tree2
 		Entity tree2Entity = new Entity();
@@ -135,8 +138,9 @@ public class Sandbox extends GameCore {
 		tree2Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(tree2Entity, new Vector2(4, 8));
 
-		SandboxCollisionBox.collisionBoxs.put(tree2Entity.name, new SandboxCollisionBox(
-				tree2Entity.position.sub(Vector2.one().mul(50)), tree2Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("tree2").name,
+				new SandboxCollisionBox(TileMap.getEntity("tree2").position.sub(Vector2.one().mul(50)),
+						TileMap.getEntity("tree2").position.add(Vector2.one().mul(50))));
 
 		// archiving
 		Entity archivingEntity = new Entity();
@@ -145,10 +149,22 @@ public class Sandbox extends GameCore {
 		archivingEntity.name = "archiving";
 		archivingEntity.setScale(new Vector2(0.2f, 0.2f));
 		map.addEntity(archivingEntity, new Vector2(3, 6));
-		SandboxCollisionBox.collisionBoxs.put(archivingEntity.name,
-				new SandboxCollisionBox(archivingEntity.position.sub(Vector2.one().mul(50)),
-						archivingEntity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("archiving").name,
+				new SandboxCollisionBox(TileMap.getEntity("archiving").position.sub(Vector2.one().mul(50)),
+						TileMap.getEntity("archiving").position.add(Vector2.one().mul(50))));
 		SandboxCollisionBox.collisionBoxs.get("archiving").isTrigger = true; // 触发盒子
+
+		// bow
+		Entity bowEntity = new Entity();
+		bowEntity.setStaticImage(Resources.loadImage(Resources.path + "images/entities/bow.png"));
+		bowEntity.rotation = 60;
+		bowEntity.name = "bow";
+		bowEntity.setScale(new Vector2(0.125f, 0.125f));
+		map.addEntity(bowEntity, new Vector2(4, 8));
+		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("bow").name,
+				new SandboxCollisionBox(TileMap.getEntity("bow").position.sub(Vector2.one().mul(50)),
+						TileMap.getEntity("bow").position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.get("bow").isTrigger = true; // 触发盒子
 
 		// chair1
 		Entity chair1Entity = new Entity();
@@ -158,8 +174,9 @@ public class Sandbox extends GameCore {
 		chair1Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair1Entity, new Vector2(4, 8));
 
-		SandboxCollisionBox.collisionBoxs.put(chair1Entity.name, new SandboxCollisionBox(
-				chair1Entity.position.sub(Vector2.one().mul(50)), chair1Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("chair1").name,
+				new SandboxCollisionBox(TileMap.getEntity("chair1").position.sub(Vector2.one().mul(50)),
+						TileMap.getEntity("chair1").position.add(Vector2.one().mul(50))));
 
 		// chair2
 		Entity chair2Entity = new Entity();
@@ -169,8 +186,9 @@ public class Sandbox extends GameCore {
 		chair2Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair2Entity, new Vector2(4, 5));
 
-		SandboxCollisionBox.collisionBoxs.put(chair2Entity.name, new SandboxCollisionBox(
-				chair2Entity.position.sub(Vector2.one().mul(50)), chair2Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("chair2").name,
+				new SandboxCollisionBox(TileMap.getEntity("chair2").position.sub(Vector2.one().mul(50)),
+						TileMap.getEntity("chair2").position.add(Vector2.one().mul(50))));
 
 		// chair3
 		Entity chair3Entity = new Entity();
@@ -180,8 +198,9 @@ public class Sandbox extends GameCore {
 		chair3Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair3Entity, new Vector2(4, 11));
 
-		SandboxCollisionBox.collisionBoxs.put(chair3Entity.name, new SandboxCollisionBox(
-				chair3Entity.position.sub(Vector2.one().mul(50)), chair3Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("chair3").name,
+				new SandboxCollisionBox(TileMap.getEntity("chair3").position.sub(Vector2.one().mul(50)),
+						TileMap.getEntity("chair3").position.add(Vector2.one().mul(50))));
 
 		// chair4
 		Entity chair4Entity = new Entity();
@@ -191,8 +210,9 @@ public class Sandbox extends GameCore {
 		chair4Entity.setScale(new Vector2(2f, 2f));
 		map.addEntity(chair4Entity, new Vector2(5, 5));
 
-		SandboxCollisionBox.collisionBoxs.put(chair4Entity.name, new SandboxCollisionBox(
-				chair4Entity.position.sub(Vector2.one().mul(50)), chair4Entity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("chair4").name,
+				new SandboxCollisionBox(TileMap.getEntity("chair4").position.sub(Vector2.one().mul(50)),
+						TileMap.getEntity("chair4").position.add(Vector2.one().mul(50))));
 
 		// desk
 		Entity deskEntity = new Entity();
@@ -202,8 +222,9 @@ public class Sandbox extends GameCore {
 		deskEntity.setScale(new Vector2(2f, 2f));
 		map.addEntity(deskEntity, new Vector2(5, 8));
 
-		SandboxCollisionBox.collisionBoxs.put(deskEntity.name, new SandboxCollisionBox(
-				deskEntity.position.sub(Vector2.one().mul(50)), deskEntity.position.add(Vector2.one().mul(50))));
+		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("desk").name,
+				new SandboxCollisionBox(TileMap.getEntity("desk").position.sub(Vector2.one().mul(50)),
+						TileMap.getEntity("desk").position.add(Vector2.one().mul(50))));
 
 		// --------------场景中的NPC----------------
 
@@ -243,6 +264,10 @@ public class Sandbox extends GameCore {
 		SandboxCollisionBox.collisionBoxs.put("mapBorderDown",
 				new SandboxCollisionBox(new Vector2(0, map.worldEndTileCenter.y + 1 - 23),
 						new Vector2(map.worldEndTileCenter.x, map.worldEndTileCenter.y + 2 - 23 + borderThickness)));
+		if (GameCore.isApplet) {
+			// 如果是applet端，地图下边界需要上移24（24是applet和非applet端y轴的差）
+			SandboxCollisionBox.collisionBoxs.get("mapBorderDown").trans(new Vector2(0, 24));
+		}
 
 		// 为地图边界添加碰撞盒 Left
 		Entity mapBorderLeft = new Entity();
@@ -367,12 +392,11 @@ public class Sandbox extends GameCore {
 		TranslateEntityHelper.notLoadNameSubStrings.add("Attack");
 
 		SandboxCollisionBox.load(); // 从数据文件中加载碰撞盒数据
-
 		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
 
 		// ---------------------配置-----------------------
-//		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
-//		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
+		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
+		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
 
 	}
 

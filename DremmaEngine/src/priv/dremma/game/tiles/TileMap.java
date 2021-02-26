@@ -17,6 +17,7 @@ import java.util.Queue;
 import java.util.Map.Entry;
 
 import priv.dremma.game.GameCore;
+import priv.dremma.game.entities.AttackEntity;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.GUtils;
@@ -145,6 +146,9 @@ public class TileMap {
 		if (name.contains("mapBorder")) {
 			return;
 		}
+		if (entity instanceof AttackEntity) {
+			return;
+		}
 		if (TranslateEntityHelper.translateEntities.containsKey(name)) {
 			return;
 		}
@@ -216,11 +220,15 @@ public class TileMap {
 					resultMap.setTile(x, y, TileMap.tilesTable.get(words[x]));
 				}
 			}
+			// 地图中最后一块砖中心的世界坐标
 			resultMap.worldEndTileCenter = GUtils.worldTileCenterToWorldPixel(
 					new Vector2(resultMap.getWidth(), resultMap.getHeight()), TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
 					resultMap.scale);
 			resultMap.worldEndTileCenter.x += TileMap.TILE_SIZE.x * resultMap.scale.x;
 			resultMap.worldEndTileCenter.y += (TileMap.TILE_SIZE.y / 2 + 10) * resultMap.scale.y;
+			if (GameCore.isApplet) {
+				resultMap.worldEndTileCenter.y -= 24;
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -249,7 +257,6 @@ public class TileMap {
 					GUtils.worldTileCenterToWorldPixel(tilePos, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y, this.scale).x,
 					GUtils.worldTileCenterToWorldPixel(tilePos, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
 							this.scale).y);
-
 			TileMap.addEntity(entity.name, entity);
 		}
 	}
@@ -268,7 +275,7 @@ public class TileMap {
 			}
 			this.updateEntities.add(entry.getValue());
 		}
-		while(!this.updateEntities.isEmpty()) {
+		while (!this.updateEntities.isEmpty()) {
 			this.updateEntities.peek().update();
 			this.updateEntities.poll();
 		}

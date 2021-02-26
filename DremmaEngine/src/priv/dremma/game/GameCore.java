@@ -49,7 +49,7 @@ public class GameCore extends Canvas implements Runnable {
 	public static final Dimension DIMENSIONS = new Dimension(width * scale, height * scale);
 
 	public static boolean debug = true; // 游戏引擎默认为Debug模式
-	public boolean isApplet = false;
+	public static boolean isApplet = false;
 	public static GameViewAngle viewAngle; // 游戏视角
 
 	public static int frames = 0; // 游戏帧数
@@ -86,7 +86,6 @@ public class GameCore extends Canvas implements Runnable {
 		mouseInputHandler = new MouseInputHandler(this);
 
 		screen = new Screen(GameCore.width * GameCore.scale, GameCore.height * GameCore.scale);
-		
 		onStart();
 	}
 
@@ -99,7 +98,7 @@ public class GameCore extends Canvas implements Runnable {
 
 	public synchronized void stop() {
 		isRunning = false;
-
+		this.onDestroy();
 		try {
 			thread.join(); // 等待线程thread运行结束
 		} catch (InterruptedException e) {

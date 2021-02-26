@@ -30,7 +30,7 @@ public class GameLauncher extends Applet {
 		this.add(game, BorderLayout.CENTER);
 		this.setSize(GameCore.DIMENSIONS);
 		GameCore.debug = true;
-		game.isApplet = true;
+		GameCore.isApplet = true;
 		Resources.path = "../res/";
 
 		game.start();
@@ -44,7 +44,7 @@ public class GameLauncher extends Applet {
 
 	public static void lauchToApplication() {
 		GameCore.debug = true; // 开启debug模式
-		game.isApplet = false;
+		GameCore.isApplet = false;
 		Resources.path = "res/";
 
 		game.window = new JFrame(GameCore.name); // 新建游戏窗体

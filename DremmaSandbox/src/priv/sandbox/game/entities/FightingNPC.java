@@ -12,7 +12,6 @@ import priv.dremma.game.entities.AttackEntity;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.ui.UIManager;
-import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.FloatCompare;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
@@ -68,8 +67,6 @@ public class FightingNPC extends NPC {
 				UIManager.getUIEntity("fightingNPCHpBar").position.y);
 		UIManager.getUIEntity("fightingNPCHpBarBase").setScale(new Vector2(this.getWidth() * this.getScale().x, 10));
 
-		// Debug.log(Debug.DebugLevel.INFO,
-		// ""+AudioManager.getInstance().getVolumn("ghostFloatSound"));
 		if (this.state == Entity.EntityState.MOVE) {
 			if (this.nearPlayer()) {
 				int volumnPercent = (int) (((this.nearDistance - this.getDistance2Player()) / this.nearDistance) * 300);
@@ -116,7 +113,6 @@ public class FightingNPC extends NPC {
 					.get(this.attackEntity.name).position = TileMap.entities.get(this.attackEntity.name).position
 							.add(transValue);
 			SandboxCollisionBox.collisionBoxs.get(this.attackEntity.name).trans(transValue);
-			Debug.log(Debug.DebugLevel.INFO, "" + transValue);
 			this.curAttackDistance += transValue.magnitude();
 			if (FloatCompare.isBiggerOrEqual(this.curAttackDistance, this.attackDistance)) {
 				TileMap.entities.remove(this.attackEntity.name);
