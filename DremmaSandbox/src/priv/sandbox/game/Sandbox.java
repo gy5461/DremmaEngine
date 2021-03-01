@@ -10,6 +10,7 @@ import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.ui.Text;
 import priv.dremma.game.ui.UIEntity;
 import priv.dremma.game.ui.UIManager;
+import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.TranslateEntityHelper;
 import priv.dremma.game.util.Vector2;
@@ -69,7 +70,7 @@ public class Sandbox extends GameCore {
 		player.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.height / 2f);
 		player.setScale(new Vector2(2f, 2f));
 
-		this.player.equipWeapon(new Weapon("bow", 2, 270f));
+		// this.player.equipWeapon(new Weapon("bow", 2, 270f));
 
 		// --------------加载音乐----------------
 		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");
@@ -329,7 +330,6 @@ public class Sandbox extends GameCore {
 		UIEntity playerHpBarBase = new UIEntity();
 		playerHpBarBase.setStaticImage(Resources.loadImage(Resources.path + "images/血条底.png"));
 		playerHpBarBase.name = "playerHpBarBase";
-		playerHpBarBase.visible = true;
 		playerHpBarBase.setScale(new Vector2(300, 20));
 		playerHpBarBase.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
 
@@ -339,7 +339,6 @@ public class Sandbox extends GameCore {
 		UIEntity playerHpBar = new UIEntity();
 		playerHpBar.setStaticImage(Resources.loadImage(Resources.path + "images/border.png"));
 		playerHpBar.name = "playerHpBar";
-		playerHpBar.visible = true;
 		playerHpBar.setScale(new Vector2(300, 20));
 		playerHpBar.algin = UIEntity.UIAlign.LEFT;
 		playerHpBar.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
@@ -350,7 +349,6 @@ public class Sandbox extends GameCore {
 		UIEntity playerHpProfile = new UIEntity();
 		playerHpProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/主角头像.png"));
 		playerHpProfile.name = "playerHpProfile";
-		playerHpProfile.visible = true;
 		playerHpProfile.setScale(new Vector2(0.5f, 0.5f));
 		playerHpProfile.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
 
@@ -361,7 +359,6 @@ public class Sandbox extends GameCore {
 		fightingNPCHpBarBase.mode = UIEntity.UIMode.WORLD;
 		fightingNPCHpBarBase.setStaticImage(Resources.loadImage(Resources.path + "images/血条底.png"));
 		fightingNPCHpBarBase.name = "fightingNPCHpBarBase";
-		fightingNPCHpBarBase.visible = true;
 		fightingNPCHpBarBase.setScale(new Vector2(fightingNPC.getWidth() * fightingNPC.getScale().x, 10));
 		Vector2 fightingNPCHpBarPos = new Vector2(
 				fightingNPC.position.sub(new Vector2(fightingNPC.getWidth() * fightingNPC.getScale().x / 2,
@@ -376,12 +373,24 @@ public class Sandbox extends GameCore {
 		fightingNPCHpBar.mode = UIEntity.UIMode.WORLD;
 		fightingNPCHpBar.setStaticImage(Resources.loadImage(Resources.path + "images/xArrow.png"));
 		fightingNPCHpBar.name = "fightingNPCHpBar";
-		fightingNPCHpBar.visible = true;
 		fightingNPCHpBar.setScale(new Vector2(fightingNPC.getWidth() * fightingNPC.getScale().x, 10));
 		fightingNPCHpBar.algin = UIEntity.UIAlign.LEFT;
 		fightingNPCHpBar.position = fightingNPCHpBarPos;
 
 		UIManager.addUI(fightingNPCHpBar);
+
+		// 背包icon，点击背包icon进入背包界面
+		UIEntity bagIcon = new UIEntity(this.mouseInputHandler);
+		bagIcon.setStaticImage(Resources.loadImage(Resources.path + "images/bagIcon.png"));
+		bagIcon.name = "bagIcon";
+		bagIcon.setScale(new Vector2(0.5f, 0.5f));
+		bagIcon.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
+
+		UIManager.addUI(bagIcon);
+
+		// 背包界面
+
+		// 储物箱界面，玩家触发储物盒时出现
 
 		// --------------加载数据----------------
 
@@ -405,5 +414,9 @@ public class Sandbox extends GameCore {
 
 	@Override
 	public void onUpdate() {
+		// 当玩家点击背包图标时，显示背包界面
+		if(UIManager.getUIEntity("bagIcon").isPressedMouseButton()) {
+			
+		}
 	}
 }
