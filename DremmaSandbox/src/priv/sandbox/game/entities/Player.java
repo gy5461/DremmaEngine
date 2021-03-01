@@ -116,7 +116,7 @@ public class Player extends Entity {
 	public int maxHp; // 满血量
 	public int attackHarm; // 攻击造成的伤害
 
-	private boolean equipmentedBow = false; // 是否装备弓箭
+	private Weapon weapon = null; // 武器
 
 	Entity arrow = null;
 
@@ -130,6 +130,7 @@ public class Player extends Entity {
 		this.maxHp = 5;
 		this.hp = maxHp;
 		this.attackHarm = 1;
+		this.attackDistance = 135f;
 
 		SandboxCollisionBox.collisionBoxs.put(this.name, new SandboxCollisionBox(
 				this.position.sub(new Vector2(33, -17)), this.position.add(new Vector2(25, 90))));
@@ -139,34 +140,31 @@ public class Player extends Entity {
 		arrow.setStaticImage(Resources.loadImage(Resources.path + "images/entities/arrow.png"));
 		this.arrow.setScale(new Vector2(0.17f, 0.17f));
 		arrow.detectCollision = false;
-
-		if (this.equipmentedBow) {
-			this.attackDistance = 270f;
-		} else {
-			this.attackDistance = 135f;
-		}
 	}
 
 	/**
 	 * 设置玩家装备上武器
 	 * 
-	 * @param equipmented
+	 * @param weapon 武器
 	 */
-	public void setEquipWeapon(boolean equipmented) {
-		this.equipmentedBow = equipmented;
-		if (this.equipmentedBow == false) {
+	public void equipWeapon(Weapon weapon) {
+		this.weapon = weapon;
+		if (weapon == null) {
 			this.attackDistance = 135f;
+			this.attackHarm = 1;
 		} else {
-			this.attackDistance = 270f;
+			this.attackDistance = weapon.attackDistance;
+			this.attackHarm = weapon.attackHarm;
 		}
 	}
-	
+
 	/**
 	 * 获取玩家的武器装备状态
+	 * 
 	 * @return
 	 */
-	public boolean isEquipmentedBow() {
-		return this.equipmentedBow;
+	public boolean weaponEquiped() {
+		return this.weapon != null;
 	}
 
 	public synchronized void update() {
@@ -192,7 +190,7 @@ public class Player extends Entity {
 								new Vector2(-attackDistance, -attackDistance * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackUp").moveVector = transValue;
 						SandboxCollisionBox.collisionBoxs.get("playerAttackUp").trans(transValue);
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.arrow.position = this.arrow.position.add(transValue);
 						}
 					}
@@ -203,7 +201,7 @@ public class Player extends Entity {
 								new Vector2(attackDistance, attackDistance * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackDown").moveVector = transValue;
 						SandboxCollisionBox.collisionBoxs.get("playerAttackDown").trans(transValue);
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.arrow.position = this.arrow.position.add(transValue);
 						}
 					}
@@ -214,7 +212,7 @@ public class Player extends Entity {
 								new Vector2(-attackDistance, attackDistance * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackLeft").moveVector = transValue;
 						SandboxCollisionBox.collisionBoxs.get("playerAttackLeft").trans(transValue);
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.arrow.position = this.arrow.position.add(transValue);
 						}
 					}
@@ -225,19 +223,20 @@ public class Player extends Entity {
 								new Vector2(attackDistance, -attackDistance * TileMap.modifier), Time.deltaTime);
 						TileMap.entities.get("playerAttackRight").moveVector = transValue;
 						SandboxCollisionBox.collisionBoxs.get("playerAttackRight").trans(transValue);
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.arrow.position = this.arrow.position.add(transValue);
 						}
 					}
 				}
 
 				// 处理攻击
-				if (this.keyInputHandler.getVirtualKey("attack").isPressed()
+				if (!(this.state == Entity.EntityState.ATTACK)
+						&& this.keyInputHandler.getVirtualKey("attack").isPressed()
 						&& this.pressAttackTimes < this.keyInputHandler.getVirtualKey("attack").getPressedTimes()) {
 					this.pressAttackTimes = this.keyInputHandler.getVirtualKey("attack").getPressedTimes();
 
 					AudioManager.getInstance().stopPlay("runSound");
-					if (this.equipmentedBow) {
+					if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 						AudioManager.getInstance().playOnce("attackWithBowSound");
 					} else {
 						AudioManager.getInstance().playLoop("attackSound");
@@ -246,7 +245,7 @@ public class Player extends Entity {
 					switch (this.direction) {
 					case UP:
 
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerAttackUpWithBow", true);
 							this.animator.setState("playerStandUpWithBow", false);
 						} else {
@@ -255,28 +254,26 @@ public class Player extends Entity {
 						}
 
 						// 近战碰撞盒 Up
-						AttackEntity playerAttackUpAttackEntity = null;
-						if (!TileMap.entities.containsKey("playerAttackUp")) {
-							playerAttackUpAttackEntity = new AttackEntity(this);
-							playerAttackUpAttackEntity.setStaticImage(this.getImage());
-							playerAttackUpAttackEntity.name = "playerAttackUpAttackEntity";
-							playerAttackUpAttackEntity.position = new Vector2(this.position);
-							playerAttackUpAttackEntity.setScale(this.getScale());
-							playerAttackUpAttackEntity.visible = false;
-							playerAttackUpAttackEntity.direction = this.direction;
-							TileMap.addEntity("playerAttackUp", playerAttackUpAttackEntity);
-						}
+						AttackEntity playerAttackUpAttackEntity = new AttackEntity(this);
+						playerAttackUpAttackEntity.setStaticImage(this.getImage());
+						playerAttackUpAttackEntity.name = "playerAttackUpAttackEntity";
+						playerAttackUpAttackEntity.position = new Vector2(this.position);
+						playerAttackUpAttackEntity.setScale(this.getScale());
+						playerAttackUpAttackEntity.visible = false;
+						playerAttackUpAttackEntity.direction = this.direction;
+						TileMap.addEntity("playerAttackUp", playerAttackUpAttackEntity);
 
-						if (playerAttackUpAttackEntity != null
-								&& !SandboxCollisionBox.collisionBoxs.containsKey("playerAttackUp")) {
-							SandboxCollisionBox.collisionBoxs.put("playerAttackUp", new SandboxCollisionBox(
-									playerAttackUpAttackEntity.position.sub(new Vector2(
-											playerAttackUpAttackEntity.getWidth()
-													* playerAttackUpAttackEntity.getScale().x / 2 - ATTACK_OFFSETX,
-											playerAttackUpAttackEntity.getHeight()
-													* playerAttackUpAttackEntity.getScale().y / 2 - ATTACK_OFFSETY)),
-									playerAttackUpAttackEntity.position));
-						}
+						SandboxCollisionBox.collisionBoxs
+								.put("playerAttackUp",
+										new SandboxCollisionBox(
+												playerAttackUpAttackEntity.position.sub(new Vector2(
+														playerAttackUpAttackEntity.getWidth()
+																* playerAttackUpAttackEntity.getScale().x / 2
+																- ATTACK_OFFSETX,
+														playerAttackUpAttackEntity.getHeight()
+																* playerAttackUpAttackEntity.getScale().y / 2
+																- ATTACK_OFFSETY)),
+												playerAttackUpAttackEntity.position));
 
 						if (SandboxCollisionBox.collisionBoxs.get("playerAttackUp").leftUpPoint
 								.isLessOrEqual(TileMap.entities.get("playerAttackUp").position
@@ -292,7 +289,7 @@ public class Player extends Entity {
 									.trans(new Vector2(attackDistance, attackDistance * TileMap.modifier));
 						}
 
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.arrow.position = SandboxCollisionBox.collisionBoxs.get("playerAttackUp").rightDownPoint
 									.add(new Vector2(120, 52));
 							this.arrow.rotation = 210;
@@ -301,7 +298,7 @@ public class Player extends Entity {
 
 						break;
 					case DOWN:
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerAttackDownWithBow", true);
 							this.animator.setState("playerStandDownWithBow", false);
 						} else {
@@ -310,29 +307,22 @@ public class Player extends Entity {
 						}
 
 						// 近战碰撞盒 Down
-						AttackEntity playerAttackDownAttackEntity = null;
-						if (!TileMap.entities.containsKey("playerAttackDown")) {
-							playerAttackDownAttackEntity = new AttackEntity(this);
-							playerAttackDownAttackEntity.setStaticImage(this.getImage());
-							playerAttackDownAttackEntity.name = "playerAttackDownAttackEntity";
-							playerAttackDownAttackEntity.position = new Vector2(this.position);
-							playerAttackDownAttackEntity.setScale(this.getScale());
-							playerAttackDownAttackEntity.visible = false;
-							playerAttackDownAttackEntity.direction = this.direction;
-							TileMap.addEntity("playerAttackDown", playerAttackDownAttackEntity);
-						}
+						AttackEntity playerAttackDownAttackEntity = new AttackEntity(this);
+						playerAttackDownAttackEntity.setStaticImage(this.getImage());
+						playerAttackDownAttackEntity.name = "playerAttackDownAttackEntity";
+						playerAttackDownAttackEntity.position = new Vector2(this.position);
+						playerAttackDownAttackEntity.setScale(this.getScale());
+						playerAttackDownAttackEntity.visible = false;
+						playerAttackDownAttackEntity.direction = this.direction;
+						TileMap.addEntity("playerAttackDown", playerAttackDownAttackEntity);
 
-						if (playerAttackDownAttackEntity != null
-								&& !SandboxCollisionBox.collisionBoxs.containsKey("playerAttackDown")) {
-							SandboxCollisionBox.collisionBoxs.put("playerAttackDown", new SandboxCollisionBox(
-									playerAttackDownAttackEntity.position,
-									playerAttackDownAttackEntity.position.add(new Vector2(
-											playerAttackDownAttackEntity.getWidth()
-													* playerAttackDownAttackEntity.getScale().x / 2 - ATTACK_OFFSETX,
-											playerAttackDownAttackEntity.getHeight()
-													* playerAttackDownAttackEntity.getScale().y / 2
-													- ATTACK_OFFSETY))));
-						}
+						SandboxCollisionBox.collisionBoxs.put("playerAttackDown", new SandboxCollisionBox(
+								playerAttackDownAttackEntity.position,
+								playerAttackDownAttackEntity.position.add(new Vector2(
+										playerAttackDownAttackEntity.getWidth()
+												* playerAttackDownAttackEntity.getScale().x / 2 - ATTACK_OFFSETX,
+										playerAttackDownAttackEntity.getHeight()
+												* playerAttackDownAttackEntity.getScale().y / 2 - ATTACK_OFFSETY))));
 
 						if (SandboxCollisionBox.collisionBoxs.get("playerAttackDown").leftUpPoint
 								.isBiggerOrEqual(TileMap.entities.get("playerAttackDown").position
@@ -341,7 +331,7 @@ public class Player extends Entity {
 									.trans(new Vector2(-attackDistance, -attackDistance * TileMap.modifier));
 						}
 
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.arrow.position = SandboxCollisionBox.collisionBoxs
 									.get("playerAttackDown").rightDownPoint.add(new Vector2(-40, -60));
 							this.arrow.rotation = 30;
@@ -350,7 +340,7 @@ public class Player extends Entity {
 
 						break;
 					case LEFT:
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerAttackLeftWithBow", true);
 							this.animator.setState("playerStandLeftWithBow", false);
 						} else {
@@ -359,30 +349,24 @@ public class Player extends Entity {
 						}
 
 						// 近战碰撞盒 Left
-						AttackEntity playerAttackLeftAttackEntity = null;
-						if (!TileMap.entities.containsKey("playerAttackLeft")) {
-							playerAttackLeftAttackEntity = new AttackEntity(this);
-							playerAttackLeftAttackEntity.setStaticImage(this.getImage());
-							playerAttackLeftAttackEntity.name = "playerAttackLeftAttackEntity";
-							playerAttackLeftAttackEntity.position = new Vector2(this.position);
-							playerAttackLeftAttackEntity.setScale(this.getScale());
-							playerAttackLeftAttackEntity.visible = false;
-							playerAttackLeftAttackEntity.direction = this.direction;
-							TileMap.addEntity("playerAttackLeft", playerAttackLeftAttackEntity);
-						}
+						AttackEntity playerAttackLeftAttackEntity = new AttackEntity(this);
+						playerAttackLeftAttackEntity.setStaticImage(this.getImage());
+						playerAttackLeftAttackEntity.name = "playerAttackLeftAttackEntity";
+						playerAttackLeftAttackEntity.position = new Vector2(this.position);
+						playerAttackLeftAttackEntity.setScale(this.getScale());
+						playerAttackLeftAttackEntity.visible = false;
+						playerAttackLeftAttackEntity.direction = this.direction;
+						TileMap.addEntity("playerAttackLeft", playerAttackLeftAttackEntity);
 
-						if (playerAttackLeftAttackEntity != null
-								&& !SandboxCollisionBox.collisionBoxs.containsKey("playerAttackLeft")) {
-							SandboxCollisionBox.collisionBoxs.put("playerAttackLeft", new SandboxCollisionBox(
-									playerAttackLeftAttackEntity.position.sub(new Vector2(
-											playerAttackLeftAttackEntity.getWidth()
-													* playerAttackLeftAttackEntity.getScale().x / 2 - ATTACK_OFFSETX,
-											0)),
-									playerAttackLeftAttackEntity.position.add(new Vector2(0,
-											playerAttackLeftAttackEntity.getHeight()
-													* playerAttackLeftAttackEntity.getScale().y / 2
-													- ATTACK_OFFSETY))));
-						}
+						SandboxCollisionBox.collisionBoxs.put("playerAttackLeft", new SandboxCollisionBox(
+								playerAttackLeftAttackEntity.position
+										.sub(new Vector2(playerAttackLeftAttackEntity.getWidth()
+												* playerAttackLeftAttackEntity.getScale().x / 2 - ATTACK_OFFSETX, 0)),
+								playerAttackLeftAttackEntity.position
+										.add(new Vector2(0,
+												playerAttackLeftAttackEntity.getHeight()
+														* playerAttackLeftAttackEntity.getScale().y / 2
+														- ATTACK_OFFSETY))));
 
 						Vector2 endPointLeft = TileMap.entities.get("playerAttackLeft").position.sub(new Vector2(
 								TileMap.entities.get("playerAttackLeft").getWidth()
@@ -397,7 +381,7 @@ public class Player extends Entity {
 									.trans(new Vector2(attackDistance, -attackDistance * TileMap.modifier));
 						}
 
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.arrow.position = SandboxCollisionBox.collisionBoxs
 									.get("playerAttackLeft").rightDownPoint.add(new Vector2(120, -48));
 							this.arrow.rotation = 150;
@@ -407,7 +391,7 @@ public class Player extends Entity {
 						break;
 					case RIGHT:
 
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerAttackRightWithBow", true);
 							this.animator.setState("playerStandRightWithBow", false);
 						} else {
@@ -416,29 +400,23 @@ public class Player extends Entity {
 						}
 
 						// 近战碰撞盒 Right
-						AttackEntity playerAttackRightAttackEntity = null;
-						if (!TileMap.entities.containsKey("playerAttackRight")) {
-							playerAttackRightAttackEntity = new AttackEntity(this);
-							playerAttackRightAttackEntity.setStaticImage(this.getImage());
-							playerAttackRightAttackEntity.name = "playerAttackRightAttackEntity";
-							playerAttackRightAttackEntity.position = new Vector2(this.position);
-							playerAttackRightAttackEntity.setScale(this.getScale());
-							playerAttackRightAttackEntity.visible = false;
-							playerAttackRightAttackEntity.direction = this.direction;
-							TileMap.addEntity("playerAttackRight", playerAttackRightAttackEntity);
-						}
+						AttackEntity playerAttackRightAttackEntity = new AttackEntity(this);
+						playerAttackRightAttackEntity.setStaticImage(this.getImage());
+						playerAttackRightAttackEntity.name = "playerAttackRightAttackEntity";
+						playerAttackRightAttackEntity.position = new Vector2(this.position);
+						playerAttackRightAttackEntity.setScale(this.getScale());
+						playerAttackRightAttackEntity.visible = false;
+						playerAttackRightAttackEntity.direction = this.direction;
+						TileMap.addEntity("playerAttackRight", playerAttackRightAttackEntity);
 
-						if (playerAttackRightAttackEntity != null
-								&& !SandboxCollisionBox.collisionBoxs.containsKey("playerAttackRight")) {
-							SandboxCollisionBox.collisionBoxs.put("playerAttackRight", new SandboxCollisionBox(
-									playerAttackRightAttackEntity.position.sub(new Vector2(0,
-											playerAttackRightAttackEntity.getHeight()
-													* playerAttackRightAttackEntity.getScale().y / 2 - ATTACK_OFFSETY)),
-									playerAttackRightAttackEntity.position.add(new Vector2(
-											playerAttackRightAttackEntity.getWidth()
-													* playerAttackRightAttackEntity.getScale().x / 2 - ATTACK_OFFSETX,
-											0))));
-						}
+						SandboxCollisionBox.collisionBoxs.put("playerAttackRight", new SandboxCollisionBox(
+								playerAttackRightAttackEntity.position.sub(new Vector2(0,
+										playerAttackRightAttackEntity.getHeight()
+												* playerAttackRightAttackEntity.getScale().y / 2 - ATTACK_OFFSETY)),
+								playerAttackRightAttackEntity.position.add(new Vector2(
+										playerAttackRightAttackEntity.getWidth()
+												* playerAttackRightAttackEntity.getScale().x / 2 - ATTACK_OFFSETX,
+										0))));
 
 						Vector2 endPointRight = TileMap.entities.get("playerAttackRight").position
 								.sub(new Vector2(0,
@@ -456,7 +434,7 @@ public class Player extends Entity {
 									.trans(new Vector2(-attackDistance, attackDistance * TileMap.modifier));
 						}
 
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.arrow.position = SandboxCollisionBox.collisionBoxs
 									.get("playerAttackRight").rightDownPoint.add(new Vector2(-50, 38));
 							this.arrow.rotation = -30;
@@ -473,7 +451,7 @@ public class Player extends Entity {
 					// AudioManager.getInstance().stopPlay("ghostWoundedSound");
 					if (this.keyInputHandler.getVirtualKey("up").isPressed()) {
 
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerRunUpWithBow", false);
 						} else {
 							this.animator.setState("playerRunUp", false);
@@ -484,7 +462,7 @@ public class Player extends Entity {
 						this.state = Entity.EntityState.MOVE;
 					} else if (this.keyInputHandler.getVirtualKey("down").isPressed()) {
 
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerRunDownWithBow", false);
 						} else {
 							this.animator.setState("playerRunDown", false);
@@ -495,7 +473,7 @@ public class Player extends Entity {
 						this.state = Entity.EntityState.MOVE;
 					} else if (this.keyInputHandler.getVirtualKey("left").isPressed()) {
 
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerRunLeftWithBow", false);
 						} else {
 							this.animator.setState("playerRunLeft", false);
@@ -506,7 +484,7 @@ public class Player extends Entity {
 						this.state = Entity.EntityState.MOVE;
 					} else if (this.keyInputHandler.getVirtualKey("right").isPressed()) {
 
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerRunRightWithBow", false);
 						} else {
 							this.animator.setState("playerRunRight", false);
@@ -528,27 +506,27 @@ public class Player extends Entity {
 					TileMap.entities.remove("playerAttackDown");
 					TileMap.entities.remove("playerAttackLeft");
 					TileMap.entities.remove("playerAttackRight");
-					if (this.equipmentedBow) {
+					if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 						TileMap.entities.remove("playerAttackArrow");
 					}
 
 					switch (this.direction) {
 					case UP:
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerStandUpWithBow", false);
 						} else {
 							this.animator.setState("playerStandUp", false);
 						}
 						break;
 					case DOWN:
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerStandDownWithBow", false);
 						} else {
 							this.animator.setState("playerStandDown", false);
 						}
 						break;
 					case LEFT:
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerStandLeftWithBow", false);
 						} else {
 							this.animator.setState("playerStandLeft", false);
@@ -556,7 +534,7 @@ public class Player extends Entity {
 						break;
 					case RIGHT:
 
-						if (this.equipmentedBow) {
+						if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 							this.animator.setState("playerStandRightWithBow", false);
 						} else {
 							this.animator.setState("playerStandRight", false);
@@ -564,7 +542,7 @@ public class Player extends Entity {
 						break;
 					}
 					AudioManager.getInstance().stopPlay("runSound");
-					if (this.equipmentedBow) {
+					if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 						AudioManager.getInstance().stopPlay("attackWithBowSound");
 					} else {
 						AudioManager.getInstance().stopPlay("attackSound");
@@ -580,11 +558,11 @@ public class Player extends Entity {
 					TileMap.entities.remove("playerAttackDown");
 					TileMap.entities.remove("playerAttackLeft");
 					TileMap.entities.remove("playerAttackRight");
-					if (this.equipmentedBow) {
+					if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 						TileMap.entities.remove("playerAttackArrow");
 					}
 
-					if (this.equipmentedBow) {
+					if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 						AudioManager.getInstance().stopPlay("attackWithBowSound");
 					} else {
 						AudioManager.getInstance().stopPlay("attackSound");
@@ -667,7 +645,7 @@ public class Player extends Entity {
 			TileMap.entities.remove("playerAttackDown");
 			TileMap.entities.remove("playerAttackLeft");
 			TileMap.entities.remove("playerAttackRight");
-			if (this.equipmentedBow) {
+			if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 				TileMap.entities.remove("playerAttackArrow");
 			}
 			// 播放拍手动画
@@ -696,7 +674,7 @@ public class Player extends Entity {
 			TileMap.entities.remove("playerAttackDown");
 			TileMap.entities.remove("playerAttackLeft");
 			TileMap.entities.remove("playerAttackRight");
-			if (this.equipmentedBow) {
+			if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 				TileMap.entities.remove("playerAttackArrow");
 			}
 			// 播放死亡动画
@@ -1028,7 +1006,7 @@ public class Player extends Entity {
 		this.detectCollision = false;
 		this.state = Entity.EntityState.DEAD;
 		AudioManager.getInstance().stopPlay("runSound");
-		if (this.equipmentedBow) {
+		if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 			AudioManager.getInstance().stopPlay("attackWithBowSound");
 		} else {
 			AudioManager.getInstance().stopPlay("attackSound");
@@ -1044,7 +1022,7 @@ public class Player extends Entity {
 		this.detectCollision = false;
 		this.state = Entity.EntityState.WIN;
 		AudioManager.getInstance().stopPlay("runSound");
-		if (this.equipmentedBow) {
+		if (this.weaponEquiped() && this.weapon.name.equals("bow")) {
 			AudioManager.getInstance().stopPlay("attackWithBowSound");
 		} else {
 			AudioManager.getInstance().stopPlay("attackSound");

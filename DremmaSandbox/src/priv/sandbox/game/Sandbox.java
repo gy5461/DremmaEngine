@@ -17,6 +17,7 @@ import priv.sandbox.game.collision.SandboxCollisionBox;
 import priv.sandbox.game.entities.ConversationalNPC;
 import priv.sandbox.game.entities.FightingNPC;
 import priv.sandbox.game.entities.Player;
+import priv.sandbox.game.entities.Weapon;
 
 @SuppressWarnings("serial")
 public class Sandbox extends GameCore {
@@ -66,8 +67,9 @@ public class Sandbox extends GameCore {
 		player = new Player(this.keyInputHandler, 60f);
 
 		player.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.height / 2f);
-
 		player.setScale(new Vector2(2f, 2f));
+
+		this.player.equipWeapon(new Weapon("bow", 2, 270f));
 
 		// --------------加载音乐----------------
 		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");

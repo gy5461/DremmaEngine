@@ -237,12 +237,11 @@ public class CollisionBox {
 								CollisionBox nextOtherCollisionBox = otherCollisionBox
 										.translate(otherEntity.moveVector.add(otherEntity.retreatVector));
 
-								if (collisionBox.isIntersected(otherCollisionBox) == false
-										&& nextCollisionBox.isIntersected(nextOtherCollisionBox) == true) {
-									Vector2 offset = nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint);
+								if (nextCollisionBox.isIntersected(nextOtherCollisionBox) == true) {
+									Vector2 offset = collisionBox.leftUpPoint.sub(otherCollisionBox.leftUpPoint).normalized();
 									// 发生了碰撞
-									entity.position = entity.position.sub(offset.mul(2));
-									collisionBox.trans(offset.mul(-2));
+									entity.position = entity.position.add(offset.mul(2));
+									collisionBox.trans(offset.mul(2));
 
 									collisionBox.onCollision(entity, otherEntity);
 								}
