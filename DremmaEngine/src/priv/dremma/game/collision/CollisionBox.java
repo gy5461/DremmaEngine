@@ -169,12 +169,21 @@ public class CollisionBox {
 					}
 					if (!otherName.equals(name)) {
 						Entity otherEntity = TileMap.getEntity(otherName);
+						CollisionBox nextCollisionBox = collisionBox
+								.translate(entity.moveVector.add(entity.retreatVector));
 						CollisionBox otherCollisionBox = otherEntry.getValue();
 						if (otherCollisionBox.isTrigger) {
 							// 进行触发检测
-							if (collisionBox.isIntersected(otherCollisionBox) == true) {
-								// 发生了触发
+							if (collisionBox.isIntersected(otherCollisionBox) == false
+									&& nextCollisionBox.isIntersected(otherCollisionBox) == true) {
+								// 进入触发
 								collisionBox.onTriggerEnter(entity, otherEntity);
+							}
+							
+							if (collisionBox.isIntersected(otherCollisionBox) == true
+									&& nextCollisionBox.isIntersected(otherCollisionBox) == false) {
+								// 退出触发
+								collisionBox.onTriggerExit(entity, otherEntity);
 							}
 						} else {
 							// 进行碰撞检测
@@ -188,8 +197,6 @@ public class CollisionBox {
 								if (otherEntity.getImage() == null) { // 确保对有图片的实体进行碰撞检测，攻击型实体的碰撞检测是与图片进行的，不是碰撞盒
 									continue;
 								}
-								CollisionBox nextCollisionBox = collisionBox
-										.translate(entity.moveVector.add(entity.retreatVector));
 								// 攻击时，应检测下一entity碰撞盒是否与otherEntity的下一图片相交
 								CollisionBox otherImageCollisionBox = new CollisionBox(
 										new Vector2(
@@ -211,10 +218,6 @@ public class CollisionBox {
 							}
 							// 如果另一个实体静止
 							else if (otherEntity.moveVector.isEqual(Vector2.zero())) {
-
-								CollisionBox nextCollisionBox = collisionBox
-										.translate(entity.moveVector.add(entity.retreatVector));
-
 								if (collisionBox.isIntersected(otherCollisionBox) == false
 										&& nextCollisionBox.isIntersected(otherCollisionBox) == true) {
 									Vector2 offset = nextCollisionBox.leftUpPoint.sub(collisionBox.leftUpPoint);
@@ -232,13 +235,12 @@ public class CollisionBox {
 								}
 							} else if (!otherEntity.moveVector.isEqual(Vector2.zero())) {
 								// 如果另一个实体也运动
-								CollisionBox nextCollisionBox = collisionBox
-										.translate(entity.moveVector.add(entity.retreatVector));
 								CollisionBox nextOtherCollisionBox = otherCollisionBox
 										.translate(otherEntity.moveVector.add(otherEntity.retreatVector));
 
 								if (nextCollisionBox.isIntersected(nextOtherCollisionBox) == true) {
-									Vector2 offset = collisionBox.leftUpPoint.sub(otherCollisionBox.leftUpPoint).normalized();
+									Vector2 offset = collisionBox.leftUpPoint.sub(otherCollisionBox.leftUpPoint)
+											.normalized();
 									// 发生了碰撞
 									entity.position = entity.position.add(offset.mul(2));
 									collisionBox.trans(offset.mul(2));
@@ -264,12 +266,20 @@ public class CollisionBox {
 	}
 
 	/**
-	 * 碰撞盒触发别的触发器碰撞盒时调用
+	 * 碰撞盒触发进入触发器碰撞盒时调用
 	 * 
 	 * @param entity      本实体
 	 * @param otherEntity 被撞到的实体
 	 */
 	public void onTriggerEnter(Entity entity, Entity otherEntity) {
+	}
+	
+	/**
+	 * 碰撞盒触发退出触发器碰撞盒时调用
+	 * @param entity
+	 * @param otherEntity
+	 */
+	private void onTriggerExit(Entity entity, Entity otherEntity) {
 	}
 
 	/**

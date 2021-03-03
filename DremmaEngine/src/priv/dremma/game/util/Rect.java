@@ -13,6 +13,11 @@ public class Rect {
 
 	static Image collisionBox = Resources.loadImage(Resources.path + "images/collisionBox.png");
 	static Image border = Resources.loadImage(Resources.path + "images/border.png");
+	
+	public Rect() {
+		this.leftUpPoint = Vector2.zero();
+		this.rightDownPoint = Vector2.zero();
+	}
 
 	public Rect(Vector2 leftUpPoint, Vector2 rightDownPoint) {
 		this.leftUpPoint = leftUpPoint;

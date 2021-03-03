@@ -5,6 +5,7 @@ import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.entities.AttackEntity;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.tiles.TileMap;
+import priv.dremma.game.ui.UIManager;
 import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.TranslateEntityHelper;
@@ -129,6 +130,13 @@ public class SandboxCollisionBox extends CollisionBox {
 			 SandboxCollisionBox.collisionBoxs.remove("bow");
 			 TranslateEntityHelper.translateEntities.remove("bow");
 			 // 弓进入背包
+		 }
+		 
+		 // ------------------玩家触发储物箱时--------------------
+		 if(entity.name.equals(TileMap.player.name) && otherEntity.name.equals("storageBox")) {
+			 UIManager.getUIEntity("bagView").visible = true;
+			 UIManager.getUIEntity("storageBoxView").visible = true;
+			 UIManager.getUIEntity("storageBoxCloseBtn").visible = true;
 		 }
 	}
 }

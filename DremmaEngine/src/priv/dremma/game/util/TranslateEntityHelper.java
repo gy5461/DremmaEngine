@@ -70,7 +70,7 @@ public class TranslateEntityHelper {
 		return TranslateEntityHelper.translateEntities.entrySet().iterator();
 	}
 
-	public void draw(Graphics2D g) {
+	public synchronized void draw(Graphics2D g) {
 		if (this.entity.visible == false) {
 			return;
 		}

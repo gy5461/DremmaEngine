@@ -120,22 +120,21 @@ public class GameCore extends Canvas implements Runnable {
 					// 游戏开发者更新
 					onUpdate();
 
+					frames++;
+					
 					// 碰撞
 					collisionBoxAjustUpdate();
 					CollisionBox.collisionDetection();
-
-					// 移动帮助
-					translateEntityAjustUpdate();
-					this.mouseInputHandler.update();
-
-					frames++;
-					render();
 
 					if (map != null) {
 						map.update();
 					}
 					animationLoop();
-
+					
+					// 移动帮助
+					translateEntityAjustUpdate();
+					this.mouseInputHandler.update();
+					render();
 				}
 			}
 		} catch (Exception e) {
@@ -238,8 +237,10 @@ public class GameCore extends Canvas implements Runnable {
 		}
 
 		if (TranslateEntityHelper.hasLock) {
-			if (TranslateEntityHelper.lockedEntity.entity.visible == true
-					&& TranslateEntityHelper.lockedEntity.shouldTransScreenPos) {
+			if(TranslateEntityHelper.lockedEntity.entity.visible == false) {
+				return;
+			}
+			if (TranslateEntityHelper.lockedEntity.shouldTransScreenPos) {
 
 				// 当拖拽x轴时
 				if (this.mouseInputHandler.mouse.isPressed()

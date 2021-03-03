@@ -7,6 +7,7 @@ import priv.dremma.game.anim.Animator;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.util.GUtils;
+import priv.dremma.game.util.TranslateEntityHelper;
 import priv.dremma.game.util.Vector2;
 
 public class UIEntity extends Entity {
@@ -47,12 +48,28 @@ public class UIEntity extends Entity {
 		if (this.mouseInputHandler == null) {
 			return false;
 		}
+		if (TranslateEntityHelper.hasLock) {
+			return false;
+		}
 		return (this.mouseInputHandler.mouse.isPressed()
-				&& this.mouseInputHandler.mouse.isInRect(this.getleftUpPoint(), this.getrightDownPoint()));
+				&& this.mouseInputHandler.getCurPos().isInRect(this.getleftUpPoint(), this.getrightDownPoint()));
+	}
+
+	/**
+	 * UIEntity是否被鼠标选中
+	 * 
+	 * @return
+	 */
+	public boolean isChosenMouseButton() {
+		if (this.mouseInputHandler == null) {
+			return false;
+		}
+		return this.mouseInputHandler.getCurPos().isInRect(this.getleftUpPoint(), this.getrightDownPoint());
 	}
 
 	/**
 	 * 获取UIEntity左上角点
+	 * 
 	 * @return
 	 */
 	public Vector2 getleftUpPoint() {
@@ -82,6 +99,7 @@ public class UIEntity extends Entity {
 
 	/**
 	 * 获取UIEntity右下角点
+	 * 
 	 * @return
 	 */
 	public Vector2 getrightDownPoint() {
