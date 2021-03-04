@@ -44,7 +44,8 @@ public class SandboxCollisionBox extends CollisionBox {
 					// 播放NPC受伤音效
 					AudioManager.getInstance().playOnce("ghostWoundedSound");
 					((AttackEntity) entity).willCauseWound = false;
-					Debug.log(Debug.DebugLevel.INFO, ((AttackEntity) entity).attacker.name + " 伤害了:" + otherEntity.name);
+					Debug.log(Debug.DebugLevel.INFO,
+							((AttackEntity) entity).attacker.name + " 伤害了:" + otherEntity.name);
 
 					// 减血
 					if (((FightingNPC) otherEntity).hp > ((Player) ((AttackEntity) entity).attacker).attackHarm) {
@@ -67,7 +68,8 @@ public class SandboxCollisionBox extends CollisionBox {
 					// 播放玩家受伤音效
 					AudioManager.getInstance().playOnce("playerWoundedSound");
 					((AttackEntity) entity).willCauseWound = false;
-					Debug.log(Debug.DebugLevel.INFO, ((AttackEntity) entity).attacker.name + " 伤害了:" + otherEntity.name);
+					Debug.log(Debug.DebugLevel.INFO,
+							((AttackEntity) entity).attacker.name + " 伤害了:" + otherEntity.name);
 
 					// 减血
 					if (((Player) otherEntity).hp > ((FightingNPC) ((AttackEntity) entity).attacker).attackHarm) {
@@ -112,7 +114,7 @@ public class SandboxCollisionBox extends CollisionBox {
 			((NPC) entity).endPos = ((NPC) entity).startPos.add(entity.moveVector.mul(((NPC) entity).totalDistance));
 			entity.retreatVector = Vector2.zero();
 		}
-		
+
 	}
 
 	/**
@@ -122,21 +124,22 @@ public class SandboxCollisionBox extends CollisionBox {
 	 * @param otherEntity 被撞到的实体
 	 */
 	public void onTriggerEnter(Entity entity, Entity otherEntity) {
-		 //Debug.log(Debug.DebugLevel.INFO, entity.name + " 触发了:" + otherEntity.name);
-		 // ------------------玩家触发地上的弓时--------------------
-		 if(entity.name.equals(TileMap.player.name) && otherEntity.name.equals("bow")) {
-			 // 弓从场景中消失
-			 TileMap.entities.remove("bow");
-			 SandboxCollisionBox.collisionBoxs.remove("bow");
-			 TranslateEntityHelper.translateEntities.remove("bow");
-			 // 弓进入背包
-		 }
-		 
-		 // ------------------玩家触发储物箱时--------------------
-		 if(entity.name.equals(TileMap.player.name) && otherEntity.name.equals("storageBox")) {
-			 UIManager.getUIEntity("bagView").visible = true;
-			 UIManager.getUIEntity("storageBoxView").visible = true;
-			 UIManager.getUIEntity("storageBoxCloseBtn").visible = true;
-		 }
+		// Debug.log(Debug.DebugLevel.INFO, entity.name + " 触发了:" + otherEntity.name);
+		// ------------------玩家触发地上的弓时--------------------
+		if (entity.name.equals(TileMap.player.name) && otherEntity.name.equals("bow")) {
+			// 弓从场景中消失
+			TileMap.entities.remove("bow");
+			SandboxCollisionBox.collisionBoxs.remove("bow");
+			TranslateEntityHelper.translateEntities.remove("bow");
+			// 弓进入背包
+		}
+
+		// ------------------玩家触发储物箱时--------------------
+		if (UIManager.getUIEntity("playerView").visible == false && entity.name.equals(TileMap.player.name)
+				&& otherEntity.name.equals("storageBox")) {
+			UIManager.getUIEntity("bagView").visible = true;
+			UIManager.getUIEntity("storageBoxView").visible = true;
+			UIManager.getUIEntity("storageBoxCloseBtn").visible = true;
+		}
 	}
 }

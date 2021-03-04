@@ -463,14 +463,16 @@ public class Sandbox extends GameCore {
 	@Override
 	public void onUpdate() {
 		// 当玩家点击背包图标时，显示背包界面
-		if (UIManager.getUIEntity("bagIcon").isPressedMouseButton()) {
+		if (UIManager.getUIEntity("storageBoxView").visible == false
+				&& UIManager.getUIEntity("bagIcon").isPressedMouseButton()) {
 			UIManager.getUIEntity("bagView").visible = true;
 			UIManager.getUIEntity("playerView").visible = true;
 			UIManager.getUIEntity("bagCloseBtn").visible = true;
 		}
 		// 当玩家按背包键时，奇数次显示背包界面，偶数次关闭背包界面
 		if (this.keyInputHandler.getVirtualKey("bag").isPressed()) {
-			if (this.keyInputHandler.getVirtualKey("bag").getPressedTimes() % 2 == 1) {
+			if (UIManager.getUIEntity("storageBoxView").visible == false
+					&& this.keyInputHandler.getVirtualKey("bag").getPressedTimes() % 2 == 1) {
 				UIManager.getUIEntity("bagView").visible = true;
 				UIManager.getUIEntity("playerView").visible = true;
 				UIManager.getUIEntity("bagCloseBtn").visible = true;
