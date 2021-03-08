@@ -17,10 +17,13 @@ import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.Time;
 import priv.dremma.game.util.Vector2;
 import priv.sandbox.game.collision.SandboxCollisionBox;
+import priv.sandbox.game.control.BagControl;
 
 public class Player extends Entity {
 
 	protected KeyInputHandler keyInputHandler;
+
+	public BagControl bag;
 
 	// 站立动画
 	HashMap<Integer, Image> playerStandUp = new HashMap<Integer, Image>();

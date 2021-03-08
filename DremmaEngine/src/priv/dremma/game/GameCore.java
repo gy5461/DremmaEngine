@@ -212,7 +212,7 @@ public class GameCore extends Canvas implements Runnable {
 	private BufferStrategy getBS() {
 		BufferStrategy bufferStrategy = this.getBufferStrategy(); // 取得本Canvas的buffer strategy
 		if (bufferStrategy == null) {
-			this.createBufferStrategy(2); // 通过双缓存、翻页技术，解决白屏闪烁、裂开等问题
+			this.createBufferStrategy(3); // 通过三重缓存、翻页技术，解决白屏闪烁、裂开等问题，减少掉帧
 		}
 		return this.getBufferStrategy();
 	}

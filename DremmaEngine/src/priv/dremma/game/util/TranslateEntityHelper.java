@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Map.Entry;
 
-import priv.dremma.game.collision.CollisionBox;
 import priv.dremma.game.entities.Entity;
 import priv.dremma.game.ui.UIEntity;
 
@@ -228,7 +227,7 @@ public class TranslateEntityHelper {
 			objs.remove(position);
 
 			boolean willLoad = true; // 是否加载到游戏
-			for (String s : CollisionBox.notLoadNameSubStrings) {
+			for (String s : TranslateEntityHelper.notLoadNameSubStrings) {
 				if (name.contains(s)) {
 					willLoad = false;
 				}

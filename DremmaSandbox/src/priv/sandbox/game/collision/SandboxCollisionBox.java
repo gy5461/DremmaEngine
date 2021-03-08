@@ -132,14 +132,14 @@ public class SandboxCollisionBox extends CollisionBox {
 			SandboxCollisionBox.collisionBoxs.remove("bow");
 			TranslateEntityHelper.translateEntities.remove("bow");
 			// 弓进入背包
+			((Player)TileMap.player).bag.addPropItemToBag("bowPropItem");
 		}
 
 		// ------------------玩家触发储物箱时--------------------
 		if (UIManager.getUIEntity("playerView").visible == false && entity.name.equals(TileMap.player.name)
 				&& otherEntity.name.equals("storageBox")) {
-			UIManager.getUIEntity("bagView").visible = true;
-			UIManager.getUIEntity("storageBoxView").visible = true;
-			UIManager.getUIEntity("storageBoxCloseBtn").visible = true;
+			UIManager.setUIVisibility("bagView", true);
+			UIManager.setUIVisibility("storageBoxView", true);
 		}
 	}
 }

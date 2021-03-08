@@ -10,11 +10,13 @@ public class Text extends UIEntity {
 
 	public String content = null;
 	public Font font = null;
-	public int fontSize = 30;
+	private int fontSize = 30;
 	public Color color = null;
 
 	public final int TXTWIDTH;
 	public final int xBorderToScreen = 55;
+
+	public boolean needAlignScreen = false;
 
 	public Text(String content) {
 		super();
@@ -24,23 +26,45 @@ public class Text extends UIEntity {
 		this.TXTWIDTH = (GameCore.screen.width - xBorderToScreen * 2) / fontSize;
 	}
 
+	public void setFontSize(int fontSize) {
+		this.fontSize = fontSize;
+		this.font = new Font("TimesRoman", Font.BOLD, fontSize);
+	}
+
+	public int getWidth() {
+		return this.content.length() * this.fontSize;
+	}
+
+	public int getHeihgt() {
+		if (this.needAlignScreen) {
+			return (int) Math.ceil(this.content.length() * 1.0f / this.TXTWIDTH);
+		} else {
+			return this.fontSize;
+		}
+	}
+
 	// 重写draw方法
 	@Override
-	public void draw(Graphics2D g) {
+	public synchronized void draw(Graphics2D g) {
 		g.setFont(font);
 		g.setColor(color);
-		// 将文字渲染到屏幕上
-		int contentLen = this.content.length();
-		int xOffset = 0;
-		int yOffset = 0;
-		while (contentLen > this.TXTWIDTH) {
-			String tmp = this.content.substring(xOffset, this.TXTWIDTH + xOffset);
-			g.drawString(tmp, this.position.x, this.position.y + yOffset);
-			contentLen -= this.TXTWIDTH;
-			xOffset += this.TXTWIDTH;
-			yOffset += this.fontSize;
+
+		if (needAlignScreen) {
+			// 将文字渲染到屏幕上
+			int contentLen = content.length();
+			int xOffset = 0;
+			int yOffset = 0;
+			while (contentLen > TXTWIDTH) {
+				String tmp = content.substring(xOffset, TXTWIDTH + xOffset);
+				g.drawString(tmp, position.x, position.y + yOffset);
+				contentLen -= TXTWIDTH;
+				xOffset += TXTWIDTH;
+				yOffset += fontSize;
+			}
+			String tmp = content.substring(xOffset, content.length());
+			g.drawString(tmp, position.x, position.y + yOffset);
+		} else {
+			g.drawString(content, position.x, position.y);
 		}
-		String tmp = this.content.substring(xOffset, this.content.length());
-		g.drawString(tmp, this.position.x, this.position.y + yOffset);
 	}
 }

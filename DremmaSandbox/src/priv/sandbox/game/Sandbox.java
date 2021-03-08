@@ -1,5 +1,7 @@
 package priv.sandbox.game;
 
+import java.awt.Color;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
@@ -10,13 +12,16 @@ import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.ui.Text;
 import priv.dremma.game.ui.UIEntity;
 import priv.dremma.game.ui.UIManager;
+import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.TranslateEntityHelper;
 import priv.dremma.game.util.Vector2;
 import priv.sandbox.game.collision.SandboxCollisionBox;
+import priv.sandbox.game.control.BagControl;
 import priv.sandbox.game.entities.ConversationalNPC;
 import priv.sandbox.game.entities.FightingNPC;
 import priv.sandbox.game.entities.Player;
+import priv.sandbox.game.entities.PropCellView;
 import priv.sandbox.game.entities.Weapon;
 
 @SuppressWarnings("serial")
@@ -323,6 +328,7 @@ public class Sandbox extends GameCore {
 
 		// 文字
 		Text text = new Text("欢迎你来到游戏世界！！");
+		text.needAlignScreen = true;
 		text.name = "firstText";
 		text.visible = false;
 		text.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
@@ -401,6 +407,23 @@ public class Sandbox extends GameCore {
 
 		UIManager.addUI(bagView);
 
+		// 为bagView加上道具栏
+		ArrayList<PropCellView> bagPropItemViews = new ArrayList<PropCellView>();
+		Image bagPropFrame = Resources.loadImage(Resources.path + "images/bagCell.png");
+
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 5; j++) {
+				PropCellView propCell = new PropCellView(bagPropFrame);
+				propCell.name = "bagPropCell" + (i * 5 + j);
+				propCell.setScale(new Vector2(0.5f, 0.5f));
+				propCell.position = new Vector2(548 + j * 60, 152 + i * 60);
+				propCell.visible = false;
+				bagPropItemViews.add(propCell);
+				UIManager.addUI(bagView, propCell);
+			}
+		}
+		((Player) TileMap.player).bag = new BagControl(bagPropItemViews);
+
 		UIEntity playerView = new UIEntity();
 		playerView.setStaticImage(Resources.loadImage(Resources.path + "images/storageBox.png"));
 		playerView.name = "playerView";
@@ -410,15 +433,25 @@ public class Sandbox extends GameCore {
 
 		UIManager.addUI(playerView);
 
-		// 背包界面的关闭按钮
-		UIEntity bagCloseBtn = new UIEntity(this.mouseInputHandler);
-		bagCloseBtn.setStaticImage(Resources.loadImage(Resources.path + "images/closeBtn.png"));
-		bagCloseBtn.name = "bagCloseBtn";
-		bagCloseBtn.setScale(new Vector2(0.5f, 0.5f));
-		bagCloseBtn.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
-		bagCloseBtn.visible = false;
+		// 角色展示图
+		UIEntity playerShowView = new UIEntity();
+		playerShowView.animator = TileMap.player.animator;
+		playerShowView.name = "playerShowView";
+		playerShowView.setScale(new Vector2(5f, 5f));
+		playerShowView.position = new Vector2(GameCore.screen.width / 2 - 150, GameCore.screen.height / 2);
+		playerShowView.visible = false;
 
-		UIManager.addUI(bagCloseBtn);
+		UIManager.addUI(playerView, playerShowView);
+
+		// 背包界面的关闭按钮
+		UIEntity playerViewCloseBtn = new UIEntity(this.mouseInputHandler);
+		playerViewCloseBtn.setStaticImage(Resources.loadImage(Resources.path + "images/closeBtn.png"));
+		playerViewCloseBtn.name = "playerViewCloseBtn";
+		playerViewCloseBtn.setScale(new Vector2(0.5f, 0.5f));
+		playerViewCloseBtn.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
+		playerViewCloseBtn.visible = false;
+
+		UIManager.addUI(playerView, playerViewCloseBtn);
 
 		// 储物箱界面，玩家触发储物盒时出现
 		UIEntity storageBoxView = new UIEntity();
@@ -430,6 +463,22 @@ public class Sandbox extends GameCore {
 
 		UIManager.addUI(storageBoxView);
 
+		// 为bagView加上道具栏
+		ArrayList<PropCellView> storageBoxPropItemViews = new ArrayList<PropCellView>();
+		Image storageBoxPropFrame = Resources.loadImage(Resources.path + "images/storageBoxCell.png");
+
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 5; j++) {
+				PropCellView propCell = new PropCellView(storageBoxPropFrame);
+				propCell.name = "storageBoxPropCell" + (i * 5 + j);
+				propCell.setScale(new Vector2(0.5f, 0.5f));
+				propCell.position = new Vector2(202 + j * 60, 152 + i * 60);
+				propCell.visible = false;
+				storageBoxPropItemViews.add(propCell);
+				UIManager.addUI(storageBoxView, propCell);
+			}
+		}
+
 		// 储物箱界面的关闭按钮
 		UIEntity storageBoxCloseBtn = new UIEntity(this.mouseInputHandler);
 		storageBoxCloseBtn.setStaticImage(Resources.loadImage(Resources.path + "images/closeBtn.png"));
@@ -438,7 +487,43 @@ public class Sandbox extends GameCore {
 		storageBoxCloseBtn.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
 		storageBoxCloseBtn.visible = false;
 
-		UIManager.addUI(storageBoxCloseBtn);
+		UIManager.addUI(storageBoxView, storageBoxCloseBtn);
+
+		// 道具：弓
+		UIEntity bowPropItem = new UIEntity(this.mouseInputHandler);
+		bowPropItem.setStaticImage(Resources.loadImage(Resources.path + "images/entities/bowPropItem.png"));
+		bowPropItem.name = "bowPropItem";
+		bowPropItem.setScale(new Vector2(0.6f, 0.6f));
+		bowPropItem.visible = false;
+
+		UIManager.addUI(bowPropItem);
+
+		// 选项界面
+		UIEntity optionView = new UIEntity();
+		optionView.setStaticImage(Resources.loadImage(Resources.path + "images/optionFrame.png"));
+		optionView.name = "optionView";
+		optionView.setScale(new Vector2(0.13f, 0.07f));
+		optionView.visible = false;
+
+		UIManager.addUI(bowPropItem, optionView);
+
+		// 选项界面中的选项
+		UIEntity option = new UIEntity(this.mouseInputHandler);
+		option.setStaticImage(Resources.loadImage(Resources.path + "images/option.png"));
+		option.name = "option";
+		option.setScale(new Vector2(0.5f, 1f));
+		option.visible = false;
+
+		UIManager.addUI(optionView, option);
+
+		// 选项表面的字：装备
+		Text optionTxt = new Text("装备");
+		optionTxt.name = "optionTxt";
+		optionTxt.setFontSize(20);
+		optionTxt.color = Color.lightGray;
+		optionTxt.visible = false;
+
+		UIManager.addUI(option, optionTxt);
 
 		// --------------加载数据----------------
 
@@ -450,55 +535,62 @@ public class Sandbox extends GameCore {
 		TranslateEntityHelper.notLoadNameSubStrings.add("野鬼");
 		TranslateEntityHelper.notLoadNameSubStrings.add("Attack");
 		TranslateEntityHelper.notLoadNameSubStrings.add("bow");
+		TranslateEntityHelper.notLoadNameSubStrings.add("Prop");
+		TranslateEntityHelper.notLoadNameSubStrings.add("playerShowView");
+		TranslateEntityHelper.notLoadNameSubStrings.add("option");
 
 		SandboxCollisionBox.load(); // 从数据文件中加载碰撞盒数据
 		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
 
 		// ---------------------配置-----------------------
 //		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
-		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
+//		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
 
 	}
+
+	static int pressBagButtonTimes = 0;
 
 	@Override
 	public void onUpdate() {
 		// 当玩家点击背包图标时，显示背包界面
 		if (UIManager.getUIEntity("storageBoxView").visible == false
 				&& UIManager.getUIEntity("bagIcon").isPressedMouseButton()) {
-			UIManager.getUIEntity("bagView").visible = true;
-			UIManager.getUIEntity("playerView").visible = true;
-			UIManager.getUIEntity("bagCloseBtn").visible = true;
+			UIManager.setUIVisibility("bagView", true);
+			UIManager.setUIVisibility("playerView", true);
 		}
-		// 当玩家按背包键时，奇数次显示背包界面，偶数次关闭背包界面
-		if (this.keyInputHandler.getVirtualKey("bag").isPressed()) {
-			if (UIManager.getUIEntity("storageBoxView").visible == false
-					&& this.keyInputHandler.getVirtualKey("bag").getPressedTimes() % 2 == 1) {
-				UIManager.getUIEntity("bagView").visible = true;
-				UIManager.getUIEntity("playerView").visible = true;
-				UIManager.getUIEntity("bagCloseBtn").visible = true;
-			} else {
-				if (UIManager.getUIEntity("storageBoxView").visible) {
-					UIManager.getUIEntity("bagView").visible = true;
+
+		// 当玩家按背包键时，背包关闭则开启，反之则关闭
+		if (this.keyInputHandler.getVirtualKey("bag").isPressed()
+				&& pressBagButtonTimes < this.keyInputHandler.getVirtualKey("bag").getPressedTimes()) {
+			if (UIManager.getUIEntity("storageBoxView").visible == false) {
+				if (UIManager.getUIEntity("bagView").visible == false) {
+					// 显示
+					UIManager.setUIVisibility("bagView", true);
+					UIManager.setUIVisibility("playerView", true);
 				} else {
-					UIManager.getUIEntity("bagView").visible = false;
+					// 关闭
+					if (UIManager.getUIEntity("storageBoxView").visible) {
+						UIManager.setUIVisibility("bagView", true);
+					} else {
+						UIManager.setUIVisibility("bagView", false);
+					}
+					UIManager.setUIVisibility("playerView", false);
 				}
-				UIManager.getUIEntity("playerView").visible = false;
-				UIManager.getUIEntity("bagCloseBtn").visible = false;
+				pressBagButtonTimes = this.keyInputHandler.getVirtualKey("bag").getPressedTimes();
 			}
 		}
 
-		if (UIManager.getUIEntity("bagCloseBtn").visible == true) {
-			if (UIManager.getUIEntity("bagCloseBtn").isChosenMouseButton()) {
-				UIManager.getUIEntity("bagCloseBtn")
+		if (UIManager.getUIEntity("playerViewCloseBtn").visible == true) {
+			if (UIManager.getUIEntity("playerViewCloseBtn").isChosenMouseButton()) {
+				UIManager.getUIEntity("playerViewCloseBtn")
 						.setStaticImage(Resources.loadImage(Resources.path + "images/closeBtnChoosen.png"));
 			} else {
-				UIManager.getUIEntity("bagCloseBtn")
+				UIManager.getUIEntity("playerViewCloseBtn")
 						.setStaticImage(Resources.loadImage(Resources.path + "images/closeBtn.png"));
 			}
-			if (UIManager.getUIEntity("bagCloseBtn").isPressedMouseButton()) {
-				UIManager.getUIEntity("bagView").visible = false;
-				UIManager.getUIEntity("playerView").visible = false;
-				UIManager.getUIEntity("bagCloseBtn").visible = false;
+			if (UIManager.getUIEntity("playerViewCloseBtn").isPressedMouseButton()) {
+				UIManager.setUIVisibility("bagView", false);
+				UIManager.setUIVisibility("playerView", false);
 			}
 		}
 
@@ -511,10 +603,25 @@ public class Sandbox extends GameCore {
 						.setStaticImage(Resources.loadImage(Resources.path + "images/closeBtn.png"));
 			}
 			if (UIManager.getUIEntity("storageBoxCloseBtn").isPressedMouseButton()) {
-				UIManager.getUIEntity("bagView").visible = false;
-				UIManager.getUIEntity("storageBoxView").visible = false;
-				UIManager.getUIEntity("storageBoxCloseBtn").visible = false;
+				UIManager.setUIVisibility("bagView", false);
+				UIManager.setUIVisibility("storageBoxView", false);
 			}
+		}
+
+		// 当玩家点击道具时，弹出道具的选项界面
+		if (UIManager.getUIEntity("bowPropItem") != null
+				&& UIManager.getUIEntity("bowPropItem").isPressedMouseButton()) {
+			UIManager.getUIEntity("optionView").position = UIManager.getUIEntity("bowPropItem").position
+					.add(new Vector2(
+							UIManager.getUIEntity("optionView").getWidth()
+									* UIManager.getUIEntity("optionView").getScale().x / 2,
+							UIManager.getUIEntity("optionView").getHeight()
+									* UIManager.getUIEntity("optionView").getScale().y / 2));
+			UIManager.getUIEntity("option").position = UIManager.getUIEntity("optionView").position;
+			UIManager.getUIEntity("optionTxt").position = UIManager.getUIEntity("option").position
+					.sub(new Vector2(((Text) UIManager.getUIEntity("optionTxt")).getWidth() / 2,
+							((Text) UIManager.getUIEntity("optionTxt")).getHeight() / 2 - 3));
+			UIManager.setUIVisibility("optionView", true);
 		}
 	}
 }
