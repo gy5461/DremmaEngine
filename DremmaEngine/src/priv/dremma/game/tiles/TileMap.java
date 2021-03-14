@@ -249,14 +249,11 @@ public class TileMap {
 	 * @param tileX
 	 * @param tileY
 	 */
-	public void addEntity(Entity srcEntity, Vector2 tilePos) {
+	public void addEntity(Entity srcEntity, Vector2 worldPos) {
 		if (srcEntity != null) {
 			// 从主实体中复制实体（深拷贝）
 			Entity entity = new Entity(srcEntity);
-			entity.position = new Vector2(
-					GUtils.worldTileCenterToWorldPixel(tilePos, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y, this.scale).x,
-					GUtils.worldTileCenterToWorldPixel(tilePos, TileMap.TILE_SIZE.x, TileMap.TILE_SIZE.y,
-							this.scale).y);
+			entity.position = new Vector2(worldPos);
 			TileMap.addEntity(entity.name, entity);
 		}
 	}

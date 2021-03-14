@@ -40,6 +40,7 @@ public class PropCellView extends UIEntity {
 			return;
 		}
 
+		// 渲染道具
 		this.propItem.draw(g);
 
 		// 渲染道具框

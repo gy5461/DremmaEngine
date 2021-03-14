@@ -34,7 +34,7 @@ public class UIManager {
 	 * 
 	 * @param UIEntity
 	 */
-	public static void addUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
+	public static void attachUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
 		UIManager.uiEntities.add(childUIEntity);
 		if (!TranslateEntityHelper.translateEntities.containsKey(childUIEntity.name)) {
 			TranslateEntityHelper translateEntityHelper = new TranslateEntityHelper(childUIEntity);
@@ -82,6 +82,28 @@ public class UIManager {
 
 		if (TranslateEntityHelper.translateEntities.containsKey(UIEntity.name)) {
 			TranslateEntityHelper.translateEntities.remove(UIEntity.name);
+		}
+	}
+
+	/**
+	 * 解除子UI与双亲UI的关系
+	 * @param parentUIEntity
+	 * @param childUIEntity
+	 */
+	public static void detachUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
+		if (UIManager.parentAndChirld.containsKey(parentUIEntity) &&
+				UIManager.parentAndChirld.get(parentUIEntity).contains(childUIEntity)) {
+			UIManager.parentAndChirld.get(parentUIEntity).remove(childUIEntity);
+		}
+	}
+	
+	/**
+	 * 去除所有子UI
+	 * @param parentUIEntity
+	 */
+	public static void detachAllChildUI(UIEntity UIEntity) {
+		if (UIManager.parentAndChirld.containsKey(UIEntity)) {
+			UIManager.parentAndChirld.remove(UIEntity);
 		}
 	}
 

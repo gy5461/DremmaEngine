@@ -12,7 +12,6 @@ import priv.dremma.game.tiles.TileMap;
 import priv.dremma.game.ui.Text;
 import priv.dremma.game.ui.UIEntity;
 import priv.dremma.game.ui.UIManager;
-import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.TranslateEntityHelper;
 import priv.dremma.game.util.Vector2;
@@ -77,8 +76,6 @@ public class Sandbox extends GameCore {
 
 		player.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.height / 2f);
 		player.setScale(new Vector2(2f, 2f));
-
-		// this.player.equipWeapon(new Weapon("bow", 2, 270f));
 
 		// --------------加载音乐----------------
 		Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");
@@ -171,9 +168,9 @@ public class Sandbox extends GameCore {
 		bowEntity.rotation = 60;
 		bowEntity.name = "bow";
 		bowEntity.setScale(new Vector2(0.125f, 0.125f));
-		map.addEntity(bowEntity, new Vector2(5, 13));
+		map.addEntity(bowEntity, new Vector2(692, 562));
 		SandboxCollisionBox.collisionBoxs.put(TileMap.getEntity("bow").name,
-				new SandboxCollisionBox(new Vector2(750.56506f, 781.72107f), new Vector2(887.56506f, 871.72107f)));
+				new SandboxCollisionBox(new Vector2(533, 508), new Vector2(664, 601)));
 		SandboxCollisionBox.collisionBoxs.get("bow").isTrigger = true; // 触发盒子
 
 		// chair1
@@ -297,43 +294,6 @@ public class Sandbox extends GameCore {
 						new Vector2(map.worldEndTileCenter.x + 2 + borderThickness, map.worldEndTileCenter.y)));
 
 		// --------------UI----------------
-		// 对话框
-		UIEntity talkBox = new UIEntity();
-		talkBox.setStaticImage(Resources.loadImage(Resources.path + "images/对话框.png"));
-		talkBox.name = "talkBox";
-		talkBox.visible = false;
-		talkBox.setScale(new Vector2(2f, 1.5f));
-		talkBox.position = new Vector2(GameCore.screen.width / 2f,
-				GameCore.screen.height - talkBox.getHeight() * talkBox.getScale().y / 2 - 25);
-
-		UIManager.addUI(talkBox);
-
-		// 南极仙翁头像
-		UIEntity talkNPCProfile = new UIEntity();
-		talkNPCProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/南极仙翁头像.png"));
-		talkNPCProfile.name = "talkNPCProfile";
-		talkNPCProfile.visible = false;
-		talkNPCProfile.position = new Vector2(107, 325);
-
-		UIManager.addUI(talkNPCProfile);
-
-		// 主角头像
-		UIEntity playerProfile = new UIEntity();
-		playerProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/主角头像.png"));
-		playerProfile.name = "playerProfile";
-		playerProfile.visible = false;
-		playerProfile.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
-
-		UIManager.addUI(playerProfile);
-
-		// 文字
-		Text text = new Text("欢迎你来到游戏世界！！");
-		text.needAlignScreen = true;
-		text.name = "firstText";
-		text.visible = false;
-		text.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
-
-		UIManager.addUI(text);
 
 		// 玩家血条底部
 		UIEntity playerHpBarBase = new UIEntity();
@@ -419,7 +379,7 @@ public class Sandbox extends GameCore {
 				propCell.position = new Vector2(548 + j * 60, 152 + i * 60);
 				propCell.visible = false;
 				bagPropItemViews.add(propCell);
-				UIManager.addUI(bagView, propCell);
+				UIManager.attachUI(bagView, propCell);
 			}
 		}
 		((Player) TileMap.player).bag = new BagControl(bagPropItemViews);
@@ -441,7 +401,16 @@ public class Sandbox extends GameCore {
 		playerShowView.position = new Vector2(GameCore.screen.width / 2 - 150, GameCore.screen.height / 2);
 		playerShowView.visible = false;
 
-		UIManager.addUI(playerView, playerShowView);
+		UIManager.attachUI(playerView, playerShowView);
+
+		// 为playerView加上道具栏，方便卸下装备
+		PropCellView playerViewPropCell = new PropCellView(Resources.loadImage(Resources.path + "images/storageBoxCell.png"));
+		playerViewPropCell.name = "playerViewPropCell";
+		playerViewPropCell.setScale(new Vector2(0.5f, 0.5f));
+		playerViewPropCell.position = new Vector2(GameCore.screen.width / 2 - 150 + 120, GameCore.screen.height / 2 - 196);
+		playerViewPropCell.visible = false;
+		bagPropItemViews.add(playerViewPropCell);
+		UIManager.attachUI(playerView, playerViewPropCell);
 
 		// 背包界面的关闭按钮
 		UIEntity playerViewCloseBtn = new UIEntity(this.mouseInputHandler);
@@ -451,7 +420,7 @@ public class Sandbox extends GameCore {
 		playerViewCloseBtn.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
 		playerViewCloseBtn.visible = false;
 
-		UIManager.addUI(playerView, playerViewCloseBtn);
+		UIManager.attachUI(playerView, playerViewCloseBtn);
 
 		// 储物箱界面，玩家触发储物盒时出现
 		UIEntity storageBoxView = new UIEntity();
@@ -463,7 +432,7 @@ public class Sandbox extends GameCore {
 
 		UIManager.addUI(storageBoxView);
 
-		// 为bagView加上道具栏
+		// 为storageBoxView加上道具栏
 		ArrayList<PropCellView> storageBoxPropItemViews = new ArrayList<PropCellView>();
 		Image storageBoxPropFrame = Resources.loadImage(Resources.path + "images/storageBoxCell.png");
 
@@ -475,7 +444,7 @@ public class Sandbox extends GameCore {
 				propCell.position = new Vector2(202 + j * 60, 152 + i * 60);
 				propCell.visible = false;
 				storageBoxPropItemViews.add(propCell);
-				UIManager.addUI(storageBoxView, propCell);
+				UIManager.attachUI(storageBoxView, propCell);
 			}
 		}
 
@@ -487,7 +456,7 @@ public class Sandbox extends GameCore {
 		storageBoxCloseBtn.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
 		storageBoxCloseBtn.visible = false;
 
-		UIManager.addUI(storageBoxView, storageBoxCloseBtn);
+		UIManager.attachUI(storageBoxView, storageBoxCloseBtn);
 
 		// 道具：弓
 		UIEntity bowPropItem = new UIEntity(this.mouseInputHandler);
@@ -505,7 +474,7 @@ public class Sandbox extends GameCore {
 		optionView.setScale(new Vector2(0.13f, 0.07f));
 		optionView.visible = false;
 
-		UIManager.addUI(bowPropItem, optionView);
+		UIManager.attachUI(bowPropItem, optionView);
 
 		// 选项界面中的选项
 		UIEntity option = new UIEntity(this.mouseInputHandler);
@@ -514,7 +483,7 @@ public class Sandbox extends GameCore {
 		option.setScale(new Vector2(0.5f, 1f));
 		option.visible = false;
 
-		UIManager.addUI(optionView, option);
+		UIManager.attachUI(optionView, option);
 
 		// 选项表面的字：装备
 		Text optionTxt = new Text("装备");
@@ -523,7 +492,54 @@ public class Sandbox extends GameCore {
 		optionTxt.color = Color.lightGray;
 		optionTxt.visible = false;
 
-		UIManager.addUI(option, optionTxt);
+		UIManager.attachUI(option, optionTxt);
+		
+		// 选项表面的字：卸下
+		Text optionTxt2 = new Text("卸下");
+		optionTxt2.name = "optionTxt2";
+		optionTxt2.setFontSize(20);
+		optionTxt2.color = Color.lightGray;
+		optionTxt2.visible = false;
+		
+		UIManager.addUI(optionTxt2);
+
+		// 对话框
+		UIEntity talkBox = new UIEntity();
+		talkBox.setStaticImage(Resources.loadImage(Resources.path + "images/对话框.png"));
+		talkBox.name = "talkBox";
+		talkBox.visible = false;
+		talkBox.setScale(new Vector2(2f, 1.5f));
+		talkBox.position = new Vector2(GameCore.screen.width / 2f,
+				GameCore.screen.height - talkBox.getHeight() * talkBox.getScale().y / 2 - 25);
+
+		UIManager.addUI(talkBox);
+
+		// 南极仙翁头像
+		UIEntity talkNPCProfile = new UIEntity();
+		talkNPCProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/南极仙翁头像.png"));
+		talkNPCProfile.name = "talkNPCProfile";
+		talkNPCProfile.visible = false;
+		talkNPCProfile.position = new Vector2(107, 325);
+
+		UIManager.addUI(talkNPCProfile);
+
+		// 主角头像
+		UIEntity playerProfile = new UIEntity();
+		playerProfile.setStaticImage(Resources.loadImage(Resources.path + "images/entities/主角头像.png"));
+		playerProfile.name = "playerProfile";
+		playerProfile.visible = false;
+		playerProfile.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.width / 2f);
+
+		UIManager.addUI(playerProfile);
+
+		// 文字
+		Text text = new Text("欢迎你来到游戏世界！！");
+		text.needAlignScreen = true;
+		text.name = "firstText";
+		text.visible = false;
+		text.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
+
+		UIManager.addUI(text);
 
 		// --------------加载数据----------------
 
@@ -608,6 +624,20 @@ public class Sandbox extends GameCore {
 			}
 		}
 
+		if (UIManager.getUIEntity("option").isPressedMouseButton() && UIManager.getUIEntity("optionTxt").visible) {
+			// 当玩家点击装备选项时，选项界面消失，背包中的装备消失，玩家装备上该装备
+			UIManager.setUIVisibility("optionView", false);
+			((Player) TileMap.player).bag.removePropItemFromBag("bowPropItem");
+
+			this.player.equipWeapon(new Weapon("bow", 2, 270f));
+			// 放入玩家的装备格子
+			((PropCellView)UIManager.getUIEntity("playerViewPropCell")).setPropItem(UIManager.getUIEntity("bowPropItem"));
+			UIManager.getUIEntity("optionTxt").visible = false;
+			UIManager.getUIEntity("optionTxt2").visible = true;
+			UIManager.detachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt"));
+			UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt2"));
+		}
+
 		// 当玩家点击道具时，弹出道具的选项界面
 		if (UIManager.getUIEntity("bowPropItem") != null
 				&& UIManager.getUIEntity("bowPropItem").isPressedMouseButton()) {
@@ -618,10 +648,15 @@ public class Sandbox extends GameCore {
 							UIManager.getUIEntity("optionView").getHeight()
 									* UIManager.getUIEntity("optionView").getScale().y / 2));
 			UIManager.getUIEntity("option").position = UIManager.getUIEntity("optionView").position;
-			UIManager.getUIEntity("optionTxt").position = UIManager.getUIEntity("option").position
-					.sub(new Vector2(((Text) UIManager.getUIEntity("optionTxt")).getWidth() / 2,
-							((Text) UIManager.getUIEntity("optionTxt")).getHeight() / 2 - 3));
+			for(UIEntity ue : UIManager.getChilds("option")) {
+				ue.position = UIManager.getUIEntity("option").position
+						.sub(new Vector2(((Text) ue).getWidth() / 2,
+								((Text) ue).getHeight() / 2 - 3));
+			}
 			UIManager.setUIVisibility("optionView", true);
+		} else if (this.mouseInputHandler.mouse.isPressed() && UIManager.getUIEntity("optionView").visible) {
+			UIManager.setUIVisibility("optionView", false);
 		}
+
 	}
 }

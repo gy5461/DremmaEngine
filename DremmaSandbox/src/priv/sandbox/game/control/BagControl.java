@@ -36,7 +36,6 @@ public class BagControl {
 	 */
 	public void addPropItemToBag(String propName) {
 		if (this.size < this.bagView.size()) {
-			UIManager.addUI(this.bagView.get(this.size), UIManager.getUIEntity(propName));
 			this.bagView.get(this.size).setPropItem(UIManager.getUIEntity(propName));
 			this.propItems.put(propName, this.size);
 			this.size++;
@@ -52,6 +51,9 @@ public class BagControl {
 	public void removePropItemFromBag(String propName) {
 		if(this.propItems.containsKey(propName)) {
 			this.bagView.get(this.propItems.get(propName)).removePropItem();
+			this.size--;
+		} else {
+			Debug.log(Debug.DebugLevel.WARNING, "移除失败，道具不在背包中");
 		}
 	}
 }
