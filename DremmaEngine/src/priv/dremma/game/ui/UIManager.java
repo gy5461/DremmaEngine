@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.TranslateEntityHelper;
 
@@ -15,6 +16,8 @@ public class UIManager {
 	public static HashMap<UIEntity, ArrayList<UIEntity>> parentAndChirld = new HashMap<UIEntity, ArrayList<UIEntity>>();
 
 	static String path = Resources.path + "data/ui.dat"; // 数据文件目录
+
+	public static UIEntity lockUIEntiy = null;
 
 	/**
 	 * 向游戏中添加UI
@@ -36,6 +39,7 @@ public class UIManager {
 	 */
 	public static void attachUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
 		UIManager.uiEntities.add(childUIEntity);
+		childUIEntity.parent = parentUIEntity;
 		if (!TranslateEntityHelper.translateEntities.containsKey(childUIEntity.name)) {
 			TranslateEntityHelper translateEntityHelper = new TranslateEntityHelper(childUIEntity);
 			TranslateEntityHelper.translateEntities.put(childUIEntity.name, translateEntityHelper);
@@ -87,22 +91,28 @@ public class UIManager {
 
 	/**
 	 * 解除子UI与双亲UI的关系
+	 * 
 	 * @param parentUIEntity
 	 * @param childUIEntity
 	 */
 	public static void detachUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
-		if (UIManager.parentAndChirld.containsKey(parentUIEntity) &&
-				UIManager.parentAndChirld.get(parentUIEntity).contains(childUIEntity)) {
+		if (UIManager.parentAndChirld.containsKey(parentUIEntity)
+				&& UIManager.parentAndChirld.get(parentUIEntity).contains(childUIEntity)) {
 			UIManager.parentAndChirld.get(parentUIEntity).remove(childUIEntity);
+			childUIEntity.parent = null;
 		}
 	}
-	
+
 	/**
 	 * 去除所有子UI
+	 * 
 	 * @param parentUIEntity
 	 */
 	public static void detachAllChildUI(UIEntity UIEntity) {
 		if (UIManager.parentAndChirld.containsKey(UIEntity)) {
+			for(UIEntity ue : UIManager.parentAndChirld.get(UIEntity)) {
+				ue.parent = null;
+			}
 			UIManager.parentAndChirld.remove(UIEntity);
 		}
 	}
@@ -152,11 +162,25 @@ public class UIManager {
 
 	public static void draw(Graphics2D g) {
 		// UI
+		boolean hasLocked = false;
 		for (UIEntity ue : UIManager.uiEntities) {
 			if (ue.visible == false) {
 				continue;
 			}
+
+			if (ue.isChosenMouseButton()) {
+				UIManager.lockUIEntiy = ue;
+				hasLocked = true;
+			}
 			ue.draw(g);
+		}
+		if(!hasLocked) {
+			UIManager.lockUIEntiy = null;
+		}
+		if (UIManager.lockUIEntiy != null) {
+			Debug.log(Debug.DebugLevel.INFO, "" + UIManager.lockUIEntiy.name);
+		} else {
+			Debug.log(Debug.DebugLevel.INFO, "null");
 		}
 	}
 }

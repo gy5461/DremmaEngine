@@ -373,7 +373,7 @@ public class Sandbox extends GameCore {
 
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 5; j++) {
-				PropCellView propCell = new PropCellView(bagPropFrame);
+				PropCellView propCell = new PropCellView(bagPropFrame, this.mouseInputHandler);
 				propCell.name = "bagPropCell" + (i * 5 + j);
 				propCell.setScale(new Vector2(0.5f, 0.5f));
 				propCell.position = new Vector2(548 + j * 60, 152 + i * 60);
@@ -405,7 +405,7 @@ public class Sandbox extends GameCore {
 
 		// 为playerView加上道具栏，方便卸下装备
 		PropCellView playerViewPropCell = new PropCellView(
-				Resources.loadImage(Resources.path + "images/storageBoxCell.png"));
+				Resources.loadImage(Resources.path + "images/storageBoxCell.png"), this.mouseInputHandler);
 		playerViewPropCell.name = "playerViewPropCell";
 		playerViewPropCell.setScale(new Vector2(0.5f, 0.5f));
 		playerViewPropCell.position = new Vector2(GameCore.screen.width / 2 - 150 + 120,
@@ -440,7 +440,7 @@ public class Sandbox extends GameCore {
 
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 5; j++) {
-				PropCellView propCell = new PropCellView(storageBoxPropFrame);
+				PropCellView propCell = new PropCellView(storageBoxPropFrame, this.mouseInputHandler);
 				propCell.name = "storageBoxPropCell" + (i * 5 + j);
 				propCell.setScale(new Vector2(0.5f, 0.5f));
 				propCell.position = new Vector2(202 + j * 60, 152 + i * 60);
@@ -580,7 +580,7 @@ public class Sandbox extends GameCore {
 		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
 
 		// ---------------------配置-----------------------
-//		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
+		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
 //		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
 
 	}
@@ -594,6 +594,7 @@ public class Sandbox extends GameCore {
 				&& UIManager.getUIEntity("bagIcon").isPressedMouseButton()) {
 			UIManager.setUIVisibility("bagView", true);
 			UIManager.setUIVisibility("playerView", true);
+			UIManager.setUIVisibility("optionView", false);
 			if (((PropCellView) UIManager.getUIEntity("playerViewPropCell")).getPropItem() == null) {
 				// 角色未装备武器
 				// 默认选项文字为 装备
@@ -615,7 +616,8 @@ public class Sandbox extends GameCore {
 					// 显示
 					UIManager.setUIVisibility("bagView", true);
 					UIManager.setUIVisibility("playerView", true);
-					
+					UIManager.setUIVisibility("optionView", false);
+
 					if (((PropCellView) UIManager.getUIEntity("playerViewPropCell")).getPropItem() == null) {
 						// 角色未装备武器
 						UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
@@ -677,7 +679,7 @@ public class Sandbox extends GameCore {
 				// 从玩家的装备格子中消失
 				((PropCellView) UIManager.getUIEntity("playerViewPropCell")).removePropItem();
 				this.player.unequipWeapon();
-				
+
 				UIManager.detachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt2"));
 				UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt"));
 
@@ -706,24 +708,24 @@ public class Sandbox extends GameCore {
 				UIManager.setUIVisibility("optionView", false);
 				((Player) TileMap.player).bag.removePropItemFromBag("bowPropItem");
 				((Player) TileMap.player).storageBox.addPropItemToBag("bowPropItem");
-				
+
 				// 选项文字由放入变为取出
 				UIManager.detachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt3"));
 				UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt4"));
 			}
-			
+
 			if (UIManager.getUIEntity("option").isPressedMouseButton() && UIManager.getUIEntity("optionTxt4").visible) {
 				// 当玩家点击取出选项时，选项界面消失，储物箱中的装备消失，装备被添加到背包中
 				UIManager.setUIVisibility("optionView", false);
 				((Player) TileMap.player).bag.addPropItemToBag("bowPropItem");
 				((Player) TileMap.player).storageBox.removePropItemFromBag("bowPropItem");
-				
+
 				// 选项文字由取出变为放入
 				UIManager.detachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt4"));
 				UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt3"));
 			}
 		}
-
+		
 		// 当玩家点击道具时，弹出道具的选项界面
 		if (UIManager.getUIEntity("bowPropItem") != null
 				&& UIManager.getUIEntity("bowPropItem").isPressedMouseButton()) {

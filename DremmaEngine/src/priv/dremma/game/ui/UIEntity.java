@@ -11,6 +11,8 @@ import priv.dremma.game.util.TranslateEntityHelper;
 import priv.dremma.game.util.Vector2;
 
 public class UIEntity extends Entity {
+	
+	UIEntity parent = null;	// 双亲UI
 
 	public static enum UIAlign {
 		CENTER, LEFT, RIGHT, UP, DOWN;
@@ -48,11 +50,14 @@ public class UIEntity extends Entity {
 		if (this.mouseInputHandler == null) {
 			return false;
 		}
+		if (this != UIManager.lockUIEntiy) {
+			return false;
+		}
 		if (TranslateEntityHelper.hasLock) {
 			return false;
 		}
 		return (this.mouseInputHandler.mouse.isPressed()
-				&& this.mouseInputHandler.getCurPos().isInRect(this.getleftUpPoint(), this.getrightDownPoint()));
+				&& this.mouseInputHandler.getCurPos().isInRect(this.getLeftUpPoint(), this.getRightDownPoint()));
 	}
 
 	/**
@@ -64,7 +69,16 @@ public class UIEntity extends Entity {
 		if (this.mouseInputHandler == null) {
 			return false;
 		}
-		return this.mouseInputHandler.getCurPos().isInRect(this.getleftUpPoint(), this.getrightDownPoint());
+		return this.mouseInputHandler.getCurPos().isInRect(this.getLeftUpPoint(), this.getRightDownPoint());
+	}
+	
+	/**
+	 * 获取UI双亲
+	 * @param name
+	 * @return
+	 */
+	public UIEntity getParent() {
+		return this.parent;
 	}
 
 	/**
@@ -72,7 +86,7 @@ public class UIEntity extends Entity {
 	 * 
 	 * @return
 	 */
-	public Vector2 getleftUpPoint() {
+	public Vector2 getLeftUpPoint() {
 		Vector2 result = Vector2.zero();
 		switch (this.algin) {
 		case CENTER:
@@ -102,7 +116,7 @@ public class UIEntity extends Entity {
 	 * 
 	 * @return
 	 */
-	public Vector2 getrightDownPoint() {
+	public Vector2 getRightDownPoint() {
 		Vector2 result = Vector2.zero();
 		switch (this.algin) {
 		case CENTER:

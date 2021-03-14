@@ -3,7 +3,9 @@ package priv.sandbox.game.entities;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import priv.dremma.game.event.MouseInputHandler;
 import priv.dremma.game.ui.UIEntity;
+import priv.dremma.game.ui.UIManager;
 
 /**
  * 道具格子
@@ -19,13 +21,20 @@ public class PropCellView extends UIEntity {
 		super();
 		this.setStaticImage(cell);
 	}
+	
+	public PropCellView(Image cell, MouseInputHandler mouseInputHandler) {
+		super(mouseInputHandler);
+		this.setStaticImage(cell);
+	}
 
 	public void setPropItem(UIEntity propItem) {
+		UIManager.attachUI(this, propItem);
 		this.propItem = propItem;
 		this.propItem.position = this.position;
 	}
 
 	public void removePropItem() {
+		UIManager.detachUI(this, propItem);
 		this.propItem = null;
 	}
 

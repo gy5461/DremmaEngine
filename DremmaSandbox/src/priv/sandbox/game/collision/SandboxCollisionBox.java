@@ -140,6 +140,7 @@ public class SandboxCollisionBox extends CollisionBox {
 				&& otherEntity.name.equals("storageBox")) {
 			UIManager.setUIVisibility("bagView", true);
 			UIManager.setUIVisibility("storageBoxView", true);
+			UIManager.setUIVisibility("optionView", false);
 			if (((Player) TileMap.player).bag.getSize() > 0) {
 				// 默认选项文字为 放入
 				UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
