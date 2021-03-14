@@ -24,6 +24,7 @@ public class Player extends Entity {
 	protected KeyInputHandler keyInputHandler;
 
 	public BagControl bag;
+	public BagControl storageBox;
 
 	// 站立动画
 	HashMap<Integer, Image> playerStandUp = new HashMap<Integer, Image>();
@@ -159,6 +160,10 @@ public class Player extends Entity {
 			this.attackDistance = weapon.attackDistance;
 			this.attackHarm = weapon.attackHarm;
 		}
+	}
+	
+	public void unequipWeapon() {
+		this.equipWeapon(null);
 	}
 
 	/**

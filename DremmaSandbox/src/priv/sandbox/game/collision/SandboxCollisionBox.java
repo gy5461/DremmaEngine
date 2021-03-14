@@ -132,7 +132,7 @@ public class SandboxCollisionBox extends CollisionBox {
 			SandboxCollisionBox.collisionBoxs.remove("bow");
 			TranslateEntityHelper.translateEntities.remove("bow");
 			// 弓进入背包
-			((Player)TileMap.player).bag.addPropItemToBag("bowPropItem");
+			((Player) TileMap.player).bag.addPropItemToBag("bowPropItem");
 		}
 
 		// ------------------玩家触发储物箱时--------------------
@@ -140,6 +140,15 @@ public class SandboxCollisionBox extends CollisionBox {
 				&& otherEntity.name.equals("storageBox")) {
 			UIManager.setUIVisibility("bagView", true);
 			UIManager.setUIVisibility("storageBoxView", true);
+			if (((Player) TileMap.player).bag.getSize() > 0) {
+				// 默认选项文字为 放入
+				UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
+				UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt3"));
+			} else if(((Player) TileMap.player).storageBox.getSize() > 0){
+				// 默认选项文字为 取出
+				UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
+				UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt4"));
+			}
 		}
 	}
 }
