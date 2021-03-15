@@ -595,17 +595,6 @@ public class Sandbox extends GameCore {
 			UIManager.setUIVisibility("bagView", true);
 			UIManager.setUIVisibility("playerView", true);
 			UIManager.setUIVisibility("optionView", false);
-			if (((PropCellView) UIManager.getUIEntity("playerViewPropCell")).getPropItem() == null) {
-				// 角色未装备武器
-				// 默认选项文字为 装备
-				UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
-				UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt"));
-			} else {
-				// 角色已装备武器
-				// 默认选项文字为 卸下
-				UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
-				UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt2"));
-			}
 		}
 
 		// 当玩家按背包键时，背包关闭则开启，反之则关闭
@@ -617,16 +606,6 @@ public class Sandbox extends GameCore {
 					UIManager.setUIVisibility("bagView", true);
 					UIManager.setUIVisibility("playerView", true);
 					UIManager.setUIVisibility("optionView", false);
-
-					if (((PropCellView) UIManager.getUIEntity("playerViewPropCell")).getPropItem() == null) {
-						// 角色未装备武器
-						UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
-						UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt"));
-					} else {
-						// 角色已装备武器
-						UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
-						UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt2"));
-					}
 				} else {
 					// 关闭
 					if (UIManager.getUIEntity("storageBoxView").visible) {
@@ -673,15 +652,27 @@ public class Sandbox extends GameCore {
 
 		if (UIManager.getUIEntity("playerView").visible) {
 			// 在打开角色展示界面时
+			
+			// 更新选项文字
+			if (UIManager.getUIEntity("bowPropItem").getParent() != null) {
+				if (UIManager.getUIEntity("bowPropItem").getParent().name.startsWith("playerViewPropCell")
+						&& UIManager.getUIEntity("optionTxt2").getParent() != UIManager.getUIEntity("option")) {
+					UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
+					UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt2"));
+				}
+				if (UIManager.getUIEntity("bowPropItem").getParent().name.startsWith("bagPropCell")
+						&& UIManager.getUIEntity("optionTxt").getParent() != UIManager.getUIEntity("option")) {
+					UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
+					UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt"));
+				}
+			}
+			
 			if (UIManager.getUIEntity("option").isPressedMouseButton() && UIManager.getUIEntity("optionTxt2").visible) {
 				// 当玩家点击卸下选项时，选项界面消失，角色展示界面中的装备消失，该装备装入背包
 				UIManager.setUIVisibility("optionView", false);
 				// 从玩家的装备格子中消失
 				((PropCellView) UIManager.getUIEntity("playerViewPropCell")).removePropItem();
 				this.player.unequipWeapon();
-
-				UIManager.detachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt2"));
-				UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt"));
 
 				((Player) TileMap.player).bag.addPropItemToBag("bowPropItem");
 			}
@@ -695,37 +686,42 @@ public class Sandbox extends GameCore {
 				// 放入玩家的装备格子
 				((PropCellView) UIManager.getUIEntity("playerViewPropCell"))
 						.setPropItem(UIManager.getUIEntity("bowPropItem"));
-				// 选项文字由装备变成卸下
-				UIManager.detachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt"));
-				UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt2"));
 			}
 		}
 
 		if (UIManager.getUIEntity("storageBoxView").visible) {
 			// 当储物箱界面打开时
+			
+			// 更新选项文字
+			if (UIManager.getUIEntity("bowPropItem").getParent() != null) {
+				if (UIManager.getUIEntity("bowPropItem").getParent().name.startsWith("bagPropCell")
+						&& UIManager.getUIEntity("optionTxt3").getParent() != UIManager.getUIEntity("option")) {
+					UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
+					UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt3"));
+				}
+				if (UIManager.getUIEntity("bowPropItem").getParent().name.startsWith("storageBoxPropCell")
+						&& UIManager.getUIEntity("optionTxt4").getParent() != UIManager.getUIEntity("option")) {
+					UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
+					UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt4"));
+				}
+			}
+
 			if (UIManager.getUIEntity("option").isPressedMouseButton() && UIManager.getUIEntity("optionTxt3").visible) {
 				// 当玩家点击放入选项时，选项界面消失，背包中的装备消失，装备被添加到储物箱中
 				UIManager.setUIVisibility("optionView", false);
 				((Player) TileMap.player).bag.removePropItemFromBag("bowPropItem");
 				((Player) TileMap.player).storageBox.addPropItemToBag("bowPropItem");
-
-				// 选项文字由放入变为取出
-				UIManager.detachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt3"));
-				UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt4"));
 			}
 
 			if (UIManager.getUIEntity("option").isPressedMouseButton() && UIManager.getUIEntity("optionTxt4").visible) {
 				// 当玩家点击取出选项时，选项界面消失，储物箱中的装备消失，装备被添加到背包中
 				UIManager.setUIVisibility("optionView", false);
-				((Player) TileMap.player).bag.addPropItemToBag("bowPropItem");
+				// 此处应先删后加，否则bowPropItem的双亲将变成null
 				((Player) TileMap.player).storageBox.removePropItemFromBag("bowPropItem");
-
-				// 选项文字由取出变为放入
-				UIManager.detachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt4"));
-				UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt3"));
+				((Player) TileMap.player).bag.addPropItemToBag("bowPropItem");
 			}
 		}
-		
+
 		// 当玩家点击道具时，弹出道具的选项界面
 		if (UIManager.getUIEntity("bowPropItem") != null
 				&& UIManager.getUIEntity("bowPropItem").isPressedMouseButton()) {
