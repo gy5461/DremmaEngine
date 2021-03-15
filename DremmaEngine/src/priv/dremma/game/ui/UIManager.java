@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import priv.dremma.game.util.Debug;
 import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.TranslateEntityHelper;
 
@@ -176,11 +175,6 @@ public class UIManager {
 		}
 		if(!hasLocked) {
 			UIManager.lockUIEntiy = null;
-		}
-		if (UIManager.lockUIEntiy != null) {
-			Debug.log(Debug.DebugLevel.INFO, "" + UIManager.lockUIEntiy.name);
-		} else {
-			Debug.log(Debug.DebugLevel.INFO, "null");
 		}
 	}
 }
