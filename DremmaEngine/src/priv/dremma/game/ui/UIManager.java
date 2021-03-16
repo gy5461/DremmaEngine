@@ -37,7 +37,7 @@ public class UIManager {
 	 * @param UIEntity
 	 */
 	public static void attachUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
-		UIManager.uiEntities.add(childUIEntity);
+		UIManager.addUI(childUIEntity);
 		childUIEntity.parent = parentUIEntity;
 		if (!TranslateEntityHelper.translateEntities.containsKey(childUIEntity.name)) {
 			TranslateEntityHelper translateEntityHelper = new TranslateEntityHelper(childUIEntity);

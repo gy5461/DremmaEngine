@@ -581,7 +581,7 @@ public class Sandbox extends GameCore {
 
 		// ---------------------配置-----------------------
 		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
-//		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
+		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
 
 	}
 
