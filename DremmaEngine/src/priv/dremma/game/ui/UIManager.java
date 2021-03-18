@@ -37,12 +37,14 @@ public class UIManager {
 	 * @param UIEntity
 	 */
 	public static void attachUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
-		UIManager.addUI(childUIEntity);
-		childUIEntity.parent = parentUIEntity;
-		if (!TranslateEntityHelper.translateEntities.containsKey(childUIEntity.name)) {
-			TranslateEntityHelper translateEntityHelper = new TranslateEntityHelper(childUIEntity);
-			TranslateEntityHelper.translateEntities.put(childUIEntity.name, translateEntityHelper);
+		if (!UIManager.uiEntities.contains(childUIEntity)) {
+			UIManager.addUI(childUIEntity);
 		}
+		
+		if(childUIEntity.parent != null) {
+			UIManager.detachUI(childUIEntity.parent, childUIEntity);
+		}
+		childUIEntity.parent = parentUIEntity;
 
 		ArrayList<UIEntity> childs;
 		if (UIManager.parentAndChirld.containsKey(parentUIEntity)) {
@@ -96,7 +98,8 @@ public class UIManager {
 	 */
 	public static void detachUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
 		if (UIManager.parentAndChirld.containsKey(parentUIEntity)
-				&& UIManager.parentAndChirld.get(parentUIEntity).contains(childUIEntity)) {
+				&& UIManager.parentAndChirld.get(parentUIEntity).contains(childUIEntity)
+				&& childUIEntity.parent == parentUIEntity) {
 			UIManager.parentAndChirld.get(parentUIEntity).remove(childUIEntity);
 			childUIEntity.parent = null;
 		}
@@ -109,7 +112,10 @@ public class UIManager {
 	 */
 	public static void detachAllChildUI(UIEntity UIEntity) {
 		if (UIManager.parentAndChirld.containsKey(UIEntity)) {
-			for(UIEntity ue : UIManager.parentAndChirld.get(UIEntity)) {
+			for (UIEntity ue : UIManager.parentAndChirld.get(UIEntity)) {
+				if (ue.parent != UIEntity) {
+					continue;
+				}
 				ue.parent = null;
 			}
 			UIManager.parentAndChirld.remove(UIEntity);
@@ -173,7 +179,7 @@ public class UIManager {
 			}
 			ue.draw(g);
 		}
-		if(!hasLocked) {
+		if (!hasLocked) {
 			UIManager.lockUIEntiy = null;
 		}
 	}

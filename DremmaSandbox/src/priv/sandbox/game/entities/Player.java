@@ -131,7 +131,7 @@ public class Player extends Entity {
 		this.name = "剑侠客";
 		this.speed = speed;
 
-		this.maxHp = 500;
+		this.maxHp = 5;
 		this.hp = maxHp;
 		this.attackHarm = 1;
 		this.attackDistance = 135f;
