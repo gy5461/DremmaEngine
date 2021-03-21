@@ -29,6 +29,12 @@ public class Sandbox extends GameCore {
 
 	@Override
 	public void onStart() {
+		// ---------------------配置-----------------------
+//		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
+//		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
+		
+		GameCore.debug = false;
+
 		this.setName("SandBox");
 
 		Sandbox.scale = 3;
@@ -578,11 +584,6 @@ public class Sandbox extends GameCore {
 
 		SandboxCollisionBox.load(); // 从数据文件中加载碰撞盒数据
 		TranslateEntityHelper.load(); // 从数据文件中加载移动帮助数据
-
-		// ---------------------配置-----------------------
-		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
-		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
-
 	}
 
 	static int pressBagButtonTimes = 0;
@@ -652,7 +653,7 @@ public class Sandbox extends GameCore {
 
 		if (UIManager.getUIEntity("playerView").visible) {
 			// 在打开角色展示界面时
-			
+
 			// 更新选项文字
 			if (UIManager.getUIEntity("bowPropItem").getParent() != null) {
 				if (UIManager.getUIEntity("bowPropItem").getParent().name.startsWith("playerViewPropCell")
@@ -666,7 +667,7 @@ public class Sandbox extends GameCore {
 					UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt"));
 				}
 			}
-			
+
 			if (UIManager.getUIEntity("option").isPressedMouseButton() && UIManager.getUIEntity("optionTxt2").visible) {
 				// 当玩家点击卸下选项时，选项界面消失，角色展示界面中的装备消失，该装备装入背包
 				UIManager.setUIVisibility("optionView", false);
@@ -691,7 +692,7 @@ public class Sandbox extends GameCore {
 
 		if (UIManager.getUIEntity("storageBoxView").visible) {
 			// 当储物箱界面打开时
-			
+
 			// 更新选项文字
 			if (UIManager.getUIEntity("bowPropItem").getParent() != null) {
 				if (UIManager.getUIEntity("bowPropItem").getParent().name.startsWith("bagPropCell")

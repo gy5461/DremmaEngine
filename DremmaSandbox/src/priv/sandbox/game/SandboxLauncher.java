@@ -3,7 +3,7 @@ package priv.sandbox.game;
 import priv.dremma.game.GameLauncher;
 
 @SuppressWarnings("serial")
-public class SandboxLaucher extends GameLauncher {
+public class SandboxLauncher extends GameLauncher {
 	public void onStart() {
 		GameLauncher.game = new Sandbox();
 	}
