@@ -30,14 +30,13 @@ public class Sandbox extends GameCore {
 	@Override
 	public void onStart() {
 		// ---------------------配置-----------------------
-//		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
-//		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
+		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
+		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
 		
-		GameCore.debug = false;
+		//GameCore.debug = false;
 
 		this.setName("SandBox");
 
-		Sandbox.scale = 3;
 		viewAngle = GameCore.GameViewAngle.ViewAngle2DOT5; // 设置2D游戏视角
 
 		// --------------设置游戏按键----------------
