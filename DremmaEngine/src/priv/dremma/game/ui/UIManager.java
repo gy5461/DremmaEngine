@@ -36,13 +36,13 @@ public class UIManager {
 	 * 
 	 * @param UIEntity
 	 */
-	public static void attachUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
+	public static void attachSubUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
 		if (!UIManager.uiEntities.contains(childUIEntity)) {
 			UIManager.addUI(childUIEntity);
 		}
 		
 		if(childUIEntity.parent != null) {
-			UIManager.detachUI(childUIEntity.parent, childUIEntity);
+			UIManager.detachSubUI(childUIEntity.parent, childUIEntity);
 		}
 		childUIEntity.parent = parentUIEntity;
 
@@ -96,7 +96,7 @@ public class UIManager {
 	 * @param parentUIEntity
 	 * @param childUIEntity
 	 */
-	public static void detachUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
+	public static void detachSubUI(UIEntity parentUIEntity, UIEntity childUIEntity) {
 		if (UIManager.parentAndChirld.containsKey(parentUIEntity)
 				&& UIManager.parentAndChirld.get(parentUIEntity).contains(childUIEntity)
 				&& childUIEntity.parent == parentUIEntity) {

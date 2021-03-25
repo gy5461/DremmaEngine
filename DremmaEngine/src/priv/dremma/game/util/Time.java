@@ -13,7 +13,7 @@ public class Time {
 	public static long lastTime = System.currentTimeMillis(); // 记录上一秒的时间，单位为毫秒
 	public static long lastnsTime = System.nanoTime(); // 记录上一次循环纳秒数
 	public static long lastFramensTime = System.nanoTime(); // 记录上一帧的纳秒数
-	// 每秒1e9纳秒，每秒渲染60帧画面是人眼上限，指在每秒渲染60帧画面的前提下，每帧需要多少纳秒
+	// 每秒1e9纳秒，指在每秒渲染60帧画面的前提下，每帧需要多少纳秒
 	public static final float NSPERFRAME = 1000000000.0f / 60.0f;
 	private static float deltaFrame = 0; // 纳秒数的变化除以nsPerFrame，即变化的帧数
 	public static float deltaTime = 0; // 每帧的用时，单位为秒
@@ -36,7 +36,7 @@ public class Time {
 		Time.deltaFrame += (Time.curnsTime - Time.lastnsTime) / Time.NSPERFRAME;
 		Time.lastnsTime = Time.curnsTime;
 
-		// 变化的纳秒数在满足人眼上限的前提下值得渲染一帧
+		// 变化的帧数在达到1时渲染一帧
 		if (FloatCompare.isBiggerOrEqual(Time.deltaFrame, 1.0f)) {
 			Time.deltaFrame--;
 			Time.deltaTime = (Time.curnsTime - Time.lastFramensTime) / 1e9f;

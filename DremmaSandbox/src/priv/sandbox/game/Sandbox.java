@@ -30,10 +30,10 @@ public class Sandbox extends GameCore {
 	@Override
 	public void onStart() {
 		// ---------------------配置-----------------------
-		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
-		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
+//		SandboxCollisionBox.shouldRender = true; // 渲染碰撞盒
+//		TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助
 		
-		//GameCore.debug = false;
+		GameCore.debug = false;
 
 		this.setName("SandBox");
 
@@ -384,7 +384,7 @@ public class Sandbox extends GameCore {
 				propCell.position = new Vector2(548 + j * 60, 152 + i * 60);
 				propCell.visible = false;
 				bagPropItemViews.add(propCell);
-				UIManager.attachUI(bagView, propCell);
+				UIManager.attachSubUI(bagView, propCell);
 			}
 		}
 		((Player) TileMap.player).bag = new BagControl(bagPropItemViews);
@@ -406,7 +406,7 @@ public class Sandbox extends GameCore {
 		playerShowView.position = new Vector2(GameCore.screen.width / 2 - 150, GameCore.screen.height / 2);
 		playerShowView.visible = false;
 
-		UIManager.attachUI(playerView, playerShowView);
+		UIManager.attachSubUI(playerView, playerShowView);
 
 		// 为playerView加上道具栏，方便卸下装备
 		PropCellView playerViewPropCell = new PropCellView(
@@ -417,7 +417,7 @@ public class Sandbox extends GameCore {
 				GameCore.screen.height / 2 - 196);
 		playerViewPropCell.visible = false;
 		bagPropItemViews.add(playerViewPropCell);
-		UIManager.attachUI(playerView, playerViewPropCell);
+		UIManager.attachSubUI(playerView, playerViewPropCell);
 
 		// 背包界面的关闭按钮
 		UIEntity playerViewCloseBtn = new UIEntity(this.mouseInputHandler);
@@ -427,7 +427,7 @@ public class Sandbox extends GameCore {
 		playerViewCloseBtn.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
 		playerViewCloseBtn.visible = false;
 
-		UIManager.attachUI(playerView, playerViewCloseBtn);
+		UIManager.attachSubUI(playerView, playerViewCloseBtn);
 
 		// 储物箱界面，玩家触发储物盒时出现
 		UIEntity storageBoxView = new UIEntity();
@@ -451,7 +451,7 @@ public class Sandbox extends GameCore {
 				propCell.position = new Vector2(202 + j * 60, 152 + i * 60);
 				propCell.visible = false;
 				storageBoxPropItemViews.add(propCell);
-				UIManager.attachUI(storageBoxView, propCell);
+				UIManager.attachSubUI(storageBoxView, propCell);
 			}
 		}
 		((Player) TileMap.player).storageBox = new BagControl(storageBoxPropItemViews);
@@ -464,7 +464,7 @@ public class Sandbox extends GameCore {
 		storageBoxCloseBtn.position = new Vector2(GameCore.screen.width / 2, GameCore.screen.height / 2);
 		storageBoxCloseBtn.visible = false;
 
-		UIManager.attachUI(storageBoxView, storageBoxCloseBtn);
+		UIManager.attachSubUI(storageBoxView, storageBoxCloseBtn);
 
 		// 道具：弓
 		UIEntity bowPropItem = new UIEntity(this.mouseInputHandler);
@@ -482,7 +482,7 @@ public class Sandbox extends GameCore {
 		optionView.setScale(new Vector2(0.13f, 0.07f));
 		optionView.visible = false;
 
-		UIManager.attachUI(bowPropItem, optionView);
+		UIManager.attachSubUI(bowPropItem, optionView);
 
 		// 选项界面中的选项
 		UIEntity option = new UIEntity(this.mouseInputHandler);
@@ -491,7 +491,7 @@ public class Sandbox extends GameCore {
 		option.setScale(new Vector2(0.5f, 1f));
 		option.visible = false;
 
-		UIManager.attachUI(optionView, option);
+		UIManager.attachSubUI(optionView, option);
 
 		// 选项表面的字：装备
 		Text optionTxt = new Text("装备");
@@ -500,7 +500,7 @@ public class Sandbox extends GameCore {
 		optionTxt.color = Color.lightGray;
 		optionTxt.visible = false;
 
-		UIManager.attachUI(option, optionTxt);
+		UIManager.attachSubUI(option, optionTxt);
 
 		// 选项表面的字：卸下
 		Text optionTxt2 = new Text("卸下");
@@ -658,12 +658,12 @@ public class Sandbox extends GameCore {
 				if (UIManager.getUIEntity("bowPropItem").getParent().name.startsWith("playerViewPropCell")
 						&& UIManager.getUIEntity("optionTxt2").getParent() != UIManager.getUIEntity("option")) {
 					UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
-					UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt2"));
+					UIManager.attachSubUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt2"));
 				}
 				if (UIManager.getUIEntity("bowPropItem").getParent().name.startsWith("bagPropCell")
 						&& UIManager.getUIEntity("optionTxt").getParent() != UIManager.getUIEntity("option")) {
 					UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
-					UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt"));
+					UIManager.attachSubUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt"));
 				}
 			}
 
@@ -697,12 +697,12 @@ public class Sandbox extends GameCore {
 				if (UIManager.getUIEntity("bowPropItem").getParent().name.startsWith("bagPropCell")
 						&& UIManager.getUIEntity("optionTxt3").getParent() != UIManager.getUIEntity("option")) {
 					UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
-					UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt3"));
+					UIManager.attachSubUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt3"));
 				}
 				if (UIManager.getUIEntity("bowPropItem").getParent().name.startsWith("storageBoxPropCell")
 						&& UIManager.getUIEntity("optionTxt4").getParent() != UIManager.getUIEntity("option")) {
 					UIManager.detachAllChildUI(UIManager.getUIEntity("option"));
-					UIManager.attachUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt4"));
+					UIManager.attachSubUI(UIManager.getUIEntity("option"), UIManager.getUIEntity("optionTxt4"));
 				}
 			}
 

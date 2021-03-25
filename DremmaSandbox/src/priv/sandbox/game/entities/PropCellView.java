@@ -28,13 +28,13 @@ public class PropCellView extends UIEntity {
 	}
 
 	public void setPropItem(UIEntity propItem) {
-		UIManager.attachUI(this, propItem);
+		UIManager.attachSubUI(this, propItem);
 		this.propItem = propItem;
 		this.propItem.position = this.position;
 	}
 
 	public void removePropItem() {
-		UIManager.detachUI(this, propItem);
+		UIManager.detachSubUI(this, propItem);
 		this.propItem = null;
 	}
 
