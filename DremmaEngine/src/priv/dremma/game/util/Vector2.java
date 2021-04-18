@@ -9,10 +9,7 @@ import java.io.Serializable;
  *
  */
 public class Vector2 implements Serializable {
-
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = -6749397976961813275L;
 	public float x, y; // 向量(x,y)在x轴与y轴上的分量
 

@@ -123,7 +123,7 @@ public final class GUtils {
 	 * @param basePointX: 视口左上角的世界x像素坐标；
 	 * @param basePointY: 视口左上角的世界y像素坐标； return 世界tile坐标.
 	 **/
-	public static Vector2 viewPortToWorldTile(Vector2 viewport, Vector2 basePoint, float tileWidth, float tileHeight) {
+	public static Vector2 viewPortToWorldTile(Vector2 viewport, float tileWidth, float tileHeight) {
 		Vector2 worldPiexl = viewPortToWorldPixel(viewport);
 		return worldPixelToWorldTile(worldPiexl, tileWidth, tileHeight);
 	}
@@ -158,16 +158,16 @@ public final class GUtils {
 	 * @param basePointX: 视口左上角的世界x像素坐标；
 	 * @param basePointY: 视口左上角的世界y像素坐标； return 视口坐标.
 	 **/
-	public static Vector2 worldTileCenterToViewPort(Vector2 tile, Vector2 basePoint, float tileWidth,
+	public static Vector2 worldTileCenterToViewPort(Vector2 tile, float tileWidth,
 			float tileHeight) {
 		Vector2 piexl = Vector2.zero();
 		if (tile.y % 2 == 0) {
-			piexl.x = tile.x * tileWidth - basePoint.x;
-			piexl.y = tile.y * (tileHeight / 2) - basePoint.y;
+			piexl.x = tile.x * tileWidth - Screen.leftUpPoint.x;
+			piexl.y = tile.y * (tileHeight / 2) - Screen.leftUpPoint.y;
 			return piexl;
 		} else {
-			piexl.x = tile.x * tileWidth + (tileWidth / 2) - basePoint.x;
-			piexl.y = tile.y * (tileHeight / 2) - basePoint.y;
+			piexl.x = tile.x * tileWidth + (tileWidth / 2) - Screen.leftUpPoint.x;
+			piexl.y = tile.y * (tileHeight / 2) - Screen.leftUpPoint.y;
 			return piexl;
 		}
 	}

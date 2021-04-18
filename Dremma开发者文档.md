@@ -238,9 +238,68 @@ Time.printFrames();	// 打印运行时帧数
 
 二维向量的封装，提供插值、运算、比较、模长、归一化等方法
 
+【注】二维向量实现了Serializable接口，可对其进行对象序列化
 
+> 公有属性：
+>
+> float x: 向量在x轴方向上的分量
+>
+> float y: 向量在y轴方向上的分量
+>
+> ------------------------------------------------
+>
+> 公有方法：
+>
+> | 方法                                                         | 含义                                                         |
+> | :----------------------------------------------------------- | ------------------------------------------------------------ |
+> | Vector2.zero()                                               | 创建并获取向量（0，0）                                       |
+> | Vector2.one()                                                | 创建并获取向量（1，1）                                       |
+> | **public** Vector2()                                         | 默认无参构造函数，将创建并获取向量（0，0）                   |
+> | **public** Vector2(**float** x, **float** y)                 | 带参构造函数，构造向量（x，y）                               |
+> | **public** **float** magnitude()                             | 返回向量模长                                                 |
+> | **public** **float** sqrMagnitude()                          | 返回向量模长的平方，比magnitude快（无需进行开方运算）        |
+> | **public** **float** dot(Vector2 other)                      | 返回本向量点乘另一个向量的结果：a·b = \|a\|\|b\|cosθ         |
+> | **public** Vector2 normalized()                              | 将向量归一化                                                 |
+> | **public** Vector2 rotate(**float** angle)                   | 旋转向量，angle为顺时针旋转角度                              |
+> | **public** Vector2 add(Vector2 other)                        | 向量相加，返回和向量                                         |
+> | **public** Vector2 add(**float** other)                      | 向量加数字                                                   |
+> | **public** Vector2 sub(Vector2 other)                        | 向量相减，返回本向量减去other向量的结果向量                  |
+> | **public** Vector2 sub(**float** other)                      | 向量减数字                                                   |
+> | **public** Vector2 mul(Vector2 other)                        | 向量相乘，返回乘积向量                                       |
+> | **public** Vector2 mul(**float** other)                      | 向量乘数字                                                   |
+> | **public** Vector2 div(Vector2 other)                        | 向量相除，返回本向量除以other向量的结果向量                  |
+> | **public** Vector2 div(**float** other)                      | 向量除数字                                                   |
+> | **public** Vector2 abs()                                     | 返回向量绝对值                                               |
+> | **public** String toString()                                 | 重写了toString函数，可以直接打印向量，<br />格式为Vector2 [x=0, y=0] |
+> | **public** **boolean** isEqual(Vector2 other)                | 判断向量是否相等                                             |
+> | **public** **boolean** isBigger(Vector2 other)               | 判断向量是否大于other                                        |
+> | **public** **boolean** isBiggerOrEqual(Vector2 other)        | 判断向量是否大于等于other                                    |
+> | **public** **boolean** isLess(Vector2 other)                 | 判断向量是否小于other                                        |
+> | **public** **boolean** isLessOrEqual(Vector2 other)          | 判断向量是否小于等于other                                    |
+> | **public** **boolean** isInRect(Vector2 leftUp, Vector2 rightDown) | 判断当前坐标是否在一个矩形内                                 |
+> | **public** **static** Vector2 lerp(Vector2 startPos, Vector2 endPos, **float** time) | 二维向量的插值函数<br />startPos：开始位置<br />endPos  结束位置<br />time   插值时间（0.0f～1.0f） |
 
 #### 坐标转换
+
+GUtils类
+
+> ~~~java
+> // 视口坐标转换成世界像素坐标
+> Vector2 worldPos = GUtils.viewPortToWorldPixel(viewportPos);
+> // 世界像素坐标转换成视口坐标
+> Vector2 viewportPos = GUtils.worldPixelToViewPort(worldPos);
+> 
+> // 世界像素坐标转换成世界地砖坐标
+> // tileWidth:  单个地砖宽度
+> // tileHeight: 单个地砖长度
+> Vector2 worldTilePos = GUtils.worldPixelToWorldTile(worldPos, tileWidth, tileHeight);
+> // 世界某地砖的中心点转换成世界像素坐标
+> // scale地图放大倍数
+> Vector2 tilePos = GUtils.worldTileCenterToWorldPixel(tileCenterPos, tileWidth, tileHeight, scale);
+> 
+> // 世界某地砖的中心点转换成视口坐标
+> Vector2 viewportPos = GUtils.worldTileCenterToViewPort(tileCenterPos, tileWidth, tileHeight);
+> ~~~
 
 ### 资源加载
 
@@ -249,6 +308,39 @@ Time.printFrames();	// 打印运行时帧数
 资源包括贴图、音频、动画、地图配置文件、对话内容等
 
 开发者可调用Resource类提供的API方法便捷地加载及获取各类资源文件
+
+> 资源目录：与项目下src文件夹同级的被命名为res的目录为资源存放目录
+>
+> Resources.path代表资源目录，在不同平台上Resources.path不同，开发者只需调用Resources.path即可获取资源存放目录
+>
+> 资源类型
+>
+> Resources.ResourceType
+>
+> * Music: 音频资源
+>
+> * Tile:基础地砖资源
+>
+> Resources.res，资源哈希表（名称-路径）
+>
+> ~~~java
+> // 资源加载方法
+> // 图片资源
+> Image img = Resources.loadImage(filePath);
+> 
+> // 音频资源，以背景音乐为例，支持格式：wav, au
+> // 音频格式转换：mp3转换为wav在线转换网站：https://cloudconvert.com/mp3-to-wav
+> Resources.load(Resources.ResourceType.Music, "backgroundSound", Resources.path + "music/background.wav");
+> 
+> // 基础地砖资源
+> // "0"：基础地砖编号
+> // Resources.path + "images/tiles/floor_0.png"：对应地砖图像资源路径
+> Resources.load(Resources.ResourceType.Tile, "0", Resources.path + "images/tiles/floor_0.png");
+> ~~~
+>
+> 
+
+
 
 ### 地图设计
 
