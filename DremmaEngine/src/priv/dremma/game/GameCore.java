@@ -570,4 +570,10 @@ public class GameCore extends Canvas implements Runnable {
 		}
 	}
 
+	public void onWindowOpened() {
+	}
+
+	public void onWindowClose() {
+	}
+
 }

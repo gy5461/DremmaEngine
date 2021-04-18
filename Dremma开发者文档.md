@@ -26,33 +26,221 @@
 
 ### 核心配置
 
+基于Dremma的游戏需要继承GameCore和GameLauncher，重写钩子函数
+
+~~~java
+// ---------------GameCore----------------
+public class Sandbox extends GameCore {
+  @Override
+	public void onStart() {
+    super.onStart();
+    // 游戏开始前调用
+    // 进行资源加载、按键绑定等配置，处理游戏开始前的初始化等准备工作
+  }
+  @Override
+	public void onUpdate() {
+    super.onUpdate();
+    // 游戏运行中的每帧调用
+    // 游戏更新逻辑
+  }
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    // 游戏关闭前调用
+    // 可对一些游戏数据进行持久化保存
+  }
+}
+
+// ---------------GameLauncher----------------
+public class SandboxLauncher extends GameLauncher {
+	public void onStart() {
+    // 在Applet小程序平台指定打包的游戏为Sandbox实例
+		GameLauncher.game = new Sandbox();
+	}
+	
+	public static void main(String[] args) {
+    // 在Java Application平台指定打包的游戏为Sandbox实例
+		GameLauncher.game = new Sandbox();
+		lauchToApplication();	// 加载Java Application平台设置
+	}
+}
+~~~
+
 是否开启Debug日志：查看游戏帧数，游戏开发过程中输出的信息、警告及错误
 
-游戏目标平台：Applet还是Java Application
+> 配置方法：引擎默认为Debug模式
+>
+> ~~~java
+> GameCore.debug = true;  // 关闭Release模式，开启Debug模式
+> GameCore.debug = false; // 关闭Debug模式，开启Release模式
+> ~~~
 
-窗体大小
+游戏目标平台：利用Java的跨平台特性：可配置打包成Applet小程序及Java Application
+
+> 配置方法：引擎默认为Java Application
+>
+> ~~~java
+> GameCore.isApplet = true;	  // 设置平台为Applet小程序
+> GameCore.isApplet = false;	// 设置平台为Java Application
+> ~~~
+
+游戏窗体的长宽，放大倍数
+
+>默认配置如下，可根据需求自定义
+>
+>~~~java
+>GameCore.width = 160;							// 游戏窗体宽度
+>GameCore.height = width / 12 * 9;	// 游戏窗体高度
+>GameCore.Scale = 6;								// 游戏窗体放大倍数
+>~~~
 
 游戏名称：决定日志中显示的名称的及游戏窗体标题
+
+>默认为DremmaEngine，可根据需求自定义
+>
+>~~~java
+>GameCore.setName(your name string);
+>~~~
+
+游戏视角：
+
+>默认为2.5D斜视角，可根据需求自定义
+>
+>~~~java
+>GameCore.viewAngle = GameViewAngle.ViewAngle2DOT5;	// 将视角设置为2.5D斜视角
+>GameCore.viewAngle = GameViewAngle.ViewAngle2;			// 将视角设置为2D直视角
+>~~~
 
 ### 核心工具
 
 #### 调试支持
 
-Debug.log输出日志 配图
+Debug.log输出日志
+
+![截屏2021-04-18下午1.03.53.png](https://i.loli.net/2021/04/18/RKX1SqWuIU6nEis.png)
+
+用法：
+
+~~~java
+Debug.log(Debug.DebugLevel.INFO, info string);				// 打印调试信息，为绿色
+Debug.log(Debug.DebugLevel.WARNING, warning string);	// 打印调试警告，为黄色
+Debug.log(Debug.DebugLevel.SERVERE, servere string);	// 打印调试严重警告，为红色
+~~~
 
 #### 事件处理
 
-键盘事件，按键绑定（多个键盘可以绑定一个虚拟键，如w键及上箭头键绑定名为up的虚拟键，虚拟键名称可自定义），鼠标事件，窗体事件 配图
+![截屏2021-04-18下午1.01.17.png](https://i.loli.net/2021/04/18/h1yxwiLZbRzNcTU.png)
+
+##### 键盘事件
+
+按键绑定（多个键盘可以绑定一个虚拟键，如w键及上箭头键绑定名为up的虚拟键，虚拟键名称可自定义）
+
+~~~java
+// 为名称为up的虚拟键绑定键盘上的W键以及上箭头键
+ArrayList<Integer> upKeyCodes = new ArrayList<Integer>();
+upKeyCodes.add(KeyEvent.VK_W);	// W键
+upKeyCodes.add(KeyEvent.VK_UP);	// 上箭头键
+this.keyInputHandler.setVirtualKey("up", upKeyCodes);
+~~~
+
+捕获键盘事件
+
+~~~java
+// 在游戏核心类(继承GameCore的类)中，例如Sandbox
+// 若非核心类，需要从核心类传入this.keyInputHandler使用
+if(this.keyInputHandler.getVirtualKey("bag").isPressed())
+{
+  // 当虚拟键bag被按时
+}
+
+// 获取虚拟键bag被按次数
+int pressedTimes = this.keyInputHandler.getVirtualKey("bag").getPressedTimes();
+~~~
+
+##### 鼠标事件
+
+捕获鼠标事件
+
+~~~java
+// 游戏核心类中，若非核心类，需要从核心类传入this.mouseInputHandler使用
+if(this.mouseInputHandler.mouse.isPressed())
+{
+  // 当鼠标被点击时
+  
+  // 获取鼠标点击位置
+  Vector2 mouseLocation = this.mouseInputHandler.mouse.getLocation();
+	// 获取鼠标点击次数
+  int mousePressedTimes = this.mouseInputHandler.mouse.getPressedTimes();
+}
+
+if(this.mouseInputHandler.worldCurPosIsInRect(Rect类实例))
+{
+  // 当点击位置的世界坐标在世界中的矩形中时
+}
+
+if(this.mouseInputHandler.screenCurPosIsInRect(Rect类实例))
+{
+  // 当点击位置的屏幕坐标在屏幕上的矩形中时
+}
+
+// 获取当前帧鼠标位置
+Vector2 curPos = this.mouseInputHandler.getCurPos();
+// 获取上一帧的鼠标位置
+Vector2 lastPos = this.mouseInputHandler.getLastPos();
+~~~
+
+##### 窗体事件
+
+~~~java
+// 游戏核心类中，重写钩子函数
+@Override
+public void onWindowOpened() {
+  // 在窗体打开时调用
+}
+
+@Override
+public void onWindowClose() {
+  // 在游戏结束关闭窗体时调用
+}
+~~~
 
 #### 时间运转
 
 可通过时间类配置是否开启帧数锁定，帧数锁定到多少，获取每帧经过的时长，已经过去的时长，当前时间等等
+
+>游戏中的时间工具非常重要，决定着游戏的帧数控制，避免性能浪费，以及游戏中物体的运动，插值运算等都紧密相关
+>
+>Dremma的时间工具提供帧数控制，关闭帧数控制等配置项，配置方法如下
+>
+>~~~java
+>Time.gameFrames = 60;	// 游戏帧数默认控制在60帧，可自定义
+>Time.shouldRender = true;	// 默认为false, 设置为true时不进行帧数限制（需在引擎源码中GameCore 118行进行该配置）
+>~~~
+
+时间获取
+
+| 取值方法             | 含义                                                         |
+| -------------------- | ------------------------------------------------------------ |
+| Time.lastTime        | 游戏上一秒的毫秒数                                           |
+| Time.lastnsTime      | 上一次时间循环纳秒数                                         |
+| Time.lastFramensTime | 上一帧的纳秒数                                               |
+| *Time.deltaTime      | 本帧的用时，单位为秒                                         |
+| Time.deltaFrame      | 纳秒数的变化除以Time.NSPERFRAME，即变化的帧数                |
+| Time.NSPERFRAME      | 每秒1e9纳秒，指在每秒渲染指定帧数画面的前提下，每帧需要多少纳秒 |
+| *Time.elapsedTime    | 过去的时间，单位为秒                                         |
+| Time.curnsTime       | 当前纳秒数                                                   |
+
+~~~java
+Time.printFrames();	// 打印运行时帧数
+~~~
 
 #### Vector2
 
 二维向量的封装，提供插值、运算、比较、模长、归一化等方法
 
 
+
+#### 坐标转换
 
 ### 资源加载
 

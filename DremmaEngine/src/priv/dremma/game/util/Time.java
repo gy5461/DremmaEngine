@@ -9,15 +9,15 @@ import priv.dremma.game.GameCore;
  *
  */
 public class Time {
-
+	public static int gameFrames = 60;	// 游戏帧数
 	public static long lastTime = System.currentTimeMillis(); // 记录上一秒的时间，单位为毫秒
 	public static long lastnsTime = System.nanoTime(); // 记录上一次循环纳秒数
 	public static long lastFramensTime = System.nanoTime(); // 记录上一帧的纳秒数
 	// 每秒1e9纳秒，指在每秒渲染60帧画面的前提下，每帧需要多少纳秒
-	public static final float NSPERFRAME = 1000000000.0f / 60.0f;
-	private static float deltaFrame = 0; // 纳秒数的变化除以nsPerFrame，即变化的帧数
-	public static float deltaTime = 0; // 每帧的用时，单位为秒
-	public static float elapsedTime = 0; // 过去的时间
+	public static final float NSPERFRAME = 1000000000.0f / gameFrames;
+	private static float deltaFrame = 0; // 纳秒数的变化除以NSPERFRAME，即变化的帧数
+	public static float deltaTime = 0; // 本帧的用时，单位为秒
+	public static float elapsedTime = 0; // 过去的时间，单位为秒
 	public static long curnsTime; // 记录当前纳秒数
 	// 如果需要测试机器极限，建议将shouldRender始终设置为true
 	public static boolean shouldRender; // 标记是否需要渲染，当deltaFrame>=1时，是渲染的时机

@@ -23,12 +23,14 @@ public class WindowInputHandler implements WindowListener {
 	@Override
 	public void windowOpened(WindowEvent event) {
 		Debug.log(Debug.DebugLevel.WARNING, "Window Opened!");
+		game.onWindowOpened();
 	}
 
 	@Override
 	public void windowClosing(WindowEvent event) {
 		Debug.log(Debug.DebugLevel.WARNING, "Window Closing!");
 		game.onDestroy();
+		game.onWindowClose();
 	}
 
 	@Override
