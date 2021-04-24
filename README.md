@@ -31,7 +31,7 @@ GameLauncher继承java.applet.Applet，支持引擎构建applet网页游戏
 
 调试支持三种信息：绿色的信息INFO、黄色的警告WARNING以及红色的严重警告SERVER，在游戏开发时，打开调试，游戏发布时，将Game.debug设为false关闭调试信息。
 
-![1.png](https://i.loli.net/2021/01/06/bRgeuQN8MS1Hj53.png)
+![截屏2021-04-24上午9.23.14.png](https://i.loli.net/2021/04/24/46bZfI29OSdCkNx.png)
 
 
 

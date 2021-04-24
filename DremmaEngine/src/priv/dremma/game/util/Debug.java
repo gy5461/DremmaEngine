@@ -24,7 +24,7 @@ public class Debug {
 			break;
 		case SEVERE:
 			// 打印红色严重警告
-			System.out.println("\u001b[1;31m[" + GameCore.name + "][SERVERE]" + msg+"\u001b[0m");
+			System.out.println("\u001b[1;31m[" + GameCore.name + "][SEVERE]" + msg+"\u001b[0m");
 			break;
 		}
 	}

@@ -117,7 +117,7 @@ public class SandboxLauncher extends GameLauncher {
 
 Debug.log输出日志
 
-![截屏2021-04-18下午1.03.53.png](https://i.loli.net/2021/04/18/RKX1SqWuIU6nEis.png)
+![截屏2021-04-24上午9.23.14.png](https://i.loli.net/2021/04/24/46bZfI29OSdCkNx.png)
 
 用法：
 
