@@ -138,7 +138,7 @@ public class GameCore extends Canvas implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			Debug.log(Debug.DebugLevel.SERVERE, "出错啦!!!");
+			Debug.log(Debug.DebugLevel.SEVERE, "出错啦!!!");
 			e.printStackTrace();
 			willSave = false;
 		}

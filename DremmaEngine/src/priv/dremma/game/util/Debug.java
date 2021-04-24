@@ -22,7 +22,7 @@ public class Debug {
 			// 打印黄色警告
 			System.out.println("\u001b[1;33m[" + GameCore.name + "][WARNIGN]" + msg+"\u001b[0m");
 			break;
-		case SERVERE:
+		case SEVERE:
 			// 打印红色严重警告
 			System.out.println("\u001b[1;31m[" + GameCore.name + "][SERVERE]" + msg+"\u001b[0m");
 			break;
@@ -30,6 +30,6 @@ public class Debug {
 	}
 
 	public static enum DebugLevel {
-		INFO, WARNING, SERVERE;
+		INFO, WARNING, SEVERE;
 	}
 }
