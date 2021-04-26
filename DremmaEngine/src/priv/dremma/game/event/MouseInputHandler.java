@@ -50,10 +50,16 @@ public class MouseInputHandler implements MouseListener {
 	}
 
 	public boolean worldCurPosIsInRect(Rect rect) {
+		if (rect == null) {
+			return false;
+		}
 		return GUtils.viewPortToWorldPixel(curPos).isInRect(rect.leftUpPoint, rect.rightDownPoint);
 	}
 
 	public boolean screenCurPosIsInRect(Rect rect) {
+		if (rect == null) {
+			return false;
+		}
 		return curPos.isInRect(rect.leftUpPoint, rect.rightDownPoint);
 	}
 
@@ -112,10 +118,12 @@ public class MouseInputHandler implements MouseListener {
 			this.isPressed = isPressed;
 			if (isPressed) {
 				Debug.log(Debug.DebugLevel.WARNING, "Mouse pressed (screen) " + this.location);
-				Debug.log(Debug.DebugLevel.WARNING, "Mouse pressed (world) " + GUtils.viewPortToWorldPixel(this.location));
+				Debug.log(Debug.DebugLevel.WARNING,
+						"Mouse pressed (world) " + GUtils.viewPortToWorldPixel(this.location));
 			} else {
 				Debug.log(Debug.DebugLevel.WARNING, "Mouse released (screen) " + this.location);
-				Debug.log(Debug.DebugLevel.WARNING, "Mouse released (world) " + GUtils.viewPortToWorldPixel(this.location));
+				Debug.log(Debug.DebugLevel.WARNING,
+						"Mouse released (world) " + GUtils.viewPortToWorldPixel(this.location));
 			}
 			if (isPressed) {
 				pressedTimes++;

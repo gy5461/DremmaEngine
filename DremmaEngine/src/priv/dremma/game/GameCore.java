@@ -120,21 +120,24 @@ public class GameCore extends Canvas implements Runnable {
 					// 游戏开发者更新
 					onUpdate();
 
-					frames++;
 					
+
 					// 碰撞
 					collisionBoxAjustUpdate();
 					CollisionBox.collisionDetection();
-
-					if (map != null) {
-						map.update();
-					}
-					animationLoop();
 					
 					// 移动帮助
 					translateEntityAjustUpdate();
 					this.mouseInputHandler.update();
+
+					if (map != null) {
+						map.update();
+					}
+					
+					frames++;
 					render();
+					
+					animationLoop();
 				}
 			}
 		} catch (Exception e) {
@@ -182,6 +185,7 @@ public class GameCore extends Canvas implements Runnable {
 //			if (translateEntity.entity.visible) {
 //				translateEntity.xAxis.draw(g);
 //				translateEntity.yAxis.draw(g);
+//				translateEntity.xyAxis.draw(g);
 //			}
 		}
 	}
@@ -229,7 +233,7 @@ public class GameCore extends Canvas implements Runnable {
 	}
 
 	/**
-	 * 用于调整其他实体的位置
+	 * 用于调整实体的位置
 	 */
 	public synchronized void translateEntityAjustUpdate() {
 		if (!TranslateEntityHelper.shouldRender) {
@@ -237,11 +241,7 @@ public class GameCore extends Canvas implements Runnable {
 		}
 
 		if (TranslateEntityHelper.hasLock) {
-			if(TranslateEntityHelper.lockedEntity.entity.visible == false) {
-				return;
-			}
 			if (TranslateEntityHelper.lockedEntity.shouldTransScreenPos) {
-
 				// 当拖拽x轴时
 				if (this.mouseInputHandler.mouse.isPressed()
 						&& (this.mouseInputHandler.worldCurPosIsInRect(TranslateEntityHelper.lockedEntity.xAxis))) {
@@ -249,7 +249,7 @@ public class GameCore extends Canvas implements Runnable {
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 					float deltaX = curPos.x - lastPos.x;
 
-					TileMap.entities.get(TranslateEntityHelper.lockedEntity.entity.name).position.x += deltaX;
+					TranslateEntityHelper.lockedEntity.entity.position.x += deltaX;
 					CollisionBox.collisionBoxs.get(TranslateEntityHelper.lockedEntity.entity.name)
 							.trans(new Vector2(deltaX, 0));
 				}
@@ -268,7 +268,7 @@ public class GameCore extends Canvas implements Runnable {
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 					float deltaY = curPos.y - lastPos.y;
 
-					TileMap.entities.get(TranslateEntityHelper.lockedEntity.entity.name).position.y += deltaY;
+					TranslateEntityHelper.lockedEntity.entity.position.y += deltaY;
 					CollisionBox.collisionBoxs.get(TranslateEntityHelper.lockedEntity.entity.name)
 							.trans(new Vector2(0, deltaY));
 
@@ -287,8 +287,8 @@ public class GameCore extends Canvas implements Runnable {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 
-					TileMap.entities.get(TranslateEntityHelper.lockedEntity.entity.name).position = TileMap.entities
-							.get(TranslateEntityHelper.lockedEntity.entity.name).position.add(curPos.sub(lastPos));
+					TranslateEntityHelper.lockedEntity.entity.position = TranslateEntityHelper.lockedEntity.entity.position
+							.add(curPos.sub(lastPos));
 					CollisionBox.collisionBoxs.get(TranslateEntityHelper.lockedEntity.entity.name)
 							.trans(curPos.sub(lastPos));
 
@@ -308,7 +308,7 @@ public class GameCore extends Canvas implements Runnable {
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 					float deltaX = curPos.x - lastPos.x;
 
-					UIManager.getUIEntity(TranslateEntityHelper.lockedEntity.entity.name).position.x += deltaX;
+					TranslateEntityHelper.lockedEntity.entity.position.x += deltaX;
 				}
 
 				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
@@ -325,7 +325,7 @@ public class GameCore extends Canvas implements Runnable {
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 					float deltaY = curPos.y - lastPos.y;
 
-					UIManager.getUIEntity(TranslateEntityHelper.lockedEntity.entity.name).position.y += deltaY;
+					TranslateEntityHelper.lockedEntity.entity.position.y += deltaY;
 
 				}
 
@@ -342,9 +342,8 @@ public class GameCore extends Canvas implements Runnable {
 					Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 					Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 
-					UIManager.getUIEntity(TranslateEntityHelper.lockedEntity.entity.name).position = UIManager
-							.getUIEntity(TranslateEntityHelper.lockedEntity.entity.name).position
-									.add(curPos.sub(lastPos));
+					TranslateEntityHelper.lockedEntity.entity.position = TranslateEntityHelper.lockedEntity.entity.position
+							.add(curPos.sub(lastPos));
 				}
 
 				if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
@@ -355,11 +354,8 @@ public class GameCore extends Canvas implements Runnable {
 				}
 			}
 
-			if (TranslateEntityHelper.lockedEntity.choosenX || TranslateEntityHelper.lockedEntity.choosenY
-					|| TranslateEntityHelper.lockedEntity.choosenXY) {
-				// 当有移动帮助被选中时，应锁定，只能进入该移动帮助进行事件监听
-				TranslateEntityHelper.hasLock = true;
-			} else {
+			if (!(TranslateEntityHelper.lockedEntity.choosenX || TranslateEntityHelper.lockedEntity.choosenY
+					|| TranslateEntityHelper.lockedEntity.choosenXY)) {
 				TranslateEntityHelper.hasLock = false;
 			}
 
@@ -378,7 +374,6 @@ public class GameCore extends Canvas implements Runnable {
 				}
 
 				if (translateEntity.shouldTransScreenPos) {
-
 					// 当拖拽x轴时
 					if (this.mouseInputHandler.mouse.isPressed()
 							&& (this.mouseInputHandler.worldCurPosIsInRect(translateEntity.xAxis))) {
@@ -386,7 +381,7 @@ public class GameCore extends Canvas implements Runnable {
 						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 						float deltaX = curPos.x - lastPos.x;
 
-						TileMap.entities.get(name).position.x += deltaX;
+						translateEntity.entity.position.x += deltaX;
 						CollisionBox.collisionBoxs.get(name).trans(new Vector2(deltaX, 0));
 					}
 
@@ -404,7 +399,7 @@ public class GameCore extends Canvas implements Runnable {
 						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 						float deltaY = curPos.y - lastPos.y;
 
-						TileMap.entities.get(name).position.y += deltaY;
+						translateEntity.entity.position.y += deltaY;
 						CollisionBox.collisionBoxs.get(name).trans(new Vector2(0, deltaY));
 
 					}
@@ -422,8 +417,7 @@ public class GameCore extends Canvas implements Runnable {
 						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 
-						TileMap.entities.get(name).position = TileMap.entities.get(name).position
-								.add(curPos.sub(lastPos));
+						translateEntity.entity.position = translateEntity.entity.position.add(curPos.sub(lastPos));
 						CollisionBox.collisionBoxs.get(name).trans(curPos.sub(lastPos));
 
 					}
@@ -442,7 +436,7 @@ public class GameCore extends Canvas implements Runnable {
 						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 						float deltaX = curPos.x - lastPos.x;
 
-						UIManager.getUIEntity(name).position.x += deltaX;
+						translateEntity.entity.position.x += deltaX;
 					}
 
 					if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())
@@ -459,7 +453,7 @@ public class GameCore extends Canvas implements Runnable {
 						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 						float deltaY = curPos.y - lastPos.y;
 
-						UIManager.getUIEntity(name).position.y += deltaY;
+						translateEntity.entity.position.y += deltaY;
 
 					}
 
@@ -476,8 +470,7 @@ public class GameCore extends Canvas implements Runnable {
 						Vector2 curPos = new Vector2(this.mouseInputHandler.getCurPos());
 						Vector2 lastPos = new Vector2(this.mouseInputHandler.getLastPos());
 
-						UIManager.getUIEntity(name).position = UIManager.getUIEntity(name).position
-								.add(curPos.sub(lastPos));
+						translateEntity.entity.position = translateEntity.entity.position.add(curPos.sub(lastPos));
 					}
 
 					if (!this.mouseInputHandler.curPos.isEqual(Vector2.zero())

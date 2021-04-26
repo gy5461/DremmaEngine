@@ -26,7 +26,7 @@ public class TranslateEntityHelper {
 	public Entity entity;
 
 	public static boolean shouldRender = false;
-	public boolean shouldTransScreenPos;
+	public boolean shouldTransScreenPos;	// 需要将屏幕坐标转换为世界坐标
 
 	// x轴
 	public Rect xAxis;

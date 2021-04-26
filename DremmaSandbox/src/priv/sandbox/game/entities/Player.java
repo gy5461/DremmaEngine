@@ -152,16 +152,22 @@ public class Player extends Entity {
 	 * @param weapon 武器
 	 */
 	public void equipWeapon(Weapon weapon) {
-		this.weapon = weapon;
-		if (weapon == null) {
-			this.attackDistance = 135f;
-			this.attackHarm = 1;
+		if (this.weapon == null) {
+			if (weapon == null) {
+				this.attackDistance = 135f;
+				this.attackHarm = 1;
+			} else {
+				this.attackDistance = weapon.attackDistance;
+				this.attackHarm = this.attackHarm + weapon.attackHarm;
+			}
+			this.weapon = weapon;
 		} else {
+			this.attackHarm = this.attackHarm - this.weapon.attackHarm + weapon.attackHarm;
 			this.attackDistance = weapon.attackDistance;
-			this.attackHarm = weapon.attackHarm;
+			this.weapon = weapon;
 		}
 	}
-	
+
 	public void unequipWeapon() {
 		this.equipWeapon(null);
 	}
