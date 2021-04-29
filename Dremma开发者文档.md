@@ -20,9 +20,25 @@
 
 站在游戏开发者的角度，我既可以从零开始开发，又可以基于引擎，而学习庞大复杂的引擎需要很高的学习成本，但自己从零开发又会拖慢开发进度，有没有五脏俱全、容易上手的小引擎呢？
 
-作为一个仅有129KB的Jar包，游戏开发者如何利用它达成自己的2D游戏开发目标呢？
+## 梦玛引擎和别的游戏引擎相比有什么优势呢？
 
-## 2D游戏开发需求洞察
+* 与大型游戏引擎比起来非常小巧、轻量（Jar包139KB）
+
+* 可以打包为可执行Jar包和Applet小程序，利用Java的跨平台特性
+
+* 默认解决人树渲染顺序问题，不需要对每个物体复杂的配置
+
+* 与其他小型纯游戏引擎相比，很多小型游戏引擎不提供场景编辑功能，只能在代码中进行位置指定，碰撞盒位置调整等内容，DremmaEngine提供可视化的碰撞盒调整以及可视化的位置调整，调整逻辑与unity相似，容易上手
+
+* 可以处理两个运动物体间的碰撞
+
+* 由于小巧，学习成本低，也方便对游戏引擎功能实现感兴趣的人分析源码学习
+
+
+
+作为一个仅有129KB的Jar包，游戏开发者如何利用梦玛引擎达成自己的2D游戏开发目标呢？
+
+## 2D游戏开发需求洞察&如何使用
 
 ### 核心配置
 
@@ -234,6 +250,19 @@ public void onWindowClose() {
 Time.printFrames();	// 打印运行时帧数
 ~~~
 
+#### FloatCompare
+
+浮点数的有效数字是6～7位，会在比较时引起误差，比如判别两个浮点数是否相等时，应该是判别它们是否在一定精度范围内近似相等，梦玛引擎原装的浮点数比较工具类FloatCompare默认精度为`1e-8`，提供给开发者的接口如下
+
+| 调用方法                                       | 含义                                        |
+| ---------------------------------------------- | ------------------------------------------- |
+| FloatCompare.isEqual(float a, float b)         | 返回boolean值，比较传入函数的a与b是否相等   |
+| FloatCompare.isNotEqual(float a, float b)      | 返回boolean值，比较传入函数的a与b是否不相等 |
+| FloatCompare.isLess(float a, float b)          | 返回boolean值，比较传入函数的a是否小于b     |
+| FloatCompare.isLessOrEqual(float a, float b)   | 返回boolean值，比较传入函数的a是否小于等于b |
+| FloatCompare.isBigger(float a, float b)        | 返回boolean值，比较传入函数的a是否大于b     |
+| FloatCompare.isBiggerOrEqual(float a, float b) | 返回boolean值，比较传入函数的a是否大于等于b |
+
 #### Vector2
 
 二维向量的封装，提供插值、运算、比较、模长、归一化等方法
@@ -338,15 +367,68 @@ GUtils类
 > Resources.load(Resources.ResourceType.Tile, "0", Resources.path + "images/tiles/floor_0.png");
 > ~~~
 >
-> 
-
-
 
 ### 地图设计
 
 地图是游戏的世界，游戏中的一草一木、飞禽走兽以及玩家的化身都在地图之中
 
 开发者可以通过资源加载提供的方法绑定地砖编号与对应贴图，然后通过由地砖编号构成的配置文件即可由引擎生成游戏地图。
+
+>使用加载进游戏中的基础地砖及地图文件（游戏中地图的布局：指定每块地砖采取哪个基础地砖，地砖位置即地砖坐标）构造
+>
+>~~~java
+>// 基础地砖加载方法
+>Resources.load(Resources.ResourceType.Tile, "0", Resources.path + "images/tiles/floor_0.png");
+>Resources.load(Resources.ResourceType.Tile, "1", Resources.path + "images/tiles/floor_1.png");
+>Resources.load(Resources.ResourceType.Tile, "2", Resources.path + "images/tiles/floor_2.png");
+>Resources.load(Resources.ResourceType.Tile, "3", Resources.path + "images/tiles/floor_3.png");
+>Resources.load(Resources.ResourceType.Tile, "4", Resources.path + "images/tiles/floor_4.png");
+>
+>// 地图文件内容编写指引，以"maps/map1.txt"为例
+># tileMap ---> '#'号之后写注释
+>0 0 0 0 0 0 0
+>0 0 0 0 0 0 0
+>0 0 1 2 3 4 4 ----> 指定地图中第3排地砖的地砖编号从左到右为'0 0 1 2 3 4 4'
+>0 0 0 0 0 0 0
+>0 0 0 0 0 0 0
+>  
+>// 根据基础地砖从文件中加载地图
+>map = TileMap.loadTileMap(Resources.path + "maps/map1.txt");
+>~~~
+>
+>地图中包含两类实体：玩家在游戏中的化身以及其他所有实体
+>
+>~~~java
+>player = new Player(this.keyInputHandler, 60f);
+>
+>player.position = new Vector2(GameCore.screen.width / 2f, GameCore.screen.height / 2f);	// 设置玩家初始时位于屏幕中心
+>player.setScale(new Vector2(2f, 2f));
+>map.setPlayer(player);	// 设置地图中的主角为player，player需要为Entity或Entity子类的实例
+>
+>// 向地图中添加名为tree1_1的树木
+>Entity tree1Entity = new Entity();
+>tree1Entity.setStaticImage(Resources.loadImage(Resources.path + "images/entities/tree1.png"));	// 树木为静态实体，设置静态图片即可，不需要进行动画更新
+>tree1Entity.setScale(new Vector2(3f, 3f));	// 设置tree1_1的放大倍数
+>tree1Entity.name = "tree1_1";
+>map.addEntity(tree1Entity, new Vector2(200, 500));	// 将tree1_1添加到世界坐标为（200，500）的位置
+>[注]以tree1Entity为实体可以进行旋转、缩放，取新的名字，将克隆实体加入到地图中其他位置，该功能类似Unity中的Prefabs预制体
+>
+>// 向地图中添加NPC
+>// 南极仙翁（对话NPC）
+>ConversationalNPC talkNPC = new ConversationalNPC(this.keyInputHandler, 0, "南极仙翁");	// NPC为游戏开发者构建的对象，以Sandbox中构建的对话型NPC为例，需要进行键盘监听，速度为0，名称为"南极仙翁"
+>talkNPC.setScale(new Vector2(2f, 2f));	// 设置该NPC缩放倍数
+>map.addNPC(talkNPC, new Vector2(1043, 275));	// 将该NPC添加到地图中，世界坐标为（1043，275）
+>
+>// 野鬼（打斗NPC）
+>FightingNPC fightingNPC = new FightingNPC(30f);	// 速度为(30像素/s)
+>fightingNPC.name = "野鬼";	// 设置NPC名称
+>fightingNPC.setScale(new Vector2(2f, 2f));	// 设置该NPC缩放倍数
+>map.addNPC(fightingNPC, new Vector2(800, 600)); // 将该NPC添加到地图中，世界坐标为（800，600）
+>~~~
+>
+>聪明的你，到这里可能会疑惑：为什么地图中的主角与其他实体都是Entity或者Entity的孩子，但却要把主角单独分出来呢？
+>
+>**这是因为玩家的化身在地图中具有很大的特殊性，以镜头跟随为例，一般为了玩家在游戏时可以一眼看到主角，会在主角偏离屏幕中心时滚动屏幕，使主角回到屏幕中心的位置，这时候直接使用TileMap.player.position去计算会比在地图中所有实体里寻找player对象再获取其位置进行计算就要高效很多**
 
 ### 游戏世界的生机
 
@@ -373,77 +455,3 @@ GUtils类
 ### UI
 
 UI是玩家与游戏用户界面交互的载体，比如血条、背包图标、背包等，梦玛引擎提供UIEntity及UIManager类处理UI系统的任务，UIEntity是Entity的孩子，可以使用移动帮助，并且自身提供UI对齐、模式等配置；UIManager可以进行UI绑定、解绑、可视性设置、添加、删除等操作。Text继承自UIEntity，用于针对文字的处理，可配置文字的大小、颜色、字体及行宽等
-
-## 如何使用梦玛游戏引擎呢？
-
-钩子函数
-
-​	生命周期函数
-
-​	碰撞检测回调函数
-
-引擎内置工具类
-
-​	时间
-
-​	Vector2
-
-​	Debug
-
-​	坐标转换
-
-​	浮点数比较
-
-​	资源加载
-
-​		音乐
-
-​		地砖
-
-实体
-
-​	Entity介绍
-
-​		对Entity进行变换
-
-​		生命周期
-
-​		可视性
-
-​	UIEntity介绍
-
-​		UI模式（世界、屏幕）
-
-​		UI对齐
-
-​		UI层级
-
-​		UI事件监听
-
-​	AttackEntity介绍
-
-​		攻击型实体的特殊性
-
-事件处理
-
-​	按键绑定
-
-​	键盘事件处理
-
-​	鼠标事件处理
-
-​	窗体事件处理
-
-## 梦玛引擎和别的游戏引擎相比有什么优势呢？
-
-与大型游戏引擎比起来非常小巧、轻量（Jar包139KB）
-
-可以打包为可执行Jar包和Applet小程序，利用Java的跨平台特性
-
-默认解决人树渲染顺序问题，不需要复杂的配置
-
-与其他小型纯游戏引擎相比，很多小型游戏引擎不提供场景编辑功能，DremmaEngine提供可视化的碰撞盒调整以及可视化的位置调整，调整逻辑与unity相似，容易上手
-
-可以处理两个运动物体间的碰撞
-
-由于小巧，学习成本低，也方便对游戏引擎功能实现感兴趣的人分析源码学习
