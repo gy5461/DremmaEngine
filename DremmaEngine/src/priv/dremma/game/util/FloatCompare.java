@@ -8,10 +8,10 @@ package priv.dremma.game.util;
  */
 public class FloatCompare {
 
-	public static final float eps = 1e-8f; // 精度，精确到小数点后6位
+	public static final float eps = 1e-8f; // 精度，精确到小数点后8位
 
 	static int sgn(float a) {
-		return a < -1.0f * eps ? -1 : a < eps ? 0 : 1;
+		return a < -eps ? -1 : a < eps ? 0 : 1;
 	}
 
 	public static boolean isEqual(float a, float b) {
