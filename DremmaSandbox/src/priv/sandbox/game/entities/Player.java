@@ -724,9 +724,8 @@ public class Player extends Entity {
 		case ViewAngle2DOT5:
 			// up
 			for (int i = 48; i <= 55; i++) {
-				playerStandUp.put(i, Resources
-						.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"));
-				playerStandUpAnimation.addFrame(playerStandUp.get(i), duration);
+				playerStandUpAnimation.addFrame(Resources
+						.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png"), duration);
 				playerStandUpWithBow.put(i, Resources.loadImage(
 						Resources.path + "images/animations/player_stand_with_bow/player_stand_" + i + ".png"));
 				playerStandUpWithBowAnimation.addFrame(playerStandUpWithBow.get(i), duration);

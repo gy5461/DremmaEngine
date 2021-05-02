@@ -18,7 +18,7 @@ public class UIEntity extends Entity {
 		CENTER, LEFT, RIGHT, UP, DOWN;
 	}
 
-	public UIAlign algin = UIAlign.CENTER;;
+	public UIAlign algin = UIAlign.CENTER;
 
 	public static enum UIMode {
 		WORLD, SCREEN;

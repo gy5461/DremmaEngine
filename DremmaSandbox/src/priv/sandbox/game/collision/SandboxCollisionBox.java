@@ -26,6 +26,7 @@ public class SandboxCollisionBox extends CollisionBox {
 	 * @param entity      本实体
 	 * @param otherEntity 被撞到的实体
 	 */
+	@Override
 	public void onCollision(Entity entity, Entity otherEntity) {
 
 		// Debug.log(Debug.DebugLevel.INFO, entity.name + " 撞到了:" + otherEntity.name);
@@ -123,6 +124,7 @@ public class SandboxCollisionBox extends CollisionBox {
 	 * @param entity      本实体
 	 * @param otherEntity 被撞到的实体
 	 */
+	@Override
 	public void onTriggerEnter(Entity entity, Entity otherEntity) {
 		// Debug.log(Debug.DebugLevel.INFO, entity.name + " 触发了:" + otherEntity.name);
 		// ------------------玩家触发地上的弓时--------------------

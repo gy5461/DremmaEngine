@@ -131,6 +131,7 @@ public class TileMap {
 	 */
 	public void setPlayer(Entity player) {
 		TileMap.player = player;
+		player.onStart();
 	}
 
 	/**
@@ -143,6 +144,7 @@ public class TileMap {
 			return;
 		}
 		entities.put(name, entity);
+		entity.onStart();
 		if (name.contains("mapBorder")) {
 			return;
 		}
@@ -172,6 +174,7 @@ public class TileMap {
 	 * @param entity
 	 */
 	public void removeEntity(String name) {
+		entities.get(name).onDestroy();
 		entities.remove(name);
 	}
 

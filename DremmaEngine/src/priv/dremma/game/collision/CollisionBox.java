@@ -279,7 +279,7 @@ public class CollisionBox {
 	 * @param entity
 	 * @param otherEntity
 	 */
-	private void onTriggerExit(Entity entity, Entity otherEntity) {
+	public void onTriggerExit(Entity entity, Entity otherEntity) {
 	}
 
 	/**

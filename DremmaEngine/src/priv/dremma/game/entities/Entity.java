@@ -88,6 +88,16 @@ public class Entity {
 		this.state = Entity.EntityState.STAND;
 		this.direction = Entity.EntityDirection.DOWN;
 	}
+	
+	// ------------------钩子函数----------------------
+	public void onStart() {
+	}
+	
+	public void onUpdate() {
+	}
+	
+	public void onDestroy() {
+	}
 
 	public void setAnimator(Animator animator) {
 		this.animator = animator;
@@ -117,6 +127,7 @@ public class Entity {
 	 * 更新Entity
 	 */
 	public void update() {
+		this.onUpdate();
 		if (this.isStatic) {
 			return;
 		}

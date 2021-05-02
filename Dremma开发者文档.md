@@ -366,7 +366,6 @@ GUtils类
 > // Resources.path + "images/tiles/floor_0.png"：对应地砖图像资源路径
 > Resources.load(Resources.ResourceType.Tile, "0", Resources.path + "images/tiles/floor_0.png");
 > ~~~
->
 
 ### 地图设计
 

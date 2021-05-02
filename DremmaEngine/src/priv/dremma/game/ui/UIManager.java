@@ -6,15 +6,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import priv.dremma.game.util.Resources;
 import priv.dremma.game.util.TranslateEntityHelper;
 
 public class UIManager {
 
 	public static Queue<UIEntity> uiEntities = new LinkedList<UIEntity>();
 	public static HashMap<UIEntity, ArrayList<UIEntity>> parentAndChirld = new HashMap<UIEntity, ArrayList<UIEntity>>();
-
-	static String path = Resources.path + "data/ui.dat"; // 数据文件目录
 
 	public static UIEntity lockUIEntiy = null;
 
