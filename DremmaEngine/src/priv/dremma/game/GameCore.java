@@ -115,12 +115,10 @@ public class GameCore extends Canvas implements Runnable {
 
 				Time.update();
 
-				// Time.shouldRender = true; //解除shouldRender对于60帧左右的限制
+				Time.shouldRender = true; //解除shouldRender对于60帧左右的限制
 				if (Time.shouldRender) {
 					// 游戏开发者更新
 					onUpdate();
-
-					
 
 					// 碰撞
 					collisionBoxAjustUpdate();

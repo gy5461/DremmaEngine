@@ -435,22 +435,177 @@ GUtils类
 
 在梦玛引擎中，Entity是所有实体的父类，它提供可视性、是否静态等配置，开发者可以通过Animator为非静态Entity添加动画状态机，设置动画状态的转换有无退出时间，静态实体只需设置贴图即可，梦玛引擎通过继承多态扩展功能，开发者只需继承Entity，重写其生命周期函数即可，Entity主要提供构造函数、onStart，onUpdate及OnDestroy，分别在实体构造时，进入游戏地图中时，更新时及被销毁时调用。
 
+| 生命周期 | 钩子函数                | 含义                   |
+| -------- | ----------------------- | ---------------------- |
+| 构造     | public Entity()         | 实体被构造时调用       |
+| 开始     | public void onStart()   | 实体被放入地图中时调用 |
+| 更新     | public void onUpdate()  | 实体在地图中更新时调用 |
+| 销毁     | public void onDestroy() | 实体被销毁时调用       |
+
 ### 碰撞处理
 
 开发者终于做出了一个丰富的游戏世界，但各个物体间都可以通过，而开发者如果不想让某些物体间直接穿过，要怎么办呢？这就需要用到碰撞系统的检测与处理了，梦玛引擎提供了可视化可调整的碰撞盒，开发者将碰撞盒添加到实体身上，指定自己希望的碰撞盒模式：触发器与非触发器，在发生碰撞时，引擎会做相应的处理，保证非触发器模式不穿模，此外，梦玛引擎提供了onCollision、onTriggerEnter及onTriggerExit等钩子函数给开发者做自己的碰撞处理，分别代表发生非触发器碰撞、进入触发器碰撞盒、退出触发器碰撞盒
+
+想要在自己的游戏中开启引擎中的碰撞检测，同样需要继承碰撞盒类
+
+~~~java
+public class SandboxCollisionBox extends CollisionBox {
+  // 需定义构造函数
+  public SandboxCollisionBox(Vector2 leftUpPoint, Vector2 rightDownPoint) {
+  	super(leftUpPoint, rightDownPoint);
+  }
+}
+~~~
+
+| 钩子函数                                                     | 含义                                                      |
+| ------------------------------------------------------------ | --------------------------------------------------------- |
+| public void onCollision(Entity entity, Entity otherEntity)   | 两个实体的碰撞盒相撞时被调用                              |
+| public void onTriggerEnter(Entity entity, Entity otherEntity) | 实体entity的碰撞盒触发进入otherEntity的触发器碰撞盒时调用 |
+| public void onTriggerExit(Entity entity, Entity otherEntity) | 实体entity的碰撞盒触发退出otherEntity的触发器碰撞盒时调用 |
+
+为实体添加碰撞盒的方法：
+
+~~~java
+SandboxCollisionBox.collisionBoxs.put("bow",new SandboxCollisionBox(new Vector2(533, 508), new Vector2(664, 601))); // 为名称为"bow"的实体添加左上点坐标为（533，508），右下点坐标为（664，601）的碰撞盒，碰撞盒的位置大小可以在游戏运行时可视化调整
+
+SandboxCollisionBox.collisionBoxs.get("bow").isTrigger = true; // 设置碰撞盒为触发器模式，反之为非触发器模式
+~~~
+
+碰撞盒大小可视化调整方法：
+
+单击鼠标左键碰撞盒左上或右下点，该点会跟随鼠标位置移动，当再次单击鼠标左键时，选中点变为未选中状态，定在鼠标单击的位置。
 
 ### 移动帮助
 
 很多小型游戏引擎需要开发者在代码中指定实体摆放位置，但实际上在代码中修改后需要重新运行才能看到效果，对于物体位置调整来说非常不便，梦玛引擎提供可视化的实体移动帮助工具，开发者无需在代码中调整，只需在引擎运行时拖动移动工具 配图 调整位置即可，引擎会在关闭时序列化存入移动帮助及碰撞盒调整数据，在下次启动时载入
 
+~~~java
+// 开启时开发者运行游戏可以看到移动帮助的箭头，可以拖动箭头对实体进行位置调整，建议开发阶段打开；关闭时不渲染移动帮助箭头，建议在游戏发布时关闭移动帮助渲染。
+
+TranslateEntityHelper.shouldRender = true; // 渲染移动拖拽帮助, 反之关闭该渲染
+~~~
+
+移动帮助可视化调整实体位置的方法：
+
+当鼠标移动到x轴时，x轴高亮，按鼠标左键不松手，通过拖拽改变x轴向位置，y轴同理，拖动中间方形时，方形高亮，可改变实体在xy轴二维平面内的位置。
+
 ### 动画系统
 
 不管是人物的行走，还是怪物的死亡，都需要有动画的播放及动画状态的转换，对于从零开始开发游戏的开发者而言，每个角色都需要写一套有限动画状态机，非常麻烦而且混乱。梦玛引擎提供关键帧动画Animation类及动画状态机Animator类，Animation可以通过添加图片及其对应播放时间自动维护关键帧动画的播放，Animator管理动画状态，可向其中增删动画状态，进行状态转换，配置转换过程有无退出时间
+
+梦玛引擎的动画系统提供关键帧动画类Animation及动画状态机类Animator，以人物向上跑的站立动画为例，
+
+~~~java
+Animation playerStandUpAnimation = new Animation();	// 初始化向上方向的站立动画关键帧动画对象
+
+for (int i = 48; i <= 55; i++) {
+
+Image playerStandUpImg = Resources.loadImage(Resources.path + "images/animations/player_stand/player_stand_" + i + ".png");	// 加载动画关键帧图片资源
+
+playerStandUpAnimation.addFrame(playerStandUpImg, duration);	// 添加动画关键帧
+
+}
+
+this.animator.addAnimation("playerStandUp", playerStandUpAnimation); // 往主角的动画状态机中添加动画状态，注意每个Entity都拥有一个动画状态机对象，但是isStatic为true的静态实体不进行动画更新 
+~~~
+
+现在关键帧动画就被加入到主角的动画状态机之中了，那么怎么使用动画状态机进行动画状态转换呢？
+
+动画状态转换分两种情况，从旧状态转换到新状态时，旧状态有退出时间及旧状态无退出时间，比如从站立状态转为跑步状态时，需要立即进行动画状态转换，旧状态无退出时间，而从攻击状态转为站立状态时，需要先等攻击动画播放完毕，再播放站立动画，这时候旧状态就有退出时间。梦玛引擎中，通过设置新的动画状态及该状态有无退出时间来实现这一点，旧状态有无退出时间的判断及处理会在引擎中做，开发者无需自己实现。转换动画状态的调用方法是this.animator.setState("playerClapDown", true); // 将玩家的动画状态转为playerClapDown（面向下方拍手），该动画状态有退出时间，当需要新状态无退出时间时，第二个参数传入false即可。
 
 ### 音频播放
 
 音频播放支持可以直接通过加载音乐文件的名字调用播放一次、播放多次、循环播放、设置音量等函数，支持wav、au格式
 
+音频播放支持可以直接通过加载音乐文件的名字调用播放一次、播放多次、循环播放、设置音量等函数，支持wav、au格式的音频[7]，由于目前mp3格式的音频比较多，推荐mp3转换为wav的网站：https://cloudconvert.com/mp3-to-wav。
+
+Java自带的音频播放存在线程等待，如果用默认的游戏主线程直接播放，游戏帧数会直接降低到30帧左右，而新开线程进行音乐播放的情况下，游戏运行帧数可以回升为300~400帧。
+
+~~~java
+Resources.load(Resources.ResourceType.Music, 音频名称, 音频路径);	// 音频加载
+
+AudioManager.getInstance().playLoop("backgroundSound"); // 循环播放音频名称为"backgroundSound"的音频
+
+AudioManager.getInstance().setVolumn("ghostWoundedSound", 100); //设置音频名称为"ghostWoundedSound"的音频音量为100%（0%~100%）
+
+AudioManager.getInstance().playOnce("backgroundSound"); // 播放一遍音频名称为"backgroundSound"的音频
+
+AudioManager.getInstance().stopPlay ("backgroundSound"); // 停止播放名称为"backgroundSound"的音频
+~~~
+
 ### UI
 
-UI是玩家与游戏用户界面交互的载体，比如血条、背包图标、背包等，梦玛引擎提供UIEntity及UIManager类处理UI系统的任务，UIEntity是Entity的孩子，可以使用移动帮助，并且自身提供UI对齐、模式等配置；UIManager可以进行UI绑定、解绑、可视性设置、添加、删除等操作。Text继承自UIEntity，用于针对文字的处理，可配置文字的大小、颜色、字体及行宽等
+UI是玩家与游戏用户界面交互的载体，比如血条、背包图标、背包等，梦玛引擎提供UIEntity及UIManager类处理UI系统的任务，UIEntity是Entity的孩子，可以使用移动帮助，并且自身提供UI对齐、模式等配置；UIManager可以进行UI绑定、解绑、可视性设置、添加、删除等操作。Text继承自UIEntity，用于针对文字的处理，可配置文字的大小、颜色、字体等。
+
+表3-3 UIEntity API
+
+| API                                                  | 含义                                                         |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| public UIAlign algin = UIAlign.CENTER;               | UI对齐类型默认为中心对齐， UI对齐类型有：CENTER, LEFT, RIGHT, UP, DOWN；LEFT对齐类型会在血条中用到。 |
+| public UIMode mode = UIMode.SCREEN;                  | UI模式默认为屏幕UI，UI模式有：WORLD和SCREEN，分别是世界UI及屏幕UI，世界UI比如怪物头顶的血条，屏幕UI如背包图标 |
+| public UIEntity()                                    | 无参构造函数                                                 |
+| public UIEntity(MouseInputHandler mouseInputHandler) | 传入鼠标事件处理对象的构造函数，用于需要监听鼠标事件的UI     |
+| public UIEntity(Animator animator)                   | 传入动画状态机的构造函数                                     |
+| public boolean isPressedMouseButton()                | 判断本UI是否被鼠标点击                                       |
+| public boolean isChosenMouseButton()                 | 判断当前鼠标是否移动到本UI上                                 |
+| public UIEntity getParent()                          | 获取本UI双亲                                                 |
+| public Vector2 getLeftUpPoint()                      | 获取本UI左上点坐标                                           |
+| public Vector2 getRightDownPoint()                   | 获取本UI右下点坐标                                           |
+
+
+
+
+
+表3-4 Text API
+
+| API                                   | 含义                 |
+| ------------------------------------- | -------------------- |
+| public String content                 | 设置待渲染文本内容   |
+| public Font font = null;              | 设置字体             |
+| public Color color                    | 设置文本颜色         |
+| public void setFontSize(int fontSize) | 设置字体大小         |
+| public int getWidth()                 | 获取渲染出的文本宽度 |
+| public int getHeihgt()                | 获取渲染出的文本长度 |
+
+
+
+对话文件编写格式：
+
+实体名称：讲话内容
+
+NPC没有重要对话内容时也会有空闲时的讲话内容，此时需要在实体名称前加上（Idle）标志，当行首注有‘#’号时该行为注释，将被忽略。
+
+例如：
+
+南极仙翁：欢迎来到梦玛世界，我是南极仙翁，你好！
+
+\# 剑侠客询问
+
+剑侠客：南极仙翁，你好！我是剑侠客，请问我下一步需要做什么呢？
+
+南极仙翁：传说这里有一只游荡的野鬼，它身上围绕着鬼火，神出鬼没、杀人无数。
+
+南极仙翁：少侠，我希望你可以为民除害，拯救苍生！！
+
+剑侠客：原来如此，多谢老者。侠之大者、为国为民，我定不辱使命！
+
+\# 赠送宝书
+
+南极仙翁：果然后生可畏，我这里有一本武林秘籍《九阳神功》，希望可以助你一臂之力！！
+
+剑侠客：多谢老者。
+
+(Idle) 南极仙翁：浮生偷得半日闲。
+
+表3-5 UIManager API
+
+| API                                                          | 含义                             |
+| ------------------------------------------------------------ | -------------------------------- |
+| public static void addUI(UIEntity UIEntity)                  | 向游戏中添加UI                   |
+| public static void attachSubUI(UIEntity parentUIEntity, UIEntity childUIEntity) | 向双亲UI中添加子UI               |
+| public static void removeUI(UIEntity UIEntity)               | 删除游戏中的UI                   |
+| public static void detachSubUI(UIEntity parentUIEntity, UIEntity childUIEntity) | 解除子UI与双亲UI的关系           |
+| public static void detachAllChildUI(UIEntity UIEntity)       | 去除所有子UI                     |
+| public static void setUIVisibility(String name, boolean visible) | 设置UI可视性，将影响其子UI       |
+| public static UIEntity getUIEntity(String name)              | 获取UI管理器中指定名称的UIEntity |
+| public static ArrayList<UIEntity> getChilds(String name)     | 根据UIEntity名称返回其所有子UI   |
